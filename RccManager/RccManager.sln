@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1704.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RccManager.API", "RccManager.API", "{65FE7E4A-CC56-4028-B7C5-C64116884375}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.API", "RccManager.API\RccManager.API.csproj", "{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F12A4B6D-AA95-4DC3-BA75-55D4BBBBB9ED}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
