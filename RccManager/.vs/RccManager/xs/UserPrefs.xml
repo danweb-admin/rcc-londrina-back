@@ -1,5 +1,4 @@
-﻿<Properties StartupConfiguration="{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}|Default">
-  <MultiItemStartupConfigurations />
+﻿<Properties>
   <MonoDevelop.Ide.Workbench ActiveDocument="RccManager.API/RccManager.API.csproj">
     <Files>
       <File FileName="RccManager.API/Startup.cs" Line="1" Column="1" />
@@ -17,10 +16,9 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.RccManager.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.ItemProperties.RccManager.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
 </Properties>
