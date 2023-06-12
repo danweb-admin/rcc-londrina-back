@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Application", "R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Domain", "RccManager.Domain\RccManager.Domain.csproj", "{7308FC22-702C-49C6-9296-862C93B86416}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Infra", "RccManager.Infra\RccManager.Infra.csproj", "{10661BFE-CD1B-406A-AE17-ECDC2689176A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{7308FC22-702C-49C6-9296-862C93B86416}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7308FC22-702C-49C6-9296-862C93B86416}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7308FC22-702C-49C6-9296-862C93B86416}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10661BFE-CD1B-406A-AE17-ECDC2689176A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10661BFE-CD1B-406A-AE17-ECDC2689176A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10661BFE-CD1B-406A-AE17-ECDC2689176A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10661BFE-CD1B-406A-AE17-ECDC2689176A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

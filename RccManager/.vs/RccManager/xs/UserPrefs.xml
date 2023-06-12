@@ -24,8 +24,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.RccManager.Domain FirstBuild="True" />
-  <MonoDevelop.Ide.ItemProperties.RccManager.Application FirstBuild="True" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints />
   <MonoDevelop.Ide.ItemProperties.RccManager.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.ItemProperties.RccManager.Infra FirstBuild="True" />
 </Properties>
