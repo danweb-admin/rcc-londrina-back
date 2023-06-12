@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DI\" />
+    <None Remove="Entities\" />
+    <None Remove="Responses\" />
+    <None Remove="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DI\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Responses\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
 </Project>
