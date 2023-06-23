@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Infra", "RccMana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Service", "RccManager.Service\RccManager.Service.csproj", "{F5821977-9396-4D49-B24C-E82F1B6A4A43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Test", "RccManager.Test\RccManager.Test.csproj", "{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +41,6 @@ Global
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
