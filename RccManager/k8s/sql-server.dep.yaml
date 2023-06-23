@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mssql-deploy
+  namespace: rcc-manager
+spec:
+  replicas: 1
+  selector:
+     matchLabels:
+       app: mssql-app
+  template:
+    metadata:
+      labels:
+        app: mssql-app
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        ports:
+        - containerPort: 1433
+        securityContext:
+          privileged: true
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          value: ""
+        volumeMounts:
+        - name: mssql-mount
+          mountPath: /var/opt/mssql
+      volumes:
+      - name: mssql-mount
+        persistentVolumeClaim:
+          claimName: mssql-data
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-service
+  namespace: rcc-manager
+spec:
+  selector:
+    app: mssql-app
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
+  type: LoadBalancer
+
+  curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -

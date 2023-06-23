@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1704.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RccManager.API", "RccManager.API", "{65FE7E4A-CC56-4028-B7C5-C64116884375}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RccManager.Database", "RccManager.Database", "{65FE7E4A-CC56-4028-B7C5-C64116884375}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.API", "RccManager.API\RccManager.API.csproj", "{636AEB5A-2E75-48C0-A133-25070BCA6081}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Infra", "RccManager.Infra\RccManager.Infra.csproj", "{10661BFE-CD1B-406A-AE17-ECDC2689176A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Service", "RccManager.Service\RccManager.Service.csproj", "{F5821977-9396-4D49-B24C-E82F1B6A4A43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RccManager.Test", "RccManager.Test\RccManager.Test.csproj", "{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5821977-9396-4D49-B24C-E82F1B6A4A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{228CCDB1-9CEB-4288-9DBA-9F81C3BBAF54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

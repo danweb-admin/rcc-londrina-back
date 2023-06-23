@@ -9,9 +9,20 @@
   <ItemGroup>
     <None Remove="Services\" />
     <None Remove="Validators\" />
+    <None Remove="AutoMapper" />
+    <None Remove="FluentValidation.AspNetCore" />
+    <None Remove="Validators\DecanatoSetor\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Validators\" />
+    <Folder Include="Validators\DecanatoSetor\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RccManager.Domain\RccManager.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
   </ItemGroup>
 </Project>
