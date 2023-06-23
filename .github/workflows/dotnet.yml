@@ -29,3 +29,11 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
       working-directory: RccManager
+      
+    - name: build image and push to docker hub
+      uses: docker/build-push-action@v1.1.0
+      with:
+        username: williambr2022
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: williambr2022/rcc-manager-api
+        tags: ${{ github.sha }}, latest
