@@ -1,26 +1,35 @@
-﻿<Properties StartupConfiguration="{24F0749B-2FDE-4EF6-9282-07E04A1B1EE8}|Default">
+﻿<Properties StartupConfiguration="{636AEB5A-2E75-48C0-A133-25070BCA6081}|Default">
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workbench ActiveDocument="RccManager.API/RccManager.API.csproj">
+  <MonoDevelop.Ide.ItemProperties.RccManager.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.RccManager.Test FirstBuild="True" />
+  <MonoDevelop.Ide.ItemProperties.RccManager.Database PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workbench ActiveDocument="RccManager.API/Controllers/DecanatoSetorController.cs">
     <Files>
-      <File FileName="RccManager.API/Startup.cs" Line="1" Column="1" />
-      <File FileName="RccManager.API/RccManager.API.csproj" Line="21" Column="5" />
+      <File FileName="RccManager.API/Program.cs" Line="56" Column="1" />
+      <File FileName="RccManager.API/Controllers/WeatherForecastController.cs" Line="27" Column="1" />
+      <File FileName="RccManager.API/Configuration/AddAutoMapperConfiguration.cs" />
+      <File FileName="RccManager.API/Controllers/DecanatoSetorController.cs" Line="8" Column="32" />
+      <File FileName="RccManager.Application/RccManager.Application.csproj" Line="16" Column="1" />
+      <File FileName="RccManager.Domain/RccManager.Domain.csproj" Line="1" Column="1" />
+      <File FileName="RccManager.Infra/RccManager.Infra.csproj" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="RccManager" expanded="True">
             <Node name="RccManager.API" expanded="True">
-              <Node name="Dependencies" expanded="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="DecanatoSetorController.cs" selected="True" />
+              </Node>
             </Node>
+            <Node name="RccManager.Application" expanded="True" />
+            <Node name="RccManager.Domain" expanded="True" />
+            <Node name="RccManager.Service" expanded="True" />
           </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.RccManager.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
