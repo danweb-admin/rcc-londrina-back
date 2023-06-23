@@ -36,6 +36,5 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
-        repository: williambr2022/rcc-manager-api
         tags: ${{ github.sha }}, latest
       
