@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.API.Models;
 using RccManager.Domain.Dtos.DecanatoSetor;
+using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
@@ -14,12 +15,10 @@ namespace RccManager.API.Controllers;
 public class DecanatoSetorController : ControllerBase
 {
     private readonly IDecanatoSetorService _decanatoSetorService;
-    private readonly IValidator<DecanatoSetorDto> _validator;
 
-    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService, IValidator<DecanatoSetorDto> validator)
+    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService)
     {
         _decanatoSetorService = decanatoSetorService;
-        _validator = validator;
     }
 
     [HttpGet]
@@ -32,30 +31,35 @@ public class DecanatoSetorController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] DecanatoSetorDto decanatoSetorViewModel)
     {
-        var validation = await ValidateModel(decanatoSetorViewModel);
+        try
+        {
 
-        if (validation != null)
-            return BadRequest(validation);
+            var createdDecanatoSetor = await _decanatoSetorService.Create(decanatoSetorViewModel);
 
-        var createdDecanatoSetor = await _decanatoSetorService.Create(decanatoSetorViewModel);
-
-        return Ok(HttpStatusCode.Created);
+            return Ok(HttpStatusCode.Created);
+        }
+        catch (ValidateByNameException ex)
+        {
+            return BadRequest(new ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+        }
+        
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] DecanatoSetorDto decanatoSetorViewModel)
     {
-        var validation = await ValidateModel(decanatoSetorViewModel);
+        try
+        {
+            var updatedDecanatoSetor = await _decanatoSetorService.Update(decanatoSetorViewModel, id);
 
-        if (validation != null)
-            return BadRequest(validation);
+            if (updatedDecanatoSetor == null)
+                return NotFound();
 
-        var updatedDecanatoSetor = await _decanatoSetorService.Update(decanatoSetorViewModel, id);
-
-        if (updatedDecanatoSetor == null)
-            return NotFound();
-
-        return Ok(HttpStatusCode.NoContent);
+            return Ok(HttpStatusCode.NoContent);
+        }catch(ValidateByNameException ex)
+        {
+            return BadRequest(new ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+        }
     }
 
     [HttpDelete("{id}")]
@@ -69,19 +73,5 @@ public class DecanatoSetorController : ControllerBase
         return NoContent();
     }
 
-    private async Task<IEnumerable<ValidationResult>> ValidateModel(DecanatoSetorDto model)
-    {
-        var validation = await _validator.ValidateAsync(model);
-
-        if (!validation.IsValid)
-        {
-            return validation.Errors?.Select(e => new ValidationResult()
-            {
-                Code = e.ErrorCode,
-                PropertyName = e.PropertyName,
-                Message = e.ErrorMessage
-            });
-        }
-        return null;
-    }
+    
 }

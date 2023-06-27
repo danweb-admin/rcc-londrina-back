@@ -6,6 +6,7 @@ using System.Reflection;
 using AutoMapper;
 using RccManager.Domain.Dtos.DecanatoSetor;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
@@ -15,9 +16,9 @@ namespace RccManager.Service.Services
     public class DecanatoSetorService : IDecanatoSetorService
     {
         private readonly IMapper mapper;
-        private IRepository<DecanatoSetor> repository;
+        private IDecanatoSetorRepository repository;
 
-        public DecanatoSetorService(IMapper _mapper, IRepository<DecanatoSetor> _repository)
+        public DecanatoSetorService(IMapper _mapper, IDecanatoSetorRepository _repository)
         {
             this.mapper = _mapper;
             this.repository = _repository;
@@ -25,7 +26,13 @@ namespace RccManager.Service.Services
 
         public async Task<HttpResponse> Create(DecanatoSetorDto decanatoSetorViewModel)
         {
+            
+            if (await repository.GetByName(decanatoSetorViewModel.Name))
+                throw new ValidateByNameException("ERRO: Esse decanato/setor já existe.");
+
             var decanato = mapper.Map<DecanatoSetor>(decanatoSetorViewModel);
+
+
 
             var result = await repository.Insert(decanato);
 
@@ -66,6 +73,9 @@ namespace RccManager.Service.Services
 
         public async Task<HttpResponse> Update(DecanatoSetorDto decanatoSetorViewModel, Guid id)
         {
+            if (await repository.GetByName(decanatoSetorViewModel.Name, id))
+                throw new ValidateByNameException("ERRO: Esse decanato/setor já existe.");
+
             var decanato = mapper.Map<DecanatoSetor>(decanatoSetorViewModel);
             decanato.Id = id;
             var result = await repository.Update(decanato);

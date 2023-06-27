@@ -15,6 +15,14 @@ public class DecanatoSetorRepository : BaseRepository<DecanatoSetor>, IDecanatoS
         dbSet = context.Set<DecanatoSetor>();
     }
 
+    public async Task<bool> GetByName(string name)
+    {
+        return await dbSet.AnyAsync(x => x.Name.ToUpper() == name.ToUpper());
+    }
 
+    public async Task<bool> GetByName(string name, Guid id)
+    {
+        return await dbSet.AnyAsync(x => x.Name.ToUpper() == name.ToUpper() && x.Id != id);
+    }
 }
 
