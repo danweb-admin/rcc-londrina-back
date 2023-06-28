@@ -1,12 +1,9 @@
 ﻿using System.Net;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.API.Models;
 using RccManager.Domain.Dtos.DecanatoSetor;
 using RccManager.Domain.Exception.Decanato;
-using RccManager.Domain.Interfaces;
 using RccManager.Domain.Interfaces.Services;
-using RccManager.Domain.Responses;
 
 namespace RccManager.API.Controllers;
 
