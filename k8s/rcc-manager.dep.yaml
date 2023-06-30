@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: rcc-manager-api
+  namespace: rcc-manager
+spec:
+  selector:
+    matchLabels:
+      app: rcc-manager-api
+  template:
+    metadata:
+      labels:
+        app: rcc-manager-api
+    spec:
+      containers:
+        - name: rcc-manager-api
+          image: williambr2022/rcc-manager-api:latest
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          env:
+            - name: DbUser
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_user
+            - name: Database
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: database
+            - name: DbPort
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_port
+            - name: DbServer
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_server
+            - name: Password
+              valueFrom:
+                secretKeyRef:
+                  name: my-secret
+                  key: password

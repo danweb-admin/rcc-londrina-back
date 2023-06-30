@@ -48,5 +48,3 @@ spec:
       port: 1433
       targetPort: 1433
   type: LoadBalancer
-
-  curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -

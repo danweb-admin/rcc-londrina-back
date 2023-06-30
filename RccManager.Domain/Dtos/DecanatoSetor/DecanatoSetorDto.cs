@@ -1,10 +1,9 @@
-﻿using System;
-namespace RccManager.Domain.Dtos.DecanatoSetor
+﻿namespace RccManager.Domain.Dtos.DecanatoSetor;
+
+public class DecanatoSetorDto
 {
-	public class DecanatoSetorDto
-	{
-        public bool Active { get; set; }
-        public string Name { get; set; }
-    }
+    public bool Active { get; set; }
+
+    public string Name { get; set; }
 }
 
