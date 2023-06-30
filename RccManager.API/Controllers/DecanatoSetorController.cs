@@ -1,9 +1,11 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.API.Models;
 using RccManager.Domain.Dtos.DecanatoSetor;
 using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces.Services;
+using RccManager.Service.Validators.DecanatoSetor;
 
 namespace RccManager.API.Controllers;
 
@@ -12,10 +14,12 @@ namespace RccManager.API.Controllers;
 public class DecanatoSetorController : ControllerBase
 {
     private readonly IDecanatoSetorService _decanatoSetorService;
+    private readonly DecanatoSetorValidator _validator;
 
-    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService)
+    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService, DecanatoSetorValidator validator)
     {
         _decanatoSetorService = decanatoSetorService;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -30,6 +34,7 @@ public class DecanatoSetorController : ControllerBase
     {
         try
         {
+            FluentValidation.Results.ValidationResult validationResult = await _validator.ValidateAsync(decanatoSetorViewModel);
 
             var createdDecanatoSetor = await _decanatoSetorService.Create(decanatoSetorViewModel);
 
@@ -37,7 +42,7 @@ public class DecanatoSetorController : ControllerBase
         }
         catch (ValidateByNameException ex)
         {
-            return BadRequest(new ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
         }
         
     }
@@ -55,7 +60,7 @@ public class DecanatoSetorController : ControllerBase
             return Ok(HttpStatusCode.NoContent);
         }catch(ValidateByNameException ex)
         {
-            return BadRequest(new ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
         }
     }
 

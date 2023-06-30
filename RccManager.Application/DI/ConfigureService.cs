@@ -2,14 +2,14 @@
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Service.Services;
 
-namespace RccManager.Application.DI;
-
-public class ConfigureService
+namespace RccManager.Application.DI
 {
-	public static void ConfigureDependenciesService(IServiceCollection services)
-	{
-		services.AddTransient<IDecanatoSetorService,DecanatoSetorService>();
-		//services.AddScoped<IValidator<DecanatoSetorDto>, DecanatoSetorValidator>();
+    public class ConfigureService
+    {
+        public static void ConfigureDependenciesService(IServiceCollection services)
+        {
+            services.AddTransient<IDecanatoSetorService, DecanatoSetorService>();
+            services.AddTransient<IParoquiaCapelaService, ParoquiaCapelaService>();
+        }
     }
 }
-

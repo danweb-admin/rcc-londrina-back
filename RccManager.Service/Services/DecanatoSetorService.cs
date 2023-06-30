@@ -78,6 +78,7 @@ namespace RccManager.Service.Services
 
             var decanato = mapper.Map<DecanatoSetor>(decanatoSetorViewModel);
             decanato.Id = id;
+
             var result = await repository.Update(decanato);
 
             if (result == null)

@@ -16,6 +16,7 @@
     <None Remove="Interfaces\Repositories\" />
     <None Remove="Exception\" />
     <None Remove="Exception\Decanato\" />
+    <None Remove="Dtos\ParoquiaCapela\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -27,5 +28,6 @@
     <Folder Include="Interfaces\Repositories\" />
     <Folder Include="Exception\" />
     <Folder Include="Exception\Decanato\" />
+    <Folder Include="Dtos\ParoquiaCapela\" />
   </ItemGroup>
 </Project>
