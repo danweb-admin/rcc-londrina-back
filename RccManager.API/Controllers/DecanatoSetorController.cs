@@ -14,12 +14,10 @@ namespace RccManager.API.Controllers;
 public class DecanatoSetorController : ControllerBase
 {
     private readonly IDecanatoSetorService _decanatoSetorService;
-    private readonly DecanatoSetorValidator _validator;
 
-    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService, DecanatoSetorValidator validator)
+    public DecanatoSetorController(IDecanatoSetorService decanatoSetorService)
     {
         _decanatoSetorService = decanatoSetorService;
-        _validator = validator;
     }
 
     [HttpGet]
@@ -34,7 +32,6 @@ public class DecanatoSetorController : ControllerBase
     {
         try
         {
-            FluentValidation.Results.ValidationResult validationResult = await _validator.ValidateAsync(decanatoSetorViewModel);
 
             var createdDecanatoSetor = await _decanatoSetorService.Create(decanatoSetorViewModel);
 

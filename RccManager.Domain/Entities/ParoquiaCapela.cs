@@ -3,11 +3,11 @@ namespace RccManager.Domain.Entities;
 
 public class ParoquiaCapela : BaseEntity
 {
-    public string Endereco { get; set; }
-    public string Bairro { get; set; }
+    public string Address { get; set; }
+    public string Neighborhood { get; set; }
     public string Name { get; set; }
     public Guid DecanatoId { get; set; }
     public DecanatoSetor DecanatoSetor { get; set; }
-    public string Cidade { get; set; }
+    public string City { get; set; }
 }
 
