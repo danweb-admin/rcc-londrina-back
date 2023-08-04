@@ -3,11 +3,11 @@ namespace RccManager.Domain.Dtos.ParoquiaCapela
 {
 	public class ParoquiaCapelaDto
 	{
-        public string Endereco { get; set; }
-        public string Bairro { get; set; }
+        public string Address { get; set; }
+        public string Neighborhood { get; set; }
         public string Name { get; set; }
-        public int DecanatoId { get; set; }
-        public string Cidade { get; set; }
+        public Guid DecanatoId { get; set; }
+        public string City { get; set; }
         public bool Active { get; set; }
     }
 }

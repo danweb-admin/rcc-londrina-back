@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: rcc-manager-api
-          image: williambr2022/rcc-manager-api:latest
+          image: williambr2022/rcc-manager-api:ffe5314af46af3b6b8014cd88dc197c624403134
           ports:
             - containerPort: 80
           imagePullPolicy: Always

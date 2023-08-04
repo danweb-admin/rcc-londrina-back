@@ -11,7 +11,7 @@ namespace RccManager.Infra.Mappings
             builder.ToTable("ParoquiasCapelas");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Endereco)
+            builder.Property(x => x.Address)
                 .IsRequired()
                 .HasColumnName("endereco")
                 .HasMaxLength(100);
@@ -21,7 +21,7 @@ namespace RccManager.Infra.Mappings
                 .HasColumnName("name")
                 .HasMaxLength(100);
 
-            builder.Property(x => x.Bairro)
+            builder.Property(x => x.Neighborhood)
                 .IsRequired()
                 .HasColumnName("bairro")
                 .HasMaxLength(50);
@@ -30,7 +30,7 @@ namespace RccManager.Infra.Mappings
                 .IsRequired()
                 .HasColumnName("decanatoId");
 
-            builder.Property(x => x.Cidade)
+            builder.Property(x => x.City)
                 .IsRequired()
                 .HasColumnName("cidade")
                 .HasMaxLength(50);

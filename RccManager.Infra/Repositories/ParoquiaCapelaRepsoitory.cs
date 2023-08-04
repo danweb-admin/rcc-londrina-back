@@ -13,5 +13,10 @@ public class ParoquiaCapelaRepsoitory : BaseRepository<ParoquiaCapela>, IParoqui
     {
         dbSet = _context.Set<ParoquiaCapela>();
     }
+
+    public new async Task<IEnumerable<ParoquiaCapela>> GetAll()
+    {
+        return await dbSet.Include("DecanatoSetor").OrderBy(x => x.Name).ToListAsync();
+    }
 }
 
