@@ -54,9 +54,9 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
         return new HttpResponse { Message = "Paróquia/Capela ativada/inativada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
     }
 
-    public async Task<IEnumerable<ParoquiaCapelaDtoResult>> GetAll()
+    public async Task<IEnumerable<ParoquiaCapelaDtoResult>> GetAll(string search)
     {
-        var entities = await repository.GetAll();
+        var entities = await repository.GetAll(search);
         return mapper.Map<IEnumerable<ParoquiaCapelaDtoResult>>(entities);
     }
 

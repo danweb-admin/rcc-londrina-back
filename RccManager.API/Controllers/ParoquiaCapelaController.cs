@@ -17,7 +17,7 @@ public class ParoquiaCapelaController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(string search)
     {
         var paroquiaCapelas = await _paroquiaCapelaService.GetAll();
         return Ok(paroquiaCapelas);

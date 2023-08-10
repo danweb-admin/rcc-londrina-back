@@ -5,7 +5,7 @@ namespace RccManager.Domain.Interfaces.Services
 {
     public interface IParoquiaCapelaService
 	{
-        Task<IEnumerable<ParoquiaCapelaDtoResult>> GetAll();
+        Task<IEnumerable<ParoquiaCapelaDtoResult>> GetAll(string search);
 
         Task<HttpResponse> Create(ParoquiaCapelaDto model);
 
