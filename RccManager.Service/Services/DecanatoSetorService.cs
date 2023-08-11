@@ -68,7 +68,7 @@ namespace RccManager.Service.Services
 
         public async Task<IEnumerable<DecanatoSetorDtoResult>> GetAll()
         {
-            return mapper.Map<IEnumerable<DecanatoSetorDtoResult>>(await repository.GetAll());
+            return mapper.Map<IEnumerable<DecanatoSetorDtoResult>>(await repository.GetAll(string.Empty));
         }
 
         public async Task<HttpResponse> Update(DecanatoSetorDto decanatoSetorViewModel, Guid id)

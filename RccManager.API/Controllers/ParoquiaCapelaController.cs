@@ -19,7 +19,7 @@ public class ParoquiaCapelaController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string search)
     {
-        var paroquiaCapelas = await _paroquiaCapelaService.GetAll();
+        var paroquiaCapelas = await _paroquiaCapelaService.GetAll(search);
         return Ok(paroquiaCapelas);
     }
 
