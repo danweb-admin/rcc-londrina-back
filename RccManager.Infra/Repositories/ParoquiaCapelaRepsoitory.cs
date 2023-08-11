@@ -14,9 +14,17 @@ public class ParoquiaCapelaRepsoitory : BaseRepository<ParoquiaCapela>, IParoqui
         dbSet = _context.Set<ParoquiaCapela>();
     }
 
-    public new async Task<IEnumerable<ParoquiaCapela>> GetAll()
+    public new async Task<IEnumerable<ParoquiaCapela>> GetAll(string search)
     {
-        return await dbSet.Include("DecanatoSetor").OrderBy(x => x.Name).ToListAsync();
+        search = search.ToUpper();
+           
+        return await dbSet.Include("DecanatoSetor")
+            .Where(
+                x => x.Name.Contains(search) ||
+                x.Address.Contains(search) ||
+                x.Neighborhood.Contains(search) ||
+                x.DecanatoSetor.Name.Contains(search))
+            .OrderBy(x => x.Name).ToListAsync();
     }
 }
 

@@ -48,7 +48,7 @@ namespace RccManager.Infra.Repositories
             
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll(string search)
         {
             return await dbSet.ToListAsync();
         }
