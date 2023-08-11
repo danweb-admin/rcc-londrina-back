@@ -17,9 +17,13 @@ public class ParoquiaCapelaController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string search)
+    public async Task<IActionResult> Get([FromQuery] string? search)
     {
-        var paroquiaCapelas = await _paroquiaCapelaService.GetAll(search);
+        string _search = string.Empty;
+        if (search != null)
+            _search = search;
+
+        var paroquiaCapelas = await _paroquiaCapelaService.GetAll(_search);
         return Ok(paroquiaCapelas);
     }
 
