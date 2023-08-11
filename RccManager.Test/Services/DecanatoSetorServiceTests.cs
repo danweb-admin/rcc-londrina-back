@@ -142,7 +142,7 @@ namespace RccManager.Tests.Service.Services
                 new DecanatoSetor { Id = Guid.NewGuid(), Name = "Decanato 3" }
             };
 
-            _repositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(entities);
+            _repositoryMock.Setup(repo => repo.GetAll(string.Empty)).ReturnsAsync(entities);
 
             // Act
             var result = await _service.GetAll();
