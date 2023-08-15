@@ -8,8 +8,11 @@ namespace RccManager.Application.DI
     {
         public static void ConfigureDependenciesService(IServiceCollection services)
         {
-            services.AddTransient<IDecanatoSetorService, DecanatoSetorService>();
-            services.AddTransient<IParoquiaCapelaService, ParoquiaCapelaService>();
+            services.AddScoped<IDecanatoSetorService, DecanatoSetorService>();
+            services.AddScoped<IParoquiaCapelaService, ParoquiaCapelaService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddSingleton<IMD5Service, MD5Service>();
         }
     }
 }

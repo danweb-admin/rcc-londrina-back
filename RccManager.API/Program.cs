@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using RccManager.Application.DI;
 using RccManager.Application.Mapper;
-using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
 using RccManager.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ ConfigureRepository.ConfigureDependenciesRepository(builder.Services);
 ConfigureAppDbContext(builder);
 
 // Setup AutoMapper e dependency injection
-var config = new AutoMapper.MapperConfiguration(cfg =>
+var config = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile(new DtoToEntityProfile());
     cfg.AddProfile(new EntityToDtoProfile());
@@ -41,14 +42,34 @@ var config = new AutoMapper.MapperConfiguration(cfg =>
 IMapper mapper = config.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+var configurationKey = Environment.GetEnvironmentVariable("KeyMD5");
+var key = Encoding.ASCII.GetBytes(configurationKey);
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(x =>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 using (var serviceScope = app.Services.CreateScope())
@@ -68,6 +89,8 @@ app.Use(async (context, next) =>
 {
     await next();
 });
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

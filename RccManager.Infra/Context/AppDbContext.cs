@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using RccManager.Domain.Entities;
 using RccManager.Infra.Mappings;
 
@@ -8,6 +9,8 @@ public class AppDbContext : DbContext
 {
     public DbSet<DecanatoSetor> Decanatos { get; set; }
     public DbSet<ParoquiaCapela> ParoquiasCapelas { get; set; }
+    public DbSet<User> Users { get; set; }
+
 
     public AppDbContext()
     {
@@ -16,12 +19,10 @@ public class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,5 +31,6 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new DecanatoSetorMap());
         modelBuilder.ApplyConfiguration(new ParoquiaCapelaMap());
+        modelBuilder.ApplyConfiguration(new UserMap());
     }
 }

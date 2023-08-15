@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.API.Models;
 using RccManager.Domain.Dtos.DecanatoSetor;
@@ -11,6 +12,7 @@ namespace RccManager.API.Controllers;
 
 [ApiController]
 [Route("api/v1/decanato-setor")]
+[Authorize]
 public class DecanatoSetorController : ControllerBase
 {
     private readonly IDecanatoSetorService _decanatoSetorService;
