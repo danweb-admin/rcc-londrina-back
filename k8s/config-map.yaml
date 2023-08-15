@@ -8,3 +8,4 @@ data:
   database: "RccManager"
   db_port: "1433"
   db_server: "10.244.0.45"
+  key_md5: ""

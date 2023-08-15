@@ -39,6 +39,11 @@ spec:
                 configMapKeyRef:
                   name: configuration
                   key: db_server
+            - name: KeyMD5
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: key_md5
             - name: Password
               valueFrom:
                 secretKeyRef:
