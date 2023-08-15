@@ -350,5 +350,5 @@ healthchecksdb
 MigrationBackup/
 
 
-RccManager.API/Properties/*
+**/Properties/launchSettings.json
 .DS_Store
