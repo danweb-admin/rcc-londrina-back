@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Interfaces.Services;
@@ -7,6 +8,7 @@ namespace RccManager.API.Controllers;
 
 [ApiController]
 [Route("api/v1/paroquia-capela")]
+[Authorize]
 public class ParoquiaCapelaController : ControllerBase
 {
     private readonly IParoquiaCapelaService _paroquiaCapelaService;
