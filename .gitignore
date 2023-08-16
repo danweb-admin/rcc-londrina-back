@@ -351,3 +351,4 @@ MigrationBackup/
 
 **/Properties/launchSettings.json
 .DS_Store
+RccManager.Test/lcov.info

@@ -44,6 +44,10 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
     public async Task<HttpResponse> ActivateDeactivate(Guid id)
     {
         var entity = await repository.GetById(id);
+
+        if (entity == null)
+            return new HttpResponse { Message = "Paróquia/Capela não encontrada", StatusCode = (int)HttpStatusCode.BadRequest };
+
         entity.Active = !entity.Active;
 
         var result = await repository.Update(entity);
