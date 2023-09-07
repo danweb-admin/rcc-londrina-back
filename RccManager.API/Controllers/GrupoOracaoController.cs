@@ -11,7 +11,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/grupo-oracao")]
-    //[Authorize]
+    [Authorize]
     public class GrupoOracaoController : ControllerBase
     {
         private readonly IGrupoOracaoService _grupoOracaoService;
