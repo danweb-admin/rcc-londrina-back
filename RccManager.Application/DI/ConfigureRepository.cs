@@ -12,6 +12,8 @@ namespace RccManager.Application.DI
             services.AddScoped<IDecanatoSetorRepository, DecanatoSetorRepository>();
             services.AddScoped<IParoquiaCapelaRepository, ParoquiaCapelaRepsoitory>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGrupoOracaoRepository, GrupoOracaoRepository>();
+
         }
     }
 }

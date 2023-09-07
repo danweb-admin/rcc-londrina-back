@@ -69,7 +69,8 @@ var app = builder.Build();
 
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.API v1"));
+
 
 
 using (var serviceScope = app.Services.CreateScope())

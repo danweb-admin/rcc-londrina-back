@@ -7,7 +7,7 @@ namespace RccManager.Domain.Dtos.GrupoOracao
 	public class GrupoOracaoDto
 	{
         public string Name { get; set; }
-        public string ParoquiaId { get; set; }
+        public Guid ParoquiaId { get; set; }
         public ParoquiaCapelaDtoResult ParoquiaCapela { get; set; }
         public string Type { get; set; }
         public string DayOfWeek { get; set; }

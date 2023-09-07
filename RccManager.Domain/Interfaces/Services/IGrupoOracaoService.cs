@@ -5,13 +5,11 @@ namespace RccManager.Domain.Interfaces.Services
 {
     public interface IGrupoOracaoService
 	{
-        Task<IEnumerable<GrupoOracaoDtoResult>> GetAll();
+        Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search);
 
-        Task<GrupoOracaoDtoResult> GetById(Guid Id);
+        Task<HttpResponse> Create(GrupoOracaoDto grupoOracao);
 
-        Task<HttpResponse> Add(GrupoOracaoDto grupoOracao);
-
-        Task<HttpResponse> Update(GrupoOracaoDtoResult grupoOracao, Guid id);
+        Task<HttpResponse> Update(GrupoOracaoDto grupoOracao, Guid id);
     }
 }
 

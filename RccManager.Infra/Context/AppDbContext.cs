@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<DecanatoSetor> Decanatos { get; set; }
     public DbSet<ParoquiaCapela> ParoquiasCapelas { get; set; }
+    public DbSet<GrupoOracao> GrupoOracoes { get; set; }
     public DbSet<User> Users { get; set; }
 
 
@@ -31,6 +32,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new DecanatoSetorMap());
         modelBuilder.ApplyConfiguration(new ParoquiaCapelaMap());
+        modelBuilder.ApplyConfiguration(new GrupoOracaoMap());
         modelBuilder.ApplyConfiguration(new UserMap());
     }
 }

@@ -12,7 +12,9 @@ namespace RccManager.Application.DI
             services.AddScoped<IParoquiaCapelaService, ParoquiaCapelaService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IGrupoOracaoService, GrupoOracaoService>();
             services.AddSingleton<IMD5Service, MD5Service>();
+
         }
     }
 }

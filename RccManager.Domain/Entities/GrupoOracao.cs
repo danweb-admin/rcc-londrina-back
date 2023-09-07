@@ -4,7 +4,7 @@ namespace RccManager.Domain.Entities
 	public class GrupoOracao : BaseEntity
 	{
 		public string Name { get; set; }
-		public string ParoquiaId { get; set; }
+		public Guid ParoquiaId { get; set; }
 		public ParoquiaCapela ParoquiaCapela { get; set; }
 		public string Type { get; set; }
 		public string DayOfWeek { get; set; }
