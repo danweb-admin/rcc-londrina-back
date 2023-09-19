@@ -26,7 +26,7 @@ public class DecanatoSetorRepository : BaseRepository<DecanatoSetor>, IDecanatoS
         return await dbSet.AnyAsync(x => x.Name.ToUpper() == name.ToUpper() && x.Id != id);
     }
 
-    public new async Task<IEnumerable<DecanatoSetor>> GetAll()
+    public async Task<IEnumerable<DecanatoSetor>> GetAll()
     {
         return await dbSet.OrderBy(x => x.Name).ToListAsync();
     }

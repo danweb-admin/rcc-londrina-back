@@ -7,4 +7,5 @@ data:
   db_user: "SA"
   database: "RccManager"
   db_port: "1433"
-  db_server: "10.244.0.45"
+  db_server: "10.244.0.66"
+  key_md5: ""

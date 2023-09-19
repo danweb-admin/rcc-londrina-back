@@ -1,15 +1,13 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Interfaces.Services;
 
 namespace RccManager.Service.Services
 {
-	public class TokenService : ITokenService
+    public class TokenService : ITokenService
 	{
         public string GenerateToken(UserDto user)
         {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using RccManager.Domain.Dtos.DecanatoSetor;
+using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
@@ -14,6 +15,12 @@ public class EntityToDtoProfile : Profile
             .ReverseMap();
 
         CreateMap<ParoquiaCapelaDtoResult, ParoquiaCapela>()
+            .ReverseMap();
+
+        CreateMap<GrupoOracaoDto, GrupoOracao>()
+            .ReverseMap();
+
+        CreateMap<GrupoOracaoDtoResult, GrupoOracao>()
             .ReverseMap();
 
         CreateMap<UserDtoAdd, User>()

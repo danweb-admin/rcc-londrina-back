@@ -3,8 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.80" />
+  </ItemGroup>
+  
 
   <ItemGroup>
     <None Remove="Entities\" />
@@ -18,6 +24,7 @@
     <None Remove="Exception\Decanato\" />
     <None Remove="Dtos\ParoquiaCapela\" />
     <None Remove="Dtos\Users\" />
+    <None Remove="Dtos\GrupoOracao\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -31,5 +38,6 @@
     <Folder Include="Exception\Decanato\" />
     <Folder Include="Dtos\ParoquiaCapela\" />
     <Folder Include="Dtos\Users\" />
+    <Folder Include="Dtos\GrupoOracao\" />
   </ItemGroup>
 </Project>

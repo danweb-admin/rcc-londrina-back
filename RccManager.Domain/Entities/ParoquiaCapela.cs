@@ -5,6 +5,7 @@ public class ParoquiaCapela : BaseEntity
 {
     public string Address { get; set; }
     public string Neighborhood { get; set; }
+    public string ZipCode { get; set; }
     public string Name { get; set; }
     public Guid DecanatoId { get; set; }
     public DecanatoSetor DecanatoSetor { get; set; }

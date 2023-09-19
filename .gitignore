@@ -32,7 +32,6 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-RccManager.API/Properties/launchSettings.json
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -349,7 +348,8 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
-# Ionide (cross platform F# VS Code tools) working folder
-.ionide/
-RccManager.API/Properties/launchSettings.json
+
+**/Properties/launchSettings.json
 .DS_Store
+**/.DS_Store
+RccManager.Test/lcov.info

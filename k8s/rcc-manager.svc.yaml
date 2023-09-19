@@ -3,12 +3,11 @@ kind: Service
 metadata:
   name: rcc-manager-service
   namespace: rcc-manager
-  labels:
-    app: rcc-manager-service
 spec:
-  type: LoadBalancer
-  ports:
-  - protocol: TCP
-    port: 80
+  type: NodePort
   selector:
-    app: rcc-manager-api
+    app.kubernetes.io/name: rcc-manager-api
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31000

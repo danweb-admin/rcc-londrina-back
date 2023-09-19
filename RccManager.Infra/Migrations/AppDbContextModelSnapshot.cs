@@ -49,6 +49,105 @@ namespace RccManager.Infra.Migrations
                     b.ToTable("Decanatos");
                 });
 
+            modelBuilder.Entity("RccManager.Domain.Entities.GrupoOracao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnName("active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Address")
+                        .HasColumnName("address")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("City")
+                        .HasColumnName("city")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .IsRequired()
+                        .HasColumnName("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DayOfWeek")
+                        .HasColumnName("dayOfWeek")
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("Email")
+                        .HasColumnName("email")
+                        .HasColumnType("nvarchar(80)")
+                        .HasMaxLength(80);
+
+                    b.Property<DateTime>("FoundationDate")
+                        .HasColumnName("foundationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Local")
+                        .HasColumnName("local")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("nvarchar(80)")
+                        .HasMaxLength(80);
+
+                    b.Property<string>("Neighborhood")
+                        .HasColumnName("neighborhood")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<int>("NumberOfParticipants")
+                        .HasColumnName("numberOfParticipants")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ParoquiaId")
+                        .HasColumnName("paroquiaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Site")
+                        .HasColumnName("site")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<string>("Telephone")
+                        .HasColumnName("telephone")
+                        .HasColumnType("nvarchar(15)")
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnName("time")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnName("type")
+                        .HasColumnType("nvarchar(15)")
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnName("updatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnName("zipCode")
+                        .HasColumnType("nvarchar(9)")
+                        .HasMaxLength(9);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParoquiaId");
+
+                    b.ToTable("GrupoOracoes");
+                });
+
             modelBuilder.Entity("RccManager.Domain.Entities.ParoquiaCapela", b =>
                 {
                     b.Property<Guid>("Id")
@@ -56,18 +155,18 @@ namespace RccManager.Infra.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Active")
-                        .HasColumnName("ativo")
+                        .HasColumnName("active")
                         .HasColumnType("bit");
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnName("endereco")
+                        .HasColumnName("address")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnName("cidade")
+                        .HasColumnName("city")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
@@ -88,13 +187,17 @@ namespace RccManager.Infra.Migrations
 
                     b.Property<string>("Neighborhood")
                         .IsRequired()
-                        .HasColumnName("bairro")
+                        .HasColumnName("neighborhood")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnName("updatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnName("zipCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -148,6 +251,15 @@ namespace RccManager.Infra.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("RccManager.Domain.Entities.GrupoOracao", b =>
+                {
+                    b.HasOne("RccManager.Domain.Entities.ParoquiaCapela", "ParoquiaCapela")
+                        .WithMany()
+                        .HasForeignKey("ParoquiaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RccManager.Domain.Entities.ParoquiaCapela", b =>

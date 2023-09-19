@@ -13,7 +13,7 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(x => x.Address)
                 .IsRequired()
-                .HasColumnName("endereco")
+                .HasColumnName("address")
                 .HasMaxLength(100);
 
             builder.Property(x => x.Name)
@@ -23,7 +23,7 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(x => x.Neighborhood)
                 .IsRequired()
-                .HasColumnName("bairro")
+                .HasColumnName("neighborhood")
                 .HasMaxLength(50);
 
             builder.Property(x => x.DecanatoId)
@@ -32,7 +32,7 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(x => x.City)
                 .IsRequired()
-                .HasColumnName("cidade")
+                .HasColumnName("city")
                 .HasMaxLength(50);
 
             builder.Property(x => x.CreatedAt)
@@ -41,7 +41,10 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(x => x.Active)
                 .IsRequired()
-                .HasColumnName("ativo");
+                .HasColumnName("active");
+
+            builder.Property(x => x.ZipCode)
+                .HasColumnName("zipCode");
 
             builder.Property(x => x.UpdatedAt)
                 .HasColumnName("updatedAt");
