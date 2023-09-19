@@ -16,12 +16,7 @@
       "applicationUrl": "https://localhost:7076;http://localhost:5291",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbServer": "24.199.89.58",
-        "DbPort": "30270",
-        "DbUser": "SA",
-        "Database": "RccManager",
-        "Password": "RccManager@2023",
-        "KeyMD5": "UmNjTWFuQGczckAyMDIz"
+        
       }
     },
     "IIS Express": {

@@ -15,6 +15,7 @@ namespace RccManager.Tests.Service.Services
         private readonly IMapper _mapper;
         private readonly Mock<IParoquiaCapelaRepository> _repositoryMock;
         private readonly IParoquiaCapelaService _service;
+        private readonly Mock<ICachingService> _cacheMock;
 
         public ParoquiaCapelaServiceTests()
         {
@@ -25,7 +26,8 @@ namespace RccManager.Tests.Service.Services
             }).CreateMapper();
 
             _repositoryMock = new Mock<IParoquiaCapelaRepository>();
-            _service = new ParoquiaCapelaService(_mapper, _repositoryMock.Object);
+            _cacheMock = new Mock<ICachingService>();
+            _service = new ParoquiaCapelaService(_mapper, _repositoryMock.Object, _cacheMock.Object);
         }
 
         [Fact]

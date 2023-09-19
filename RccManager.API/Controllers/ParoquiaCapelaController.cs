@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.Domain.Dtos.ParoquiaCapela;
@@ -8,7 +9,7 @@ namespace RccManager.API.Controllers;
 
 [ApiController]
 [Route("api/v1/paroquia-capela")]
-[Authorize]
+//[Authorize]
 public class ParoquiaCapelaController : ControllerBase
 {
     private readonly IParoquiaCapelaService _paroquiaCapelaService;
@@ -59,4 +60,15 @@ public class ParoquiaCapelaController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("caching-paroquia-capela")]
+    public async Task<IActionResult> CachingParoquiaCapela()
+    {
+        var caching = await _paroquiaCapelaService.CachingParoquiaCapela();
+        if (caching.StatusCode == 200)
+            return Ok(caching);
+
+        return BadRequest(caching);
+    }
+
 }

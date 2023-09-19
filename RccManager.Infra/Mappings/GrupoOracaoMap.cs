@@ -51,9 +51,6 @@ namespace RccManager.Infra.Mappings
                 .HasColumnName("zipCode")
                 .HasMaxLength(9);
 
-            builder.Property(x => x.DecanatoId)
-                .HasColumnName("decanatoId");
-
             builder.Property(x => x.City)
                 .HasColumnName("city")
                 .HasMaxLength(50);
@@ -88,12 +85,6 @@ namespace RccManager.Infra.Mappings
             builder.HasOne(x => x.ParoquiaCapela)
                 .WithMany()
                 .HasForeignKey(x => x.ParoquiaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Relacionamento com a entidade DecanatoSetor
-            builder.HasOne(x => x.DecanatoSetor)
-                .WithMany()
-                .HasForeignKey(x => x.DecanatoId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

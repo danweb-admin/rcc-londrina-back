@@ -1,4 +1,5 @@
 ﻿using RccManager.Domain.Dtos.ParoquiaCapela;
+using RccManager.Domain.Entities;
 using RccManager.Domain.Responses;
 
 namespace RccManager.Domain.Interfaces.Services
@@ -12,6 +13,8 @@ namespace RccManager.Domain.Interfaces.Services
         Task<HttpResponse> Update(ParoquiaCapelaDto model, Guid id);
 
         Task<HttpResponse> Delete(Guid id);
+
+        Task<HttpResponse> CachingParoquiaCapela();
 
         Task<HttpResponse> ActivateDeactivate(Guid id);
     }

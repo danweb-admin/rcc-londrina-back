@@ -19,7 +19,6 @@ namespace RccManager.Infra.Repositories
             search = search.ToUpper();
 
             return await dbSet
-                .Include("DecanatoSetor")
                 .Include("ParoquiaCapela")
                 .Where(
                     x => x.Name.Contains(search) ||

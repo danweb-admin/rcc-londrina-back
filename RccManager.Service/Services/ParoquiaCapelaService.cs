@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using AutoMapper;
+using Newtonsoft.Json;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
@@ -12,11 +13,16 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
 {
     private readonly IMapper mapper;
     private readonly IParoquiaCapelaRepository repository;
+    private readonly ICachingService cache;
+    private readonly string hashParoquiaCapela = "paroquia-capela";
 
-    public ParoquiaCapelaService(IMapper mapper, IParoquiaCapelaRepository repository)
+
+    public ParoquiaCapelaService(IMapper mapper, IParoquiaCapelaRepository repository, ICachingService cache)
     {
         this.mapper = mapper;
         this.repository = repository;
+        this.cache = cache;
+        
     }
 
     public async Task<HttpResponse> Create(ParoquiaCapelaDto paroquiaCapelaDto)
@@ -28,6 +34,7 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
         if (result == null)
             return new HttpResponse { Message = "Houve um problema para criar a Paróquia/Capela", StatusCode = (int)HttpStatusCode.BadRequest };
 
+        await cache.SetAsync(hashParoquiaCapela, result.Id.ToString(), JsonConvert.SerializeObject(result));
         return new HttpResponse { Message = "Paróquia/Capela criada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
     }
 
@@ -60,8 +67,18 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
 
     public async Task<IEnumerable<ParoquiaCapelaDtoResult>> GetAll(string search)
     {
-        var entities = await repository.GetAll(search);
-        return mapper.Map<IEnumerable<ParoquiaCapelaDtoResult>>(entities);
+        var cachedEntities = await cache.GetAllAsync(hashParoquiaCapela);
+        IEnumerable<ParoquiaCapela> entities;
+
+        if (cachedEntities.Length == 0)
+        {
+            entities = await repository.GetAll(search);
+            await CachingParoquiaCapela();
+            return mapper.Map<IEnumerable<ParoquiaCapelaDtoResult>>(entities);
+        }
+
+        
+        return mapper.Map<IEnumerable<ParoquiaCapelaDtoResult>>(GetAllCache(search, cachedEntities));
     }
 
     public async Task<HttpResponse> Update(ParoquiaCapelaDto paroquiaCapelaDto, Guid id)
@@ -75,6 +92,39 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
         if (result == null)
             return new HttpResponse { Message = "Houve um problema para atualizar o objeto", StatusCode = (int)HttpStatusCode.BadRequest };
 
+        var result_ = await repository.GetById(result.Id);
+        await cache.SetAsync(hashParoquiaCapela, result_.Id.ToString(), JsonConvert.SerializeObject(result_));
         return new HttpResponse { Message = "Paróquia/Capela atualizada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+    }
+
+    public async Task<HttpResponse> CachingParoquiaCapela()
+    {
+        var list = await repository.GetAll(string.Empty);
+        
+        foreach (var item in list)
+        {
+            var paroquiaCapela = await cache.GetAsync(hashParoquiaCapela,item.Id.ToString());
+
+            if (paroquiaCapela == null)
+            {
+                await cache.SetAsync(hashParoquiaCapela, item.Id.ToString(), JsonConvert.SerializeObject(item));
+            }
+        }
+
+        return new HttpResponse { Message = "Paróquia/Capela foram cacheados.", StatusCode = (int)HttpStatusCode.OK };
+
+    }
+
+    private IEnumerable<ParoquiaCapela> GetAllCache(string search, StackExchange.Redis.HashEntry[] cachedEntities)
+    {
+        search = search.ToUpper();
+
+        var entities = cachedEntities.Select(x => JsonConvert.DeserializeObject<ParoquiaCapela>((string)x.Value)).ToList();
+        return entities.Where(
+                x => x.Name.Contains(search) ||
+                x.Address.Contains(search) ||
+                x.Neighborhood.Contains(search) ||
+                x.DecanatoSetor.Name.Contains(search))
+            .OrderBy(x => x.Name);
     }
 }

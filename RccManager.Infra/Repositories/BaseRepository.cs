@@ -56,7 +56,7 @@ namespace RccManager.Infra.Repositories
         public async Task<T> GetById(Guid id)
         {
             
-            return await dbSet.SingleOrDefaultAsync(x => x.Id.Equals(id));
+            return await dbSet.Include("DecanatoSetor").SingleOrDefaultAsync(x => x.Id.Equals(id));
             
         }
 

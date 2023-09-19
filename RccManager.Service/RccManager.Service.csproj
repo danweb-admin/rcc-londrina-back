@@ -12,11 +12,13 @@
     <None Remove="AutoMapper" />
     <None Remove="FluentValidation.AspNetCore" />
     <None Remove="Validators\DecanatoSetor\" />
+    <None Remove="Helper\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Validators\" />
     <Folder Include="Validators\DecanatoSetor\" />
+    <Folder Include="Helper\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RccManager.Domain\RccManager.Domain.csproj" />
@@ -25,6 +27,7 @@
     <PackageReference Include="AutoMapper" Version="10.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
-
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.80" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/grupo-oracao")]
-    [Authorize]
+    //[Authorize]
     public class GrupoOracaoController : ControllerBase
     {
         private readonly IGrupoOracaoService _grupoOracaoService;
@@ -22,7 +22,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string? search)
+        public async Task<IActionResult> Get([FromQuery] string search)
         {
             string _search = string.Empty;
             if (search != null)
