@@ -151,6 +151,7 @@ namespace RccManager.Tests.Service.Services
             var entity = _mapper.Map<ParoquiaCapela>(dto);
 
             _repositoryMock.Setup(repo => repo.Update(It.IsAny<ParoquiaCapela>())).ReturnsAsync(entity);
+            _repositoryMock.Setup(repo => repo.GetById(It.IsAny<Guid>())).ReturnsAsync(entity);
 
             // Act
             var result = await _service.Update(dto, id);
