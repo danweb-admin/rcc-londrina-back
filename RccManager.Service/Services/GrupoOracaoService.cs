@@ -59,6 +59,7 @@ namespace RccManager.Service.Services
 
         private DateTime formatFoundationDate(string date)
         {
+            date = date.Replace("/", "");
             var year = int.Parse(date.Substring(4));
             var day = int.Parse(date.Substring(0, 2));
             var month = int.Parse(date.Substring(2, 2));
@@ -68,6 +69,7 @@ namespace RccManager.Service.Services
 
         private DateTime formaTime(string time)
         {
+            time = time.Replace(":", "");
             var hours = int.Parse(time.Substring(0, 2));
             var minutes = int.Parse(time.Substring(2));
 
