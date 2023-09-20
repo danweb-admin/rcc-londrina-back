@@ -46,6 +46,8 @@ namespace RccManager.Service.Services
         {
             var grupoOracao_ = mapper.Map<GrupoOracao>(grupoOracao);
             grupoOracao_.Id = id;
+            grupoOracao_.FoundationDate = formatFoundationDate(grupoOracao.FoundationDate1);
+            grupoOracao_.Time = formaTime(grupoOracao.Time1);
 
             var result = await repository.Update(grupoOracao_);
 

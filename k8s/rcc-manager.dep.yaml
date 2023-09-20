@@ -44,6 +44,16 @@ spec:
                 configMapKeyRef:
                   name: configuration
                   key: key_md5
+            - name: RedisHost
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: redis_host
+            - name: RedisPort
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: redis_port
             - name: Password
               valueFrom:
                 secretKeyRef:
