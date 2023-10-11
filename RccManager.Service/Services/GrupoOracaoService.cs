@@ -59,6 +59,7 @@ namespace RccManager.Service.Services
 
         private DateTime formatFoundationDate(string date)
         {
+
             date = date.Replace("/", "");
             var year = int.Parse(date.Substring(4));
             var day = int.Parse(date.Substring(0, 2));

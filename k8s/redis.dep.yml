@@ -13,6 +13,7 @@ spec:
       labels:
         app: redis
     spec:
+      hostname: redis
       containers:
       - name: redis
         image: registry.k8s.io/redis:e2e  

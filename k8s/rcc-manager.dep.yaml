@@ -12,6 +12,8 @@ spec:
       labels:
         app: rcc-manager-api
     spec:
+      hostname: rcc-manager-api
+      subdomain: rcc-manager
       containers:
         - name: rcc-manager-api
           image: williambr2022/rcc-manager-api:latest
