@@ -24,7 +24,6 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=161.35.255.131, 30214;Initial Catalog=RccManager;User ID=SA;Password=RccManager@2023");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
