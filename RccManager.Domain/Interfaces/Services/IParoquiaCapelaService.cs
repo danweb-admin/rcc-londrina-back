@@ -1,4 +1,5 @@
 ﻿using RccManager.Domain.Dtos.ParoquiaCapela;
+using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Responses;
 

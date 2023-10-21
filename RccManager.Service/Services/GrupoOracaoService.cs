@@ -3,6 +3,7 @@ using System.Net;
 using AutoMapper;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
+using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
@@ -36,9 +37,10 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Grupo de Oração criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search)
+        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
         {
-            var entities = await repository.GetAll(search);
+            var user_ = mapper.Map<User>(user);
+            var entities = await repository.GetAll(search, user_);
             return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
         }
 

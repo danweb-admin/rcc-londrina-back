@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231016122733_ParoquiaIdAndDecanatoIdUser")]
+    partial class ParoquiaIdAndDecanatoIdUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,6 +222,9 @@ namespace RccManager.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("datetime");
 
+                    b.Property<Guid?>("DecanatoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("DecanatoSetorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -228,17 +233,21 @@ namespace RccManager.Infra.Migrations
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<Guid?>("GrupoOracaoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
                     b.Property<string>("NickName")
+                        .IsRequired()
                         .HasColumnType("varchar(4)")
                         .HasMaxLength(4);
+
+                    b.Property<Guid?>("ParoquiaCapelaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ParoquiaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -246,6 +255,7 @@ namespace RccManager.Infra.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
@@ -256,7 +266,7 @@ namespace RccManager.Infra.Migrations
 
                     b.HasIndex("DecanatoSetorId");
 
-                    b.HasIndex("GrupoOracaoId");
+                    b.HasIndex("ParoquiaCapelaId");
 
                     b.ToTable("Users");
                 });
@@ -285,9 +295,9 @@ namespace RccManager.Infra.Migrations
                         .WithMany()
                         .HasForeignKey("DecanatoSetorId");
 
-                    b.HasOne("RccManager.Domain.Entities.GrupoOracao", "GrupoOracao")
+                    b.HasOne("RccManager.Domain.Entities.ParoquiaCapela", "ParoquiaCapela")
                         .WithMany()
-                        .HasForeignKey("GrupoOracaoId");
+                        .HasForeignKey("ParoquiaCapelaId");
                 });
 #pragma warning restore 612, 618
         }

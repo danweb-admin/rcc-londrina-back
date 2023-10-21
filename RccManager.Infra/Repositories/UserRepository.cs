@@ -14,6 +14,20 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         dbSet = _context.Set<User>();
     }
 
+    public new async Task<IEnumerable<User>> GetAll(string search)
+    {
+        search = search.ToUpper();
+
+        return await dbSet
+            .Include("DecanatoSetor")
+            .Include("GrupoOracao")
+            .Where(
+                x => x.Name.Contains(search) ||
+                x.Email.Contains(search.ToLower()) ||
+                x.DecanatoSetor.Name.Contains(search))
+            .OrderBy(x => x.Name).ToListAsync();
+    }
+
     public async Task<User> GetByEmail(string email)
     {
         return await dbSet.FirstOrDefaultAsync(x => x.Email.Equals(email));

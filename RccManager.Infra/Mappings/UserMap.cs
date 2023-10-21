@@ -18,8 +18,7 @@ public class UserMap : IEntityTypeConfiguration<User>
 
         builder.Property(c => c.NickName)
             .HasColumnType("varchar(4)")
-            .HasMaxLength(4)
-            .IsRequired();
+            .HasMaxLength(4);
 
         builder.Property(c => c.Password)
             .HasColumnType("varchar(50)")
@@ -28,8 +27,7 @@ public class UserMap : IEntityTypeConfiguration<User>
 
         builder.Property(c => c.Role)
             .HasColumnType("varchar(50)")
-            .HasMaxLength(50)
-            .IsRequired();
+            .HasMaxLength(50);
 
         builder.Property(c => c.Email)
             .HasColumnType("varchar(50)")
@@ -47,6 +45,11 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.Property(c => c.Active)
             .HasColumnType("bit")
             .IsRequired();
+
+        builder.Property(c => c.GrupoOracaoId);
+
+        builder.Property(c => c.DecanatoSetorId);
+
     }
 }
 

@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.Domain.Dtos.ParoquiaCapela;
@@ -9,10 +11,11 @@ namespace RccManager.API.Controllers;
 
 [ApiController]
 [Route("api/v1/paroquia-capela")]
-//[Authorize]
+[Authorize]
 public class ParoquiaCapelaController : ControllerBase
 {
     private readonly IParoquiaCapelaService _paroquiaCapelaService;
+
 
     public ParoquiaCapelaController(IParoquiaCapelaService paroquiaCapelaService)
     {
@@ -25,6 +28,8 @@ public class ParoquiaCapelaController : ControllerBase
         string _search = string.Empty;
         if (search != null)
             _search = search;
+
+        
 
         var paroquiaCapelas = await _paroquiaCapelaService.GetAll(_search);
         return Ok(paroquiaCapelas);

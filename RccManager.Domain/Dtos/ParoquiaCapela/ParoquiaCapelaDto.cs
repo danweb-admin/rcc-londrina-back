@@ -10,6 +10,7 @@ namespace RccManager.Domain.Dtos.ParoquiaCapela
         public Guid DecanatoId { get; set; }
         public string City { get; set; }
         public bool Active { get; set; }
+
     }
 }
 

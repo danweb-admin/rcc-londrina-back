@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231017183927_ColunaErrada")]
+    partial class ColunaErrada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,6 +239,7 @@ namespace RccManager.Infra.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("NickName")
+                        .IsRequired()
                         .HasColumnType("varchar(4)")
                         .HasMaxLength(4);
 
@@ -246,6 +249,7 @@ namespace RccManager.Infra.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
