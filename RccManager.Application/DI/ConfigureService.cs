@@ -14,6 +14,7 @@ namespace RccManager.Application.DI
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IGrupoOracaoService, GrupoOracaoService>();
             services.AddScoped<ICachingService, CachingService>();
+            services.AddScoped<IServoService, ServoService>();
             services.AddSingleton<IMD5Service, MD5Service>();
 
         }

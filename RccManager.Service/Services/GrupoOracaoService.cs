@@ -8,6 +8,7 @@ using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Helper;
 
 namespace RccManager.Service.Services
 {
@@ -25,8 +26,8 @@ namespace RccManager.Service.Services
         public async Task<HttpResponse> Create(GrupoOracaoDto grupoOracao)
         {
 
-            grupoOracao.FoundationDate = formatFoundationDate(grupoOracao.FoundationDate1);
-            grupoOracao.Time = formaTime(grupoOracao.Time1);
+            grupoOracao.FoundationDate = Utils.formatDate(grupoOracao.FoundationDate1);
+            grupoOracao.Time = Utils.formaTime(grupoOracao.Time1);
 
             var grupoOracao_ = mapper.Map<GrupoOracao>(grupoOracao);
             var result = await repository.Insert(grupoOracao_);
@@ -48,8 +49,8 @@ namespace RccManager.Service.Services
         {
             var grupoOracao_ = mapper.Map<GrupoOracao>(grupoOracao);
             grupoOracao_.Id = id;
-            grupoOracao_.FoundationDate = formatFoundationDate(grupoOracao.FoundationDate1);
-            grupoOracao_.Time = formaTime(grupoOracao.Time1);
+            grupoOracao_.FoundationDate = Utils.formatDate(grupoOracao.FoundationDate1);
+            grupoOracao_.Time = Utils.formaTime(grupoOracao.Time1);
 
             var result = await repository.Update(grupoOracao_);
 
@@ -59,27 +60,9 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Grupo de Oração atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-        private DateTime formatFoundationDate(string date)
-        {
+        
 
-            date = date.Replace("/", "");
-            var year = int.Parse(date.Substring(4));
-            var day = int.Parse(date.Substring(0, 2));
-            var month = int.Parse(date.Substring(2, 2));
-
-            return new DateTime(year, month, day);
-        }
-
-        private DateTime formaTime(string time)
-        {
-            time = time.Replace(":", "");
-            var hours = int.Parse(time.Substring(0, 2));
-            var minutes = int.Parse(time.Substring(2));
-
-            var now = DateTime.Now;
-
-            return new DateTime(now.Year, now.Month, now.Day, hours, minutes, 0);
-        }
+        
     }
 }
 

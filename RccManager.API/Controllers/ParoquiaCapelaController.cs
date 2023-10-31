@@ -29,8 +29,6 @@ public class ParoquiaCapelaController : ControllerBase
         if (search != null)
             _search = search;
 
-        
-
         var paroquiaCapelas = await _paroquiaCapelaService.GetAll(_search);
         return Ok(paroquiaCapelas);
     }

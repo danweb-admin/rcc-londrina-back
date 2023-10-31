@@ -12,11 +12,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
+var redisHost = Environment.GetEnvironmentVariable("RedisHost");
+var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 
 builder.Services.AddStackExchangeRedisCache(o =>
 {
     o.InstanceName = "instance";
-    o.Configuration = "localhost:6379";
+    o.Configuration = $"{redisHost}:{redisPort}";
 });
 
 builder.Services.AddControllers()

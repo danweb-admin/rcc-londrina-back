@@ -13,7 +13,7 @@ namespace RccManager.Application.DI
             services.AddScoped<IParoquiaCapelaRepository, ParoquiaCapelaRepsoitory>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGrupoOracaoRepository, GrupoOracaoRepository>();
-
+            services.AddScoped<IServoRepository, ServoRepository>();
         }
     }
 }
