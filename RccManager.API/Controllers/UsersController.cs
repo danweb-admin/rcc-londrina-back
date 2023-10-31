@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Dtos.Users;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace RccManager.API.Controllers;
 
@@ -29,10 +32,14 @@ public class UsersController : ControllerBase
     [HttpGet("user")]
     [Authorize]
     [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(UserDtoResult))]
-    public async Task<IEnumerable<UserDtoResult>> GetAllAsync()
+    public async Task<IEnumerable<UserDtoResult>> GetAllAsync([FromQuery] string search)
     {
         logger.LogInformation($"{nameof(GetAllAsync)} | Inicio da chamada");
-        return await userService.GetAll();
+        string _search = string.Empty;
+        if (search != null)
+            _search = search;
+
+        return await userService.GetAll(_search);
     }
 
     [HttpPost("user")]
@@ -41,7 +48,6 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> PostAsync([FromBody] UserDtoAdd model)
     {
         logger.LogInformation($"{nameof(PostAsync)} | Inicio da chamada - {model.Email}");
-        model.Active = false;
 
         var result = await userService.Add(model);
 
@@ -62,7 +68,7 @@ public class UsersController : ControllerBase
         logger.LogInformation($"{nameof(PutAsync)} | Inicio da chamada - {model.Email}");
         var result = await userService.Update(model, id);
 
-        if (result != null)
+        if (result.StatusCode != 200)
         {
             logger.LogWarning($"{nameof(PutAsync)} | Erro na atualizacao - {model.Email} - {result}");
             return NotFound(result);

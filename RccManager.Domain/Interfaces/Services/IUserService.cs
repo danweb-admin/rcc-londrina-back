@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Responses;
 
@@ -7,7 +8,7 @@ namespace RccManager.Domain.Interfaces.Services
 {
 	public interface IUserService
 	{
-        Task<IEnumerable<UserDtoResult>> GetAll();
+        Task<IEnumerable<UserDtoResult>> GetAll(string search);
 
         Task<UserDtoResult> GetById(Guid Id);
 
@@ -22,6 +23,8 @@ namespace RccManager.Domain.Interfaces.Services
         Task<UserDto> Authenticate(string email, string password);
 
         Task<UserDtoResult> GetByEmail(string email);
+
+        Task<UserDtoResult> GetUserContext(ClaimsPrincipal claimsPrincipal);
     }
 }
 

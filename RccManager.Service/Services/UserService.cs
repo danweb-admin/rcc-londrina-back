@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Security.Claims;
 using AutoMapper;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
@@ -60,9 +61,9 @@ public class UserService : IUserService
         return null;
     }
 
-    public async Task<IEnumerable<UserDtoResult>> GetAll()
+    public async Task<IEnumerable<UserDtoResult>> GetAll(string search)
     {
-        return mapper.Map<IEnumerable<UserDtoResult>>(await userRepository.GetAll(string.Empty));
+        return mapper.Map<IEnumerable<UserDtoResult>>(await userRepository.GetAll(search));
     }
 
     public async Task<UserDtoResult> GetByEmail(string email)
@@ -86,6 +87,7 @@ public class UserService : IUserService
         var temp = await userRepository.GetById(id);
         var _user = mapper.Map<User>(user);
 
+        _user.Id = id;
         _user.Password = temp.Password;
 
         var result = await userRepository.Update(_user);
@@ -108,6 +110,19 @@ public class UserService : IUserService
             return new HttpResponse { Message = "Houve um problema para mudar a senha.", StatusCode = (int)HttpStatusCode.BadRequest };
 
         return new HttpResponse { Message = "Senha atualizada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+    }
+
+    public async Task<UserDtoResult> GetUserContext(ClaimsPrincipal claimsPrincipal)
+    {
+        var email = claimsPrincipal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
+
+        if (email != null)
+        {
+            var email_ = await userRepository.GetByEmail(email.Value);
+            return mapper.Map<UserDtoResult>(email_);
+        }
+
+        return null;
     }
 }
 

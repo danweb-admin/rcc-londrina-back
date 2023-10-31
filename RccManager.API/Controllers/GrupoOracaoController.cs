@@ -1,8 +1,12 @@
 ﻿using System.Net;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Interfaces.Services;
+using RccManager.Service.Services;
 
 namespace RccManager.API.Controllers;
 
@@ -12,10 +16,14 @@ namespace RccManager.API.Controllers;
 public class GrupoOracaoController : ControllerBase
 {
     private readonly IGrupoOracaoService _grupoOracaoService;
+    private readonly IUserService _userService;
 
-    public GrupoOracaoController(IGrupoOracaoService grupoOracaoService)
+
+    public GrupoOracaoController(IGrupoOracaoService grupoOracaoService, IUserService userService)
     {
         _grupoOracaoService = grupoOracaoService;
+        _userService = userService;
+
     }
 
     [HttpGet]
@@ -25,7 +33,9 @@ public class GrupoOracaoController : ControllerBase
         if (search != null)
             _search = search;
 
-        var grupoOracoes = await _grupoOracaoService.GetAll(_search);
+        var user = await _userService.GetUserContext(User);
+
+        var grupoOracoes = await _grupoOracaoService.GetAll(_search, user);
         return Ok(grupoOracoes);
     }
 

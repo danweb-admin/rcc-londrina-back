@@ -20,11 +20,51 @@ namespace RccManager.Infra.Repositories
 
             return await dbSet
                 .Include("ParoquiaCapela")
+                .Include(x => x.ParoquiaCapela.DecanatoSetor)
                 .Where(
                     x => x.Name.Contains(search) ||
                     x.Address.Contains(search) ||
                     x.Neighborhood.Contains(search))
                 .OrderBy(x => x.Name).ToListAsync();
+        }
+
+        public async Task<IEnumerable<GrupoOracao>> GetAll(string search, User user)
+        {
+            search = search.ToUpper();
+
+            var sql = await dbSet
+                .Include("ParoquiaCapela")
+                .Include(x => x.ParoquiaCapela.DecanatoSetor).ToListAsync();
+
+            if (!user.DecanatoSetorId.HasValue && !user.GrupoOracaoId.HasValue)
+            {
+                return sql.Where(
+                    x => x.Name.Contains(search) ||
+                    x.Address.Contains(search) ||
+                    x.Neighborhood.Contains(search))
+                    .OrderBy(x => x.Name).ToList();
+            }
+
+            if (user.DecanatoSetorId.HasValue)
+            {
+                sql = sql.Where(x => 
+                            x.ParoquiaCapela.DecanatoId == user.DecanatoSetorId)
+                         .Where(
+                            x => x.Name.Contains(search) ||
+                            x.Address.Contains(search) ||
+                            x.Neighborhood.Contains(search))
+                         .ToList();
+            }
+
+
+            if (user.GrupoOracaoId.HasValue)
+            {
+                sql = sql.Where(x =>
+                        x.Id == user.GrupoOracaoId).ToList();
+            }
+
+            return sql.OrderBy(x => x.Name);
+
         }
     }
 }

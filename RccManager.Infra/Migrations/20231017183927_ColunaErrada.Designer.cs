@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231017183927_ColunaErrada")]
+    partial class ColunaErrada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,75 +208,6 @@ namespace RccManager.Infra.Migrations
                     b.ToTable("ParoquiasCapelas");
                 });
 
-            modelBuilder.Entity("RccManager.Domain.Entities.Servo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnName("active")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnName("birthday")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CellPhone")
-                        .IsRequired()
-                        .HasColumnName("cellphone")
-                        .HasColumnType("nvarchar(15)")
-                        .HasMaxLength(15);
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnName("cpf")
-                        .HasColumnType("nvarchar(14)")
-                        .HasMaxLength(14);
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .IsRequired()
-                        .HasColumnName("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnName("email")
-                        .HasColumnType("nvarchar(80)")
-                        .HasMaxLength(80);
-
-                    b.Property<Guid>("GrupoOracaoId")
-                        .HasColumnName("grupoOracaoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("MainMinistry")
-                        .IsRequired()
-                        .HasColumnName("main_ministry")
-                        .HasColumnType("nvarchar(30)")
-                        .HasMaxLength(30);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("name")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("SecondaryMinistry")
-                        .HasColumnName("secondary_ministry")
-                        .HasColumnType("nvarchar(30)")
-                        .HasMaxLength(30);
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnName("updatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GrupoOracaoId");
-
-                    b.ToTable("Servos");
-                });
-
             modelBuilder.Entity("RccManager.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -306,6 +239,7 @@ namespace RccManager.Infra.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("NickName")
+                        .IsRequired()
                         .HasColumnType("varchar(4)")
                         .HasMaxLength(4);
 
@@ -315,6 +249,7 @@ namespace RccManager.Infra.Migrations
                         .HasMaxLength(50);
 
                     b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
@@ -345,15 +280,6 @@ namespace RccManager.Infra.Migrations
                         .WithMany()
                         .HasForeignKey("DecanatoId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RccManager.Domain.Entities.Servo", b =>
-                {
-                    b.HasOne("RccManager.Domain.Entities.GrupoOracao", "GrupoOracao")
-                        .WithMany("Servos")
-                        .HasForeignKey("GrupoOracaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

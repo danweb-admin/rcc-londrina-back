@@ -18,7 +18,7 @@ namespace RccManager.Test.Services
             var tokenService = new TokenService();
             Environment.SetEnvironmentVariable("KeyMD5", "mNjTWFuQGczckAyMDI");
             var keyMd5 = Environment.GetEnvironmentVariable("KeyMD5");
-            var user = new UserDto { Name = "John Doe" };
+            var user = new UserDto { Name = "John Doe", Email = "email@email.com"};
 
             // Act
             var token = tokenService.GenerateToken(user);
