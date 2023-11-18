@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231108135845_AddedFormacao")]
+    partial class AddedFormacao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,52 +79,6 @@ namespace RccManager.Infra.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Formacoes");
-                });
-
-            modelBuilder.Entity("RccManager.Domain.Entities.FormacoesServo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Active")
-                        .HasColumnName("active")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CertificateDate")
-                        .HasColumnName("certificateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .IsRequired()
-                        .HasColumnName("createdAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("FormacaoId")
-                        .HasColumnName("formacaoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ServoId")
-                        .HasColumnName("servoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnName("updatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnName("usuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormacaoId");
-
-                    b.HasIndex("ServoId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("FormacoesServos");
                 });
 
             modelBuilder.Entity("RccManager.Domain.Entities.GrupoOracao", b =>
@@ -404,27 +360,6 @@ namespace RccManager.Infra.Migrations
                     b.HasIndex("GrupoOracaoId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("RccManager.Domain.Entities.FormacoesServo", b =>
-                {
-                    b.HasOne("RccManager.Domain.Entities.Formacao", "Formacao")
-                        .WithMany()
-                        .HasForeignKey("FormacaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RccManager.Domain.Entities.Servo", "Servo")
-                        .WithMany()
-                        .HasForeignKey("ServoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RccManager.Domain.Entities.User", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("RccManager.Domain.Entities.GrupoOracao", b =>

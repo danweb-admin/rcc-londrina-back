@@ -69,7 +69,6 @@ namespace RccManager.Service.Services
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este EMAIL já está sendo utilizado.");
 
-
             var servo_ = _mapper.Map<Servo>(servo);
             servo_.Id = id;
 

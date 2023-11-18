@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231115143438_AddedFormacoesServos")]
+    partial class AddedFormacoesServos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,21 +91,15 @@ namespace RccManager.Infra.Migrations
                         .HasColumnName("active")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("CertificateDate")
-                        .HasColumnName("certificateDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
                         .HasColumnName("createdAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("FormacaoId")
-                        .HasColumnName("formacaoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ServoId")
-                        .HasColumnName("servoId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -111,7 +107,6 @@ namespace RccManager.Infra.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("UsuarioId")
-                        .HasColumnName("usuarioId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
