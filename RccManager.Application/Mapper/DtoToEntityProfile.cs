@@ -1,6 +1,8 @@
 ﻿using System;
 using AutoMapper;
 using RccManager.Domain.Dtos.DecanatoSetor;
+using RccManager.Domain.Dtos.Formacao;
+using RccManager.Domain.Dtos.FormacoesServo;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
@@ -29,6 +31,12 @@ public class DtoToEntityProfile : Profile
             .ReverseMap();
 
         CreateMap<Servo, ServoDtoResult>()
+            .ReverseMap();
+
+        CreateMap<Formacao, FormacaoDto>()
+            .ReverseMap();
+
+        CreateMap<FormacoesServo, FormacoesServoDtoResult>()
             .ReverseMap();
 
         CreateMap<User, UserDto>()

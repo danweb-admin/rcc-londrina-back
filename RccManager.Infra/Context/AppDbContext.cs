@@ -11,6 +11,9 @@ public class AppDbContext : DbContext
     public DbSet<ParoquiaCapela> ParoquiasCapelas { get; set; }
     public DbSet<GrupoOracao> GrupoOracoes { get; set; }
     public DbSet<Servo> Servos { get; set; }
+    public DbSet<Formacao> Formacoes { get; set; }
+    public DbSet<FormacoesServo> FormacoesServos { get; set; }
+
     public DbSet<User> Users { get; set; }
 
 
@@ -25,8 +28,6 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Data Source=161.35.255.131,30214;Initial Catalog=RccManager; User ID=sa;Password=RccManager@2023");
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +38,8 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ParoquiaCapelaMap());
         modelBuilder.ApplyConfiguration(new GrupoOracaoMap());
         modelBuilder.ApplyConfiguration(new ServoMap());
+        modelBuilder.ApplyConfiguration(new FormacaoMap());
+        modelBuilder.ApplyConfiguration(new FormacoesServoMap());
         modelBuilder.ApplyConfiguration(new UserMap());
     }
 }

@@ -14,6 +14,10 @@ namespace RccManager.Application.DI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGrupoOracaoRepository, GrupoOracaoRepository>();
             services.AddScoped<IServoRepository, ServoRepository>();
+            services.AddScoped<IFormacaoRepository, FormacaoRepository>();
+            services.AddScoped<IFormacoesServoRepository, FormacoesServoRepository>();
+
+
         }
     }
 }
