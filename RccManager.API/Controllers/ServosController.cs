@@ -47,6 +47,24 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpPost("servos-google-forms")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PostForms([FromBody] ServoFormsDto servoViewModel)
+        {
+
+
+            Console.WriteLine("-*****Servo Google Forms******-" );
+            Console.WriteLine($"Nome: {servoViewModel.Nome}" );
+            Console.WriteLine($"Email: {servoViewModel.Email}");
+            Console.WriteLine($"Celular: {servoViewModel.Celular}");
+            Console.WriteLine("***************************");
+
+
+            return Ok(HttpStatusCode.Created);
+            
+
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] ServoDto servoViewModel)
         {
