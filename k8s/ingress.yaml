@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hosts
+  namespace: rcc-manager
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-rcc-manager"
+spec:
+  ingressClassName: "nginx"
+  tls:
+  - hosts:
+    - "rcc-manager.api-danweb-softwares.click"
+    secretName: "rcc-manager-tls"
+  rules:
+  - host: rcc-manager.api-danweb-softwares.click
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: rcc-manager-service
+            port: 
+              number: 80
