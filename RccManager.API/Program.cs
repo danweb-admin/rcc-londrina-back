@@ -36,10 +36,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "RCCManager.API", Version = "v1" });
 });
 
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-    {
-        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-    }));
+builder.Services.AddCors(options =>
+{
+
+    options.AddPolicy("AppCors",
+        policy =>
+        {
+            policy.WithOrigins("https://rcc-londrina.app-danweb-softwares.click")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
 
 
 ConfigureService.ConfigureDependenciesService(builder.Services);
@@ -99,7 +106,7 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors("corsapp");
+app.UseCors();
 
 app.Use(async (context, next) =>
 {
