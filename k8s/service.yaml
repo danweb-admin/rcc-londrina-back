@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rcc-londrina-back-svc
+  namespace: rcc-manager
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: rcc-londrina-back
+  ports:
+    - port: 80

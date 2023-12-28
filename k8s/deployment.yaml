@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: rcc-londrina-back
+  namespace: rcc-manager
+spec:
+  selector:
+    matchLabels:
+      app: rcc-londrina-back
+  template:
+    metadata:
+      labels:
+        app: rcc-londrina-back
+    spec:
+      hostname: rcc-londrina-back
+      subdomain: rcc-manager
+      containers:
+        - name: rcc-londrina-back
+          image: williambr2022/rcc-londrina-back
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          env:
+            - name: DbUser
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_user
+            - name: Database
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: database
+            - name: DbPort
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_port
+            - name: DbServer
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: db_server
+            - name: KeyMD5
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: key_md5
+            - name: RedisHost
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: redis_host
+            - name: RedisPort
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: redis_port
+            - name: Password
+              valueFrom:
+                secretKeyRef:
+                  name: my-secret
+                  key: password
