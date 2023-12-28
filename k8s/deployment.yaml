@@ -1,9 +1,10 @@
+kind: Deployment
 apiVersion: apps/v1
-kind: Deployment # Kubernetes resource kind we are creating
 metadata:
   name: rcc-londrina-back
   namespace: rcc-manager
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: rcc-londrina-back
@@ -12,14 +13,12 @@ spec:
       labels:
         app: rcc-londrina-back
     spec:
-      hostname: rcc-londrina-back
-      subdomain: rcc-manager
       containers:
         - name: rcc-londrina-back
-          image: williambr2022/rcc-londrina-back
+          image: williambr2022/rcc-londrina-back:latest
           ports:
             - containerPort: 80
-          imagePullPolicy: Always
+              protocol: TCP
           env:
             - name: DbUser
               valueFrom:
