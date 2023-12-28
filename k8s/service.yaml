@@ -3,9 +3,13 @@ kind: Service
 metadata:
   name: rcc-londrina-back-svc
   namespace: rcc-manager
+  labels:
+    app: rcc-londrina-back
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app.kubernetes.io/name: rcc-londrina-back
   ports:
     - port: 80
+      targetPort: 80
+      nodePort: 32101

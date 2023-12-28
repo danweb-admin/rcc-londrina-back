@@ -31,9 +31,9 @@ jobs:
     - name: build image and push to docker hub
       uses: docker/build-push-action@v1.1.0
       with:
-        username: ${{ secrets.DOCKER_USER }}
+        username: williambr2022
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_USER }}/rcc-londrina-back
+        repository: williambr2022/rcc-londrina-back
         tags: ${{ github.sha }}, latest
   
   deploy:
