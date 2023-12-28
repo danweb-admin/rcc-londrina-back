@@ -42,9 +42,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AppCors",
         policy =>
         {
-            policy.WithOrigins("https://rcc-londrina.app-danweb-softwares.click")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
+            policy.AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .WithExposedHeaders()
+                  .AllowAnyOrigin();
         });
 });
 
@@ -106,7 +107,7 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("AppCors");
 
 app.Use(async (context, next) =>
 {
