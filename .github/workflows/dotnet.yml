@@ -50,7 +50,7 @@ jobs:
       - name: update k8s
         run: |
           cd k8s
-          kustomize edit set image rcc-londrina-back=${{ secrets.DOCKER_USER }}/rcc-londrina-back:${{ github.sha }}
+          kustomize edit set image ${{ secrets.DOCKER_USER }}/rcc-londrina-back=${{ secrets.DOCKER_USER }}/rcc-londrina-back:${{ github.sha }}
           cat kustomization.yaml
       - name: commit
         run: |
