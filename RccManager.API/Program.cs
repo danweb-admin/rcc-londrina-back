@@ -15,8 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
 var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 
-builder.Services.AddCors();
-
 builder.Services.AddStackExchangeRedisCache(o =>
 {
     o.InstanceName = "instance";
@@ -37,6 +35,11 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "RCCManager.API", Version = "v1" });
 });
+
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+    {
+        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    }));
 
 
 ConfigureService.ConfigureDependenciesService(builder.Services);
@@ -96,11 +99,7 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseCors(builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-
+app.UseCors("corsapp");
 
 app.Use(async (context, next) =>
 {
