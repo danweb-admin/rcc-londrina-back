@@ -10,3 +10,6 @@ images:
 - name: rcc-londrina-back
   newName: williambr2022/rcc-londrina-back
   newTag: d034c09f083517fa9f45f413fb4a64d0a01d07f0
+- name: williambr2022/rcc-londrina-back
+  newName: williambr2022/rcc-londrina-back
+  newTag: b0140d1fdc6ec82b9d2ff862884e0d66305500f2
