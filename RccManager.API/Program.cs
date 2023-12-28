@@ -15,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
 var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 
+builder.Services.AddCors();
+
 builder.Services.AddStackExchangeRedisCache(o =>
 {
     o.InstanceName = "instance";
