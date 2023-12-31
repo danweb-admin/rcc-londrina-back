@@ -9,6 +9,5 @@ public interface IMD5Service
     bool CompareMD5(string password, string passwordMD5);
     string ReturnHash(MD5 md5Hash, string input);
     bool VerifyHash(MD5 md5Hash, string input, string hash);
-
 }
 

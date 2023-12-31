@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RccManager.Domain.Dtos.DecanatoSetor;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
+using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Exception.Servo;
@@ -21,6 +22,7 @@ namespace RccManager.Service.Services
         private readonly IMapper _mapper;
         private readonly IServoRepository _repository;
 
+
         public ServoService(IMapper mapper, IServoRepository repository)
         {
             _mapper = mapper;
@@ -32,12 +34,12 @@ namespace RccManager.Service.Services
             servo.Birthday = Utils.formatDate(servo.Birthday1);
             var servo_ = _mapper.Map<Servo>(servo);
 
-            var exists = await _repository.GetByCPF(servo.Cpf);
+            var exists = await _repository.GetByCPF(Utils.Encrypt(servo.Cpf));
 
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
 
-            exists = await _repository.GetByEmail(servo.Email);
+            exists = await _repository.GetByEmail(Utils.Encrypt(servo.Email));
 
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este EMAIL já está sendo utilizado.");
@@ -59,12 +61,12 @@ namespace RccManager.Service.Services
         public async Task<HttpResponse> Update(ServoDto servo, Guid id)
         {
             servo.Birthday = Utils.formatDate(servo.Birthday1);
-            var exists = await _repository.GetByCPF(id ,servo.Cpf);
+            var exists = await _repository.GetByCPF(id ,Utils.Encrypt(servo.Cpf));
 
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
 
-            exists = await _repository.GetByEmail(id, servo.Email);
+            exists = await _repository.GetByEmail(id, Utils.Encrypt(servo.Email));
 
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este EMAIL já está sendo utilizado.");

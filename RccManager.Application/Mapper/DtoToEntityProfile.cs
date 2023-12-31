@@ -8,6 +8,7 @@ using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
+using RccManager.Service.Helper;
 
 namespace RccManager.Application.Mapper;
 
@@ -28,10 +29,16 @@ public class DtoToEntityProfile : Profile
             .ReverseMap();
 
         CreateMap<Servo, ServoDto>()
-            .ReverseMap();
+            .ForMember(dest => dest.Name, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Email, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Cpf, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.CellPhone, opt => opt.ConvertUsing(new TextDecrypter()));
 
         CreateMap<Servo, ServoDtoResult>()
-            .ReverseMap();
+            .ForMember(dest => dest.Name, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Email, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Cpf, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.CellPhone, opt => opt.ConvertUsing(new TextDecrypter()));
 
         CreateMap<Formacao, FormacaoDto>()
             .ReverseMap();
@@ -47,5 +54,15 @@ public class DtoToEntityProfile : Profile
 
         CreateMap<User, UserDtoResult>()
             .ReverseMap();
+    }
+
+    public class TextDecrypter : IValueConverter<string, string>
+    {
+        public string Convert(string sourceMember, ResolutionContext context)
+        {
+            if (string.IsNullOrEmpty(sourceMember))
+                return string.Empty;
+            return Utils.Decrypt(sourceMember);
+        }
     }
 }

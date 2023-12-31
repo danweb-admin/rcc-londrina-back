@@ -33,7 +33,8 @@ namespace RccManager.Infra.Repositories
             search = search.ToUpper();
 
             var sql = await dbSet
-                .Include("ParoquiaCapela")
+                .Include("ParoquiaCapela").
+                Include("Servos")
                 .Include(x => x.ParoquiaCapela.DecanatoSetor).ToListAsync();
 
             if (!user.DecanatoSetorId.HasValue && !user.GrupoOracaoId.HasValue)

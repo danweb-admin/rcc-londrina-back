@@ -18,6 +18,7 @@ namespace RccManager.API.Controllers
     {
         private readonly IServoService _servoService;
 
+
         public ServosController(IServoService servoService)
         {
             _servoService = servoService;
@@ -58,7 +59,6 @@ namespace RccManager.API.Controllers
             Console.WriteLine($"Email: {servoViewModel.Email}");
             Console.WriteLine($"Celular: {servoViewModel.Celular}");
             Console.WriteLine("***************************");
-
 
             return Ok(HttpStatusCode.Created);
             

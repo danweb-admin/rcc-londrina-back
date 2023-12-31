@@ -26,7 +26,7 @@ namespace RccManager.Infra.Mappings
             builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnName("name")
-                .HasMaxLength(100);
+                .HasMaxLength(200);
 
             builder.Property(x => x.Birthday)
                 .IsRequired()
@@ -35,17 +35,17 @@ namespace RccManager.Infra.Mappings
             builder.Property(x => x.CellPhone)
                 .IsRequired()
                 .HasColumnName("cellphone")
-                .HasMaxLength(15);
+                .HasMaxLength(100);
 
             builder.Property(x => x.Cpf)
                 .IsRequired()
                 .HasColumnName("cpf")
-                .HasMaxLength(14);
+                .HasMaxLength(100);
 
             builder.Property(x => x.Email)
                 .IsRequired()
                 .HasColumnName("email")
-                .HasMaxLength(80);
+                .HasMaxLength(200);
 
             builder.Property(x => x.MainMinistry)
                 .IsRequired()

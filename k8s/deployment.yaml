@@ -55,6 +55,16 @@ spec:
                 configMapKeyRef:
                   name: configuration
                   key: redis_port
+            - name: CryptKey
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: crypt_key
+            - name: CryptIV
+              valueFrom:
+                configMapKeyRef:
+                  name: configuration
+                  key: crypt_iv
             - name: Password
               valueFrom:
                 secretKeyRef:
