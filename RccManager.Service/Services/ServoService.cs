@@ -54,7 +54,8 @@ namespace RccManager.Service.Services
 
         public async Task<IEnumerable<ServoDtoResult>> GetAll(Guid grupoOracaoId)
         {
-            return _mapper.Map<IEnumerable<ServoDtoResult>>(await _repository.GetAll(grupoOracaoId));
+            var list = _mapper.Map<IEnumerable<ServoDtoResult>>(await _repository.GetAll(grupoOracaoId));
+            return list.OrderBy(x => x.Name);
 
         }
 
