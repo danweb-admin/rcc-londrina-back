@@ -20,6 +20,7 @@ namespace RccManager.Infra.Repositories
 
             return await dbSet
                 .Include("ParoquiaCapela")
+                .Include("ServosTemp")
                 .Include(x => x.ParoquiaCapela.DecanatoSetor)
                 .Where(
                     x => x.Name.Contains(search) ||
@@ -33,8 +34,9 @@ namespace RccManager.Infra.Repositories
             search = search.ToUpper();
 
             var sql = await dbSet
-                .Include("ParoquiaCapela").
-                Include("Servos")
+                .Include("ParoquiaCapela")
+                .Include("Servos")
+                .Include("ServosTemp")
                 .Include(x => x.ParoquiaCapela.DecanatoSetor).ToListAsync();
 
             if (!user.DecanatoSetorId.HasValue && !user.GrupoOracaoId.HasValue)
@@ -66,6 +68,11 @@ namespace RccManager.Infra.Repositories
 
             return sql.OrderBy(x => x.Name);
 
+        }
+
+        public async Task<GrupoOracao> GetByName(string name)
+        {
+            return await dbSet.FirstOrDefaultAsync(x => x.Name == name);
         }
     }
 }

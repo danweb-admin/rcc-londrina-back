@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<ParoquiaCapela> ParoquiasCapelas { get; set; }
     public DbSet<GrupoOracao> GrupoOracoes { get; set; }
     public DbSet<Servo> Servos { get; set; }
+    public DbSet<ServoTemp> ServosTemp { get; set; }
     public DbSet<Formacao> Formacoes { get; set; }
     public DbSet<FormacoesServo> FormacoesServos { get; set; }
 
@@ -28,7 +29,6 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,6 +39,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ParoquiaCapelaMap());
         modelBuilder.ApplyConfiguration(new GrupoOracaoMap());
         modelBuilder.ApplyConfiguration(new ServoMap());
+        modelBuilder.ApplyConfiguration(new ServoTempMap());
         modelBuilder.ApplyConfiguration(new FormacaoMap());
         modelBuilder.ApplyConfiguration(new FormacoesServoMap());
         modelBuilder.ApplyConfiguration(new UserMap());

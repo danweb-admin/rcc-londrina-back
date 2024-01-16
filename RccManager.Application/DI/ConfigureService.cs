@@ -18,6 +18,8 @@ namespace RccManager.Application.DI
             services.AddScoped<IFormacaoService, FormacaoService>();
             services.AddScoped<IFormacoesServoService, FormacoesServoService>();
             services.AddSingleton<IMD5Service, MD5Service>();
+            services.AddScoped<IServoTempService, ServoTempService>();
+
 
         }
     }

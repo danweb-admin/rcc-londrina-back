@@ -20,5 +20,7 @@ public class GrupoOracao : BaseEntity
 	public string Telephone { get; set; }
 	public int NumberOfParticipants { get; set; }
 	public List<Servo> Servos { get; set; }
+    public List<ServoTemp> ServosTemp { get; set; }
+
 }
 

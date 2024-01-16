@@ -6,6 +6,7 @@ using RccManager.Domain.Dtos.FormacoesServo;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
+using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
 using RccManager.Service.Helper;
@@ -35,6 +36,18 @@ public class DtoToEntityProfile : Profile
             .ForMember(dest => dest.CellPhone, opt => opt.ConvertUsing(new TextDecrypter()));
 
         CreateMap<Servo, ServoDtoResult>()
+            .ForMember(dest => dest.Name, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Email, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Cpf, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.CellPhone, opt => opt.ConvertUsing(new TextDecrypter()));
+
+        CreateMap<ServoTemp, ServoTempDto>()
+            .ForMember(dest => dest.Name, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Email, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.Cpf, opt => opt.ConvertUsing(new TextDecrypter()))
+            .ForMember(dest => dest.CellPhone, opt => opt.ConvertUsing(new TextDecrypter()));
+
+        CreateMap<ServoTemp, ServoTempDtoResult>()
             .ForMember(dest => dest.Name, opt => opt.ConvertUsing(new TextDecrypter()))
             .ForMember(dest => dest.Email, opt => opt.ConvertUsing(new TextDecrypter()))
             .ForMember(dest => dest.Cpf, opt => opt.ConvertUsing(new TextDecrypter()))

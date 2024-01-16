@@ -1,5 +1,6 @@
 ﻿using RccManager.Domain.Dtos.DecanatoSetor;
 using RccManager.Domain.Dtos.ParoquiaCapela;
+using RccManager.Domain.Dtos.ServoTemp;
 
 namespace RccManager.Domain.Dtos.GrupoOracao;
 
@@ -26,5 +27,6 @@ public class GrupoOracaoDtoResult
     public string Site { get; set; }
     public string Telephone { get; set; }
     public int NumberOfParticipants { get; set; }
+    public List<ServoTempDtoResult>  ServosTemp { get; set; }
 }
 

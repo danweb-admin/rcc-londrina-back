@@ -29,6 +29,7 @@
     <None Remove="Exception\Servo\" />
     <None Remove="Dtos\Formacao\" />
     <None Remove="Dtos\FormacoesServo\" />
+    <None Remove="Dtos\ServoTemp\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -47,5 +48,6 @@
     <Folder Include="Exception\Servo\" />
     <Folder Include="Dtos\Formacao\" />
     <Folder Include="Dtos\FormacoesServo\" />
+    <Folder Include="Dtos\ServoTemp\" />
   </ItemGroup>
 </Project>
