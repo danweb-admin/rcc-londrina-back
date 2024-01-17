@@ -81,7 +81,7 @@ namespace RccManager.Service.Services
 
             var servo_ = _mapper.Map<ServoTemp>(servo);
 
-            var grupoOracao = await _repositoryGO.GetByName(servo.GrupoOracaoName);
+            var grupoOracao = await _repositoryGO.GetByName(servo.GrupoOracaoName, servo.ParoquiaCapelaName);
             servo_.GrupoOracaoId = grupoOracao.Id;
 
             var result = await _repository.Insert(servo_);

@@ -70,9 +70,9 @@ namespace RccManager.Infra.Repositories
 
         }
 
-        public async Task<GrupoOracao> GetByName(string name)
+        public async Task<GrupoOracao> GetByName(string name, string paroquiaCapelaName)
         {
-            return await dbSet.FirstOrDefaultAsync(x => x.Name == name);
+            return await dbSet.FirstOrDefaultAsync(x => x.Name == name && x.ParoquiaCapela.Name == paroquiaCapelaName);
         }
     }
 }

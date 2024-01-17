@@ -14,6 +14,7 @@ public class ServoTempDto
     public string SecondaryMinistry { get; set; }
     public bool Checked { get; set; }
     public string GrupoOracaoName { get; set; }
+    public string ParoquiaCapelaName { get; set; }
     public Guid GrupoOracaoId { get; set; }
 }
 
