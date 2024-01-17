@@ -31,12 +31,12 @@ namespace RccManager.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Post([FromBody] ServoTempDto servoViewModel)
+        public IActionResult Post([FromBody] ServoTempDto servoViewModel)
         {
-            Console.WriteLine("****SERVOS TEMPORARIOS****");
+            Console.WriteLine(".....SERVOS TEMPORARIOS.......");
             Console.WriteLine($"NOME: {servoViewModel.Name}");
 
-            await _servoService.Create(servoViewModel);
+            _servoService.Create(servoViewModel);
 
             return Ok(HttpStatusCode.Created);
             

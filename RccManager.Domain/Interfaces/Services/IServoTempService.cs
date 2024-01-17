@@ -9,7 +9,7 @@ namespace RccManager.Domain.Interfaces.Services;
 public interface IServoTempService
 {
     Task<IEnumerable<ServoTempDtoResult>> GetAll(Guid grupoOracaoId);
-    Task<HttpResponse> Create(ServoTempDto servo);
+    HttpResponse Create(ServoTempDto servo);
     Task<HttpResponse> Update(ServoTempDto servo, Guid id);
     Task<HttpResponse> Checked(Guid id);
 

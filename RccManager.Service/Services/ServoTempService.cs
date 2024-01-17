@@ -67,9 +67,9 @@ namespace RccManager.Service.Services
 
         }
 
-        public async Task<HttpResponse> Create(ServoTempDto servo)
+        public HttpResponse Create(ServoTempDto servo)
         {
-            var exists = await _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
+            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
 
             if (exists)
                 return new HttpResponse { Message = "Servo(a) temporário já existe", StatusCode = (int)HttpStatusCode.BadRequest };
@@ -81,10 +81,10 @@ namespace RccManager.Service.Services
 
             var servo_ = _mapper.Map<ServoTemp>(servo);
 
-            var grupoOracao = await _repositoryGO.GetByName(servo.GrupoOracaoName, servo.ParoquiaCapelaName);
+            var grupoOracao = _repositoryGO.GetByName(servo.GrupoOracaoName, servo.ParoquiaCapelaName);
             servo_.GrupoOracaoId = grupoOracao.Id;
 
-            var result = await _repository.Insert(servo_);
+            var result =  _repository.Insert(servo_);
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };

@@ -6,7 +6,7 @@ namespace RccManager.Domain.Interfaces.Repositories
 	public interface IServoTempRepository : IRepository<ServoTemp>
     {
         Task<IEnumerable<ServoTemp>> GetAll(Guid grupoOracaoId);
-        Task<bool> ValidateServoTemp(string name, DateTime birthday, string cpf, string email, string cellPhone);
+        bool ValidateServoTemp(string name, DateTime birthday, string cpf, string email, string cellPhone);
         Task<ServoTemp> GetById(Guid id);
 
     }
