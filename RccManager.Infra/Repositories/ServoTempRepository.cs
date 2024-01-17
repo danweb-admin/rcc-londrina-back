@@ -27,6 +27,16 @@ namespace RccManager.Infra.Repositories
         {
             return await dbSet.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public async Task<bool> ValidateServoTemp(string name, DateTime birthday, string cpf, string email, string cellPhone)
+        {
+            return await dbSet.AnyAsync(x => x.Name == name &&
+                                             x.Birthday == birthday &&
+                                             x.CellPhone == cellPhone &&
+                                             x.Email == email &&
+                                             x.Cpf == cpf);
+                
+        }
     }
 }
 

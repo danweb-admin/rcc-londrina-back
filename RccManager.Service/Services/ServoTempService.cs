@@ -69,14 +69,17 @@ namespace RccManager.Service.Services
 
         public async Task<HttpResponse> Create(ServoTempDto servo)
         {
+            var exists = await _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
+
+            if (exists)
+                return new HttpResponse { Message = "Servo(a) temporário já existe", StatusCode = (int)HttpStatusCode.BadRequest };
+
             servo.Name = servo.Name.ToUpper();
             servo.MainMinistry = Ministerios.returnMinistryValue(servo.MainMinistry);
             if (!string.IsNullOrEmpty(servo.SecondaryMinistry))
                 servo.SecondaryMinistry = Ministerios.returnMinistryValue(servo.SecondaryMinistry);
 
             var servo_ = _mapper.Map<ServoTemp>(servo);
-
-            Console.WriteLine("****CREATE****");
 
             var grupoOracao = await _repositoryGO.GetByName(servo.GrupoOracaoName);
             servo_.GrupoOracaoId = grupoOracao.Id;
