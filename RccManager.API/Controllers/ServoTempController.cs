@@ -68,12 +68,23 @@ namespace RccManager.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] ServoTempDto servoViewModel)
         {
-            var updatedServo = await _servoService.Update(servoViewModel, id);
+            try
+            {
+                var updatedServo = await _servoService.Update(servoViewModel, id);
 
-            if (updatedServo == null)
-                return NotFound();
+                if (updatedServo == null)
+                    return NotFound();
 
-            return Ok(HttpStatusCode.NoContent);
+                return Ok(HttpStatusCode.NoContent);
+            }
+            catch (ValidateByCpfOrEmailException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }
