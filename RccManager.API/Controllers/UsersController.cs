@@ -29,6 +29,13 @@ public class UsersController : ControllerBase
     }
 
 
+    [HttpGet("healthy")]
+    [Authorize]
+    public IActionResult Healthy([FromQuery] string search)
+    {
+        return Ok();
+    }
+
     [HttpGet("user")]
     [Authorize]
     [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(UserDtoResult))]
