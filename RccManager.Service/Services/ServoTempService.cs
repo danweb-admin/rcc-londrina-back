@@ -111,8 +111,7 @@ namespace RccManager.Service.Services
 
             exists = await _repo.GetByEmail(Utils.Encrypt(servoTemp.Email));
 
-            if (exists)
-                throw new ValidateByCpfOrEmailException("Este EMAIL já está sendo utilizado.");
+            
 
             var servo_ = _mapper.Map<ServoTemp>(servoTemp);
             servo_.Id = id;
