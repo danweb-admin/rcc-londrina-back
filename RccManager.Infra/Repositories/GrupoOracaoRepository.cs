@@ -25,7 +25,9 @@ namespace RccManager.Infra.Repositories
                 .Where(
                     x => x.Name.Contains(search) ||
                     x.Address.Contains(search) ||
-                    x.Neighborhood.Contains(search))
+                    x.Neighborhood.Contains(search) ||
+                    x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
+                    
                 .OrderBy(x => x.Name).ToListAsync();
         }
 
