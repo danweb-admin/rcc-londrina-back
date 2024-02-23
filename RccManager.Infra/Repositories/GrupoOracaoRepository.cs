@@ -25,9 +25,7 @@ namespace RccManager.Infra.Repositories
                 .Where(
                     x => x.Name.Contains(search) ||
                     x.Address.Contains(search) ||
-                    x.Neighborhood.Contains(search) ||
-                    x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
-                    
+                    x.Neighborhood.Contains(search))
                 .OrderBy(x => x.Name).ToListAsync();
         }
 
@@ -46,7 +44,8 @@ namespace RccManager.Infra.Repositories
                 return sql.Where(
                     x => x.Name.Contains(search) ||
                     x.Address.Contains(search) ||
-                    x.Neighborhood.Contains(search))
+                    x.Neighborhood.Contains(search) ||
+                    x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
                     .OrderBy(x => x.Name).ToList();
             }
 
@@ -57,7 +56,8 @@ namespace RccManager.Infra.Repositories
                          .Where(
                             x => x.Name.Contains(search) ||
                             x.Address.Contains(search) ||
-                            x.Neighborhood.Contains(search))
+                            x.Neighborhood.Contains(search) ||
+                            x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
                          .ToList();
             }
 
