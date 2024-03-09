@@ -16,6 +16,7 @@ namespace RccManager.Tests.Service.Services
         private readonly Mock<IParoquiaCapelaRepository> _repositoryMock;
         private readonly IParoquiaCapelaService _service;
         private readonly Mock<ICachingService> _cacheMock;
+        private readonly Mock<IHistoryRepository> _historyMock;
 
         public ParoquiaCapelaServiceTests()
         {
@@ -27,7 +28,8 @@ namespace RccManager.Tests.Service.Services
 
             _repositoryMock = new Mock<IParoquiaCapelaRepository>();
             _cacheMock = new Mock<ICachingService>();
-            _service = new ParoquiaCapelaService(_mapper, _repositoryMock.Object, _cacheMock.Object);
+            _historyMock = new Mock<IHistoryRepository>();
+            _service = new ParoquiaCapelaService(_mapper, _repositoryMock.Object, _cacheMock.Object, _historyMock.Object);
         }
 
         [Fact]

@@ -15,6 +15,8 @@ namespace RccManager.Tests.Service.Services
     {
         private readonly IMapper _mapper;
         private readonly Mock<IDecanatoSetorRepository> _repositoryMock;
+        private readonly Mock<IHistoryRepository> _historyMock;
+
         private readonly IDecanatoSetorService _service;
 
         public DecanatoSetorServiceTests()
@@ -26,7 +28,8 @@ namespace RccManager.Tests.Service.Services
             }).CreateMapper();
 
             _repositoryMock = new Mock<IDecanatoSetorRepository>();
-            _service = new DecanatoSetorService(_mapper, _repositoryMock.Object);
+            _historyMock = new Mock<IHistoryRepository>();
+            _service = new DecanatoSetorService(_mapper, _repositoryMock.Object, _historyMock.Object);
         }
 
         [Fact]
