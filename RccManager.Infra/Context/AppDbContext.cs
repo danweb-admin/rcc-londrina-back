@@ -31,7 +31,6 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Data Source=161.35.255.131,30214;Initial Catalog=RccManager; User ID=sa;Password=RccManager@2023");
 
     }
 
