@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Helpers;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Infra.Context;
 
@@ -38,7 +39,7 @@ namespace RccManager.Infra.Repositories
             var result = await dbSet.SingleOrDefaultAsync(x => x.Id.Equals(id));
 
             result.CreatedAt = result.CreatedAt;
-            result.UpdatedAt = DateTime.Now;
+            result.UpdatedAt = Helpers.DateTimeNow();
             result.Active = !result.Active;
 
             dbSet.Update(result);
@@ -66,7 +67,7 @@ namespace RccManager.Infra.Repositories
             if (entity.Id == Guid.Empty)
                 entity.Id = Guid.NewGuid();
 
-            entity.CreatedAt = DateTime.Now;
+            entity.CreatedAt = Helpers.DateTimeNow();
             dbSet.Add(entity);
 
             await context.SaveChangesAsync();
@@ -90,14 +91,12 @@ namespace RccManager.Infra.Repositories
                 return null;
 
             entity.CreatedAt = result.CreatedAt;
-            entity.UpdatedAt = DateTime.Now;
+            entity.UpdatedAt = Helpers.DateTimeNow();
 
             context.Entry(result).CurrentValues.SetValues(entity);
             await context.SaveChangesAsync();
 
-            return entity;
-
-            
+            return entity;   
         }
     }
 }

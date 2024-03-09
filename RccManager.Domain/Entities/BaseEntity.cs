@@ -11,7 +11,7 @@ public abstract class BaseEntity
     public DateTime? CreatedAt
     {
         get { return _createdAt; }
-        set { _createdAt = (value == null ? DateTime.Now : value); }
+        set { _createdAt = (value == null ? Helpers.Helpers.DateTimeNow() : value); }
     }
 }
 

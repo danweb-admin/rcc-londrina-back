@@ -6,6 +6,7 @@ using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Enum;
 
 namespace RccManager.Service.Services;
 
@@ -15,13 +16,15 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
     private readonly IParoquiaCapelaRepository repository;
     private readonly ICachingService cache;
     private readonly string hashParoquiaCapela = "paroquia-capela";
+    private readonly IHistoryRepository history;
 
 
-    public ParoquiaCapelaService(IMapper mapper, IParoquiaCapelaRepository repository, ICachingService cache)
+    public ParoquiaCapelaService(IMapper _mapper, IParoquiaCapelaRepository _repository, ICachingService _cache, IHistoryRepository _history)
     {
-        this.mapper = mapper;
-        this.repository = repository;
-        this.cache = cache;
+        mapper = _mapper;
+        repository = _repository;
+        cache = _cache;
+        history = _history;
         
     }
 
@@ -35,6 +38,10 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
             return new HttpResponse { Message = "Houve um problema para criar a Paróquia/Capela", StatusCode = (int)HttpStatusCode.BadRequest };
 
         await cache.SetAsync(hashParoquiaCapela, result.Id.ToString(), JsonConvert.SerializeObject(result));
+
+        // adiciona a tabela de histórico de alteracao
+        await history.Add(TableEnum.DecanatoSetor.ToString(), result.Id, OperationEnum.Criacao.ToString());
+
         return new HttpResponse { Message = "Paróquia/Capela criada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
     }
 
@@ -94,6 +101,10 @@ public class ParoquiaCapelaService : IParoquiaCapelaService
 
         var result_ = await repository.GetById(result.Id);
         await cache.SetAsync(hashParoquiaCapela, result_.Id.ToString(), JsonConvert.SerializeObject(result_));
+
+        // adiciona a tabela de histórico de alteracao
+        await history.Add(TableEnum.DecanatoSetor.ToString(), result.Id, OperationEnum.Criacao.ToString());
+
         return new HttpResponse { Message = "Paróquia/Capela atualizada com sucesso.", StatusCode = (int)HttpStatusCode.OK };
     }
 

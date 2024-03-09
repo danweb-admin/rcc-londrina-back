@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using RccManager.Domain.Helpers;
 
 namespace RccManager.Service.Helper;
 
@@ -23,10 +24,12 @@ public static class Utils
         var hours = int.Parse(time.Substring(0, 2));
         var minutes = int.Parse(time.Substring(2));
 
-        var now = DateTime.Now;
+        var now = Helpers.DateTimeNow();
 
         return new DateTime(now.Year, now.Month, now.Day, hours, minutes, 0);
     }
+
+    
 
     public static string Encrypt(string text)
     {

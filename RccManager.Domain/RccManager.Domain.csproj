@@ -30,6 +30,7 @@
     <None Remove="Dtos\Formacao\" />
     <None Remove="Dtos\FormacoesServo\" />
     <None Remove="Dtos\ServoTemp\" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -49,5 +50,6 @@
     <Folder Include="Dtos\Formacao\" />
     <Folder Include="Dtos\FormacoesServo\" />
     <Folder Include="Dtos\ServoTemp\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

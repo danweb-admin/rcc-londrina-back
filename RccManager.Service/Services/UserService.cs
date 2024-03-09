@@ -5,6 +5,7 @@ using System.Security.Claims;
 using AutoMapper;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Helpers;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
@@ -101,7 +102,7 @@ public class UserService : IUserService
     public async Task<HttpResponse> ChangeUserPassword(UserDtoResult user, string newPassword)
     {
         var _user = mapper.Map<User>(user);
-        _user.UpdatedAt = DateTime.Now;
+        _user.UpdatedAt = Helpers.DateTimeNow();
         _user.Password = mD5Service.ReturnMD5(newPassword);
 
         var result = await userRepository.Update(_user);

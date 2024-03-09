@@ -7,6 +7,8 @@ using RccManager.Domain.Responses;
 using AutoMapper;
 using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Exception.Servo;
+using RccManager.Domain.Helpers;
+using RccManager.Service.Enum;
 
 namespace RccManager.Service.Services
 {
@@ -16,13 +18,16 @@ namespace RccManager.Service.Services
         private readonly IServoTempRepository _repository;
         private readonly IServoRepository _repo;
         private readonly IGrupoOracaoRepository _repositoryGO;
+        private readonly IHistoryRepository _history;
 
-        public ServoTempService(IMapper mapper, IServoTempRepository repository, IGrupoOracaoRepository repositoryGO, IServoRepository repo)
+
+        public ServoTempService(IMapper mapper, IServoTempRepository repository, IGrupoOracaoRepository repositoryGO, IServoRepository repo, IHistoryRepository history)
         {
             _mapper = mapper;
             _repository = repository;
             _repositoryGO = repositoryGO;
             _repo = repo;
+            _history = history;
         }
 
         public async Task<HttpResponse> Checked(Guid id)
@@ -45,7 +50,7 @@ namespace RccManager.Service.Services
                 Birthday = servoTemp.Birthday,
                 CellPhone = servoTemp.CellPhone,
                 Cpf = servoTemp.Cpf,
-                CreatedAt = DateTime.Now,
+                CreatedAt = Helpers.DateTimeNow(),
                 Email = servoTemp.Email,
                 GrupoOracaoId = servoTemp.GrupoOracaoId,
                 MainMinistry = servoTemp.MainMinistry,
@@ -56,12 +61,18 @@ namespace RccManager.Service.Services
 
             await _repo.Insert(servo);
 
+            // adiciona a tabela de histórico de alteracao
+            await _history.Add(TableEnum.Servo.ToString(), servo.Id, OperationEnum.Criacao.ToString());
+
             servoTemp.Checked = true;
 
             var result = await _repository.Update(servoTemp);
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para validar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await _history.Add(TableEnum.Servo.ToString(), result.Id, OperationEnum.Validado.ToString());
 
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 
@@ -84,10 +95,13 @@ namespace RccManager.Service.Services
             var grupoOracao = _repositoryGO.GetByName(servo.GrupoOracaoName, servo.ParoquiaCapelaName);
             servo_.GrupoOracaoId = grupoOracao.Id;
 
-            var result =  _repository.Insert(servo_);
+            var result =  _repository.Insert(servo_).GetAwaiter().GetResult();
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            _history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Criacao.ToString());
 
             return new HttpResponse { Message = "Servo(a) criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
@@ -109,10 +123,6 @@ namespace RccManager.Service.Services
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
 
-            exists = await _repo.GetByEmail(Utils.Encrypt(servoTemp.Email));
-
-            
-
             var servo_ = _mapper.Map<ServoTemp>(servoTemp);
             servo_.Id = id;
             servo_.Checked = true;
@@ -123,7 +133,7 @@ namespace RccManager.Service.Services
                 Birthday = servo_.Birthday,
                 CellPhone = servo_.CellPhone,
                 Cpf = servo_.Cpf,
-                CreatedAt = DateTime.Now,
+                CreatedAt = Helpers.DateTimeNow(),
                 Email = servo_.Email,
                 GrupoOracaoId = servo_.GrupoOracaoId,
                 MainMinistry = servo_.MainMinistry,
@@ -136,8 +146,14 @@ namespace RccManager.Service.Services
 
             await _repo.Insert(servo);
 
+            // adiciona a tabela de histórico de alteracao
+            await _history.Add(TableEnum.Servo.ToString(), servo.Id, OperationEnum.Criacao.ToString());
+
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para validar o objeto", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await _history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Alteracao.ToString());
 
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }

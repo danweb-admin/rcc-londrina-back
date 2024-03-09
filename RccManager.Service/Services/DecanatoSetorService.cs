@@ -10,6 +10,7 @@ using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Enum;
 
 namespace RccManager.Service.Services
 {
@@ -17,11 +18,14 @@ namespace RccManager.Service.Services
     {
         private readonly IMapper mapper;
         private IDecanatoSetorRepository repository;
+        private IHistoryRepository history;
 
-        public DecanatoSetorService(IMapper _mapper, IDecanatoSetorRepository _repository)
+
+        public DecanatoSetorService(IMapper _mapper, IDecanatoSetorRepository _repository, IHistoryRepository _history)
         {
-            this.mapper = _mapper;
-            this.repository = _repository;
+            mapper = _mapper;
+            repository = _repository;
+            history = _history;
         }
 
         public async Task<HttpResponse> Create(DecanatoSetorDto decanatoSetorViewModel)
@@ -32,12 +36,13 @@ namespace RccManager.Service.Services
 
             var decanato = mapper.Map<DecanatoSetor>(decanatoSetorViewModel);
 
-
-
             var result = await repository.Insert(decanato);
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para criar o objeto", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await history.Add(TableEnum.DecanatoSetor.ToString(), result.Id, OperationEnum.Criacao.ToString());
 
             return new HttpResponse { Message = "Objeto criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
@@ -83,6 +88,9 @@ namespace RccManager.Service.Services
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para atualizar o objeto", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await history.Add(TableEnum.DecanatoSetor.ToString(), result.Id, OperationEnum.Alteracao.ToString());
 
             return new HttpResponse { Message = "Objeto atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }

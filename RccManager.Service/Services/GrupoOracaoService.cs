@@ -8,6 +8,7 @@ using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Enum;
 using RccManager.Service.Helper;
 
 namespace RccManager.Service.Services
@@ -16,11 +17,13 @@ namespace RccManager.Service.Services
 	{
         private readonly IMapper mapper;
         private readonly IGrupoOracaoRepository repository;
+        private readonly IHistoryRepository history;
 
-        public GrupoOracaoService(IMapper mapper, IGrupoOracaoRepository repository)
+        public GrupoOracaoService(IMapper _mapper, IGrupoOracaoRepository _repository, IHistoryRepository _history)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            mapper = _mapper;
+            repository = _repository;
+            history = _history;
         }
 
         public async Task<HttpResponse> Create(GrupoOracaoDto grupoOracao)
@@ -34,6 +37,9 @@ namespace RccManager.Service.Services
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para criar Grupo de Oração", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await history.Add(TableEnum.GrupoOracao.ToString(), result.Id, OperationEnum.Criacao.ToString());
 
             return new HttpResponse { Message = "Grupo de Oração criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
@@ -56,6 +62,9 @@ namespace RccManager.Service.Services
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para atualizar o objeto", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            // adiciona a tabela de histórico de alteracao
+            await history.Add(TableEnum.GrupoOracao.ToString(), result.Id, OperationEnum.Alteracao.ToString());
 
             return new HttpResponse { Message = "Grupo de Oração atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
