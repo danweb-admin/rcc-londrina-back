@@ -14,6 +14,7 @@ namespace RccManager.Tests.Service.Services
     {
         private readonly IMapper _mapper;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IHistoryRepository> _historyMock;
         private readonly Mock<IMD5Service> _md5ServiceMock;
         private readonly IUserService _service;
 
@@ -27,7 +28,8 @@ namespace RccManager.Tests.Service.Services
 
             _userRepositoryMock = new Mock<IUserRepository>();
             _md5ServiceMock = new Mock<IMD5Service>();
-            _service = new UserService(_userRepositoryMock.Object, _mapper, _md5ServiceMock.Object);
+            _historyMock = new Mock<IHistoryRepository>();
+            _service = new UserService(_userRepositoryMock.Object, _mapper, _md5ServiceMock.Object, _historyMock.Object);
         }
 
         [Fact]
