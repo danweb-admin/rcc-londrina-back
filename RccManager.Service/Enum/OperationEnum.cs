@@ -5,7 +5,8 @@ namespace RccManager.Service.Enum
     {
         Criacao,
         Alteracao,
-        Validado
+        Validado,
+        Logou
     }
 }
 

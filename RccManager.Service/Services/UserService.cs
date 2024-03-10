@@ -9,20 +9,23 @@ using RccManager.Domain.Helpers;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Enum;
 
 namespace RccManager.Service.Services;
 
 public class UserService : IUserService
 {
-    private IUserRepository userRepository;
+    private readonly IUserRepository userRepository;
     private readonly IMapper mapper;
     private readonly IMD5Service mD5Service;
+    private readonly IHistoryRepository history;
 
-    public UserService(IUserRepository _userRepository, IMapper _mapper, IMD5Service _mD5Service)
+    public UserService(IUserRepository _userRepository, IMapper _mapper, IMD5Service _mD5Service, IHistoryRepository _history)
     {
         userRepository = _userRepository;
         mapper = _mapper;
         mD5Service = _mD5Service;
+        history = _history;
     }
 
     public async Task<HttpResponse> Add(UserDtoAdd user)
@@ -41,6 +44,9 @@ public class UserService : IUserService
         if (result == null)
             return new HttpResponse { Message = "Houve um problema para criar o Usuário", StatusCode = (int)HttpStatusCode.BadRequest };
 
+        // adiciona a tabela de histórico de alteracao
+        await history.Add(TableEnum.User.ToString(), result.Id, OperationEnum.Criacao.ToString());
+
         return new HttpResponse { Message = "Usuário criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 
 
@@ -56,7 +62,12 @@ public class UserService : IUserService
                 throw new Exception("Usuário não esta ativo.");
 
             if (mD5Service.CompareMD5(password, user.Password))
+            {
+                // adiciona a tabela de histórico de alteracao
+                await history.Add(TableEnum.User.ToString(), user.Id, OperationEnum.Logou.ToString());
+
                 return mapper.Map<UserDto>(user);
+            }
         }
 
         return null;
@@ -95,6 +106,9 @@ public class UserService : IUserService
 
         if (result == null)
             return new HttpResponse { Message = "Houve um problema para atualizar o Usuário", StatusCode = (int)HttpStatusCode.BadRequest };
+
+        // adiciona a tabela de histórico de alteracao
+        await history.Add(TableEnum.User.ToString(), result.Id, OperationEnum.Alteracao.ToString());
 
         return new HttpResponse { Message = "Usuário atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
     }

@@ -72,7 +72,7 @@ namespace RccManager.Service.Services
                 return new HttpResponse { Message = "Houve um problema para validar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
 
             // adiciona a tabela de histórico de alteracao
-            await _history.Add(TableEnum.Servo.ToString(), result.Id, OperationEnum.Validado.ToString());
+            await _history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Validado.ToString());
 
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 

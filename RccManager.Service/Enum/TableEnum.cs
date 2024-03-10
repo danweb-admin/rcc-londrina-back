@@ -7,7 +7,8 @@ namespace RccManager.Service.Enum
         ParoquiaCapela,
         GrupoOracao,
         Servo,
-        ServoTemp
+        ServoTemp,
+        User
     }
 }
 

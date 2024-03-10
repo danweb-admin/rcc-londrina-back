@@ -23,7 +23,10 @@ namespace RccManager.Infra.Repositories
 
         public async Task Add(string tableName, Guid recordId, string operation)
         {
+
             var userName = httpContextAccessor.HttpContext.User?.Identity.Name;
+            if (string.IsNullOrEmpty(userName))
+                userName = "administrador";
             var user = await userRepository.GetByName(userName);
 
             var history = new History
