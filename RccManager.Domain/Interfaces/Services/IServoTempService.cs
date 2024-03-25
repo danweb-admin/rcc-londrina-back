@@ -12,6 +12,8 @@ public interface IServoTempService
     HttpResponse Create(ServoTempDto servo);
     Task<HttpResponse> Update(ServoTempDto servo, Guid id);
     Task<HttpResponse> Checked(Guid id);
+    Task<HttpResponse> UploadFile(StreamReader reader, Guid grupoOracaoId);
+
 
 }
 

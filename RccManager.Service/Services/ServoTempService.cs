@@ -47,8 +47,8 @@ namespace RccManager.Service.Services
             var servo = new Servo
             {
                 Active = servoTemp.Active,
-                Birthday = servoTemp.Birthday,
                 CellPhone = servoTemp.CellPhone,
+                Birthday = DateTime.Parse(servoTemp.Birthday),
                 Cpf = servoTemp.Cpf,
                 CreatedAt = Helpers.DateTimeNow(),
                 Email = servoTemp.Email,
@@ -80,7 +80,7 @@ namespace RccManager.Service.Services
 
         public HttpResponse Create(ServoTempDto servo)
         {
-            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
+            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), DateTime.Parse(servo.Birthday), Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
 
             if (exists)
                 return new HttpResponse { Message = "Servo(a) temporário já existe", StatusCode = (int)HttpStatusCode.BadRequest };
@@ -114,7 +114,7 @@ namespace RccManager.Service.Services
 
         public async Task<HttpResponse> Update(ServoTempDto servoTemp, Guid id)
         {
-            servoTemp.Birthday = Utils.formatDate(servoTemp.Birthday1);
+            servoTemp.Birthday = servoTemp.Birthday;
             servoTemp.Cpf = servoTemp.Cpf.Replace(" ", "").Replace(".", "").Replace("-", "");
             servoTemp.CellPhone = servoTemp.CellPhone.Replace(" ", "").Replace(".", "").Replace("-", "").Replace("(","").Replace(")","");
 
@@ -130,8 +130,8 @@ namespace RccManager.Service.Services
             var servo = new Servo
             {
                 Active = servo_.Active,
-                Birthday = servo_.Birthday,
                 CellPhone = servo_.CellPhone,
+                Birthday = Utils.formatDate2(servo_.Birthday),
                 Cpf = servo_.Cpf,
                 CreatedAt = Helpers.DateTimeNow(),
                 Email = servo_.Email,
@@ -156,6 +156,11 @@ namespace RccManager.Service.Services
             await _history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Alteracao.ToString());
 
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public Task<HttpResponse> UploadFile(StreamReader reader, Guid grupoOracaoId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

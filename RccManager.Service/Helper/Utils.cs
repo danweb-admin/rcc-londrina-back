@@ -18,6 +18,17 @@ public static class Utils
         return new DateTime(year, month, day);
     }
 
+    public static DateTime formatDate2(string date)
+    {
+
+        var split = date.Split("/");
+        var year = int.Parse(split[2]);
+        var day = int.Parse(split[0]);
+        var month = int.Parse(split[1]);
+
+        return new DateTime(year, month, day);
+    }
+
     public static DateTime formaTime(string time)
     {
         time = time.Replace(":", "");

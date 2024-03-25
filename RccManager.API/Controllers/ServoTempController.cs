@@ -86,6 +86,31 @@ namespace RccManager.API.Controllers
                 return BadRequest(e);
             }
         }
+
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadCsv(IFormFile file_, Guid grupoOracaoId)
+        {
+            if (Request.Form.Files.Count == 0)
+            {
+                return BadRequest("Nenhum arquivo enviado.");
+            }
+
+            var file = Request.Form.Files[0];
+
+            if (file.Length == 0)
+            {
+                return BadRequest("Arquivo vazio.");
+            }
+
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                await _servoService.UploadFile(reader, grupoOracaoId);
+            }
+
+            // Se necessário, você pode retornar uma resposta de sucesso
+            return Ok("Arquivo CSV recebido com sucesso.");
+        }
     }
 }
 

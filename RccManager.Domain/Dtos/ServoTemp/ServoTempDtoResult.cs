@@ -8,7 +8,7 @@ public class ServoTempDtoResult
     public DateTime? UpdatedAt { get; set; }
     public bool Active { get; set; }
     public string Name { get; set; }
-    public DateTime Birthday { get; set; }
+    public string Birthday { get; set; }
     public string Cpf { get; set; }
     public string Email { get; set; }
     public string CellPhone { get; set; }
