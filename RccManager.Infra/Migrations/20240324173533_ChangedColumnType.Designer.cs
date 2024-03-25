@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240324173533_ChangedColumnType")]
+    partial class ChangedColumnType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -398,8 +400,12 @@ namespace RccManager.Infra.Migrations
                         .HasColumnName("active")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Birthday")
+                    b.Property<DateTime>("Birthday")
                         .HasColumnName("birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Birthday1")
+                        .HasColumnName("birthday1")
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 

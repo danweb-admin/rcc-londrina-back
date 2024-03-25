@@ -67,7 +67,7 @@ namespace RccManager.Infra.Repositories
             if (entity.Id == Guid.Empty)
                 entity.Id = Guid.NewGuid();
 
-            entity.CreatedAt = Helpers.DateTimeNow();
+            entity.CreatedAt = entity.CreatedAt == null ? Helpers.DateTimeNow() : entity.CreatedAt;
             dbSet.Add(entity);
 
             await context.SaveChangesAsync();

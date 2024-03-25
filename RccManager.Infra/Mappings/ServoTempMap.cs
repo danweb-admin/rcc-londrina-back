@@ -29,8 +29,8 @@ namespace RccManager.Infra.Mappings
                 .HasMaxLength(200);
 
             builder.Property(x => x.Birthday)
-                .IsRequired()
-                .HasColumnName("birthday");
+                .HasColumnName("birthday")
+                .HasMaxLength(20);
 
             builder.Property(x => x.CellPhone)
                 .IsRequired()
