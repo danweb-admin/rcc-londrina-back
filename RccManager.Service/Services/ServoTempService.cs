@@ -9,6 +9,8 @@ using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Exception.Servo;
 using RccManager.Domain.Helpers;
 using RccManager.Service.Enum;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using StackExchange.Redis;
 
 namespace RccManager.Service.Services
 {
@@ -158,9 +160,90 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-        public Task<HttpResponse> UploadFile(StreamReader reader, Guid grupoOracaoId)
+        public async Task<HttpResponse> UploadFile(StreamReader reader, Guid grupoOracaoId)
         {
-            throw new NotImplementedException();
+            var i = 0;
+            while (reader.Peek() >= 0)
+            {
+                
+                var line = await reader.ReadLineAsync();
+
+                if (i == 0)
+                {
+                    i++;
+                    continue;
+                }
+
+                var split = line.Split(",");
+
+                var temp = split[5];
+                
+                var createdAt = split[0];
+                var name = split[1];
+                var email = split[2];
+                var cpf = split[3];
+                var phone = split[4];
+                var birthdate = temp.Contains("/") || temp.Contains("-") ? DateTime.Parse(temp).ToString("dd/MM/yyyy") : temp;
+                var mainMinistry = split[6];
+                var secondaryMinistry = split[7];
+
+                try
+                {
+                    var servoTemp = new ServoTemp
+                    {
+                        CreatedAt = DateTime.Parse(createdAt),
+                        Name = Utils.Encrypt(name.ToUpper()),
+                        Email = Utils.Encrypt(email),
+                        Cpf = Utils.Encrypt(cpf),
+                        CellPhone = Utils.Encrypt(phone),
+                        Birthday = birthdate,
+                        MainMinistry = mainMinistry,
+                        SecondaryMinistry = secondaryMinistry,
+                        GrupoOracaoId = grupoOracaoId
+
+                    };
+
+                    await _repository.Insert(servoTemp);
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException.Message.Contains("UNIQUE KEY"))
+                        continue;
+                }
+            }
+
+            return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public async Task<HttpResponse> ValidateServoTemp(Guid grupoOracaoId)
+        {
+            var servos = await _repo.GetAll(grupoOracaoId);
+
+            var temp = await _repository.GetAll(grupoOracaoId);
+
+            IEnumerable<ServoTemp> stores =
+            from t in temp
+            select new ServoTemp { Cpf = Utils.Decrypt(t.Cpf).Replace(".","").Replace("-", ""), Id = t.Id };
+
+            foreach (var servo in servos)
+            { 
+                var cpf = Utils.Decrypt(servo.Cpf);
+
+                var result = stores.FirstOrDefault(x => x.Cpf == cpf);
+
+                if (result != null)
+                {
+                    var r = await _repository.GetById(result.Id);
+
+                    r.Checked = true;
+
+                    await _repository.Update(r);
+
+                }
+            }
+
+            return new HttpResponse { Message = "Servos validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+
         }
     }
 }

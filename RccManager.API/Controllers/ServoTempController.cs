@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using RccManager.Domain.Dtos.Servo;
 using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Exception.Servo;
@@ -110,6 +114,29 @@ namespace RccManager.API.Controllers
 
             // Se necessário, você pode retornar uma resposta de sucesso
             return Ok("Arquivo CSV recebido com sucesso.");
+        }
+
+
+        [HttpPost("validate")]
+        public async Task<IActionResult> ValidateServo(Guid grupoOracaoId)
+        {
+            try
+            {
+                var response = await _servoService.ValidateServoTemp(grupoOracaoId);
+
+                if (response == null)
+                    return NotFound();
+
+                return Ok(HttpStatusCode.NoContent);
+            }
+            catch (ValidateByCpfOrEmailException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }
