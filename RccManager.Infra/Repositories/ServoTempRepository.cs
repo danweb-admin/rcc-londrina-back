@@ -35,7 +35,7 @@ namespace RccManager.Infra.Repositories
                                                   x.Email == email);
         }
 
-        public bool ValidateServoTemp(string name, DateTime birthday, string cpf, string email, string cellPhone)
+        public bool ValidateServoTemp(string name, string birthday, string cpf, string email, string cellPhone)
         {
             return dbSet.Any(x => x.Name == name &&
                                              x.CellPhone == cellPhone &&

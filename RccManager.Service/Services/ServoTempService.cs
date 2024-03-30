@@ -82,7 +82,9 @@ namespace RccManager.Service.Services
 
         public HttpResponse Create(ServoTempDto servo)
         {
-            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), DateTime.Parse(servo.Birthday), Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
+
+
+            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
 
             if (exists)
                 return new HttpResponse { Message = "Servo(a) temporário já existe", StatusCode = (int)HttpStatusCode.BadRequest };
