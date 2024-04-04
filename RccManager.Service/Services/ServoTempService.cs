@@ -50,7 +50,7 @@ namespace RccManager.Service.Services
             {
                 Active = servoTemp.Active,
                 CellPhone = servoTemp.CellPhone,
-                Birthday = DateTime.Parse(servoTemp.Birthday),
+                Birthday = Utils.formatDate2(servoTemp.Birthday),
                 Cpf = servoTemp.Cpf,
                 CreatedAt = Helpers.DateTimeNow(),
                 Email = servoTemp.Email,
