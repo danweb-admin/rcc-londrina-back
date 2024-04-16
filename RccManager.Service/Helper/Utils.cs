@@ -20,11 +20,23 @@ public static class Utils
 
     public static DateTime formatDate2(string date)
     {
+        string[] split;
+        int year, day, month;
 
-        var split = date.Split("/");
-        var year = int.Parse(split[2]);
-        var day = int.Parse(split[0]);
-        var month = int.Parse(split[1]);
+        if (date.Contains("-"))
+        {
+            split = date.Split("-");
+            year = int.Parse(split[0]);
+            day = int.Parse(split[2]);
+            month = int.Parse(split[1]);
+
+            return new DateTime(year, month, day);
+        }
+
+        split = date.Split("/");
+        year = int.Parse(split[2]);
+        day = int.Parse(split[0]);
+        month = int.Parse(split[1]);
 
         return new DateTime(year, month, day);
     }

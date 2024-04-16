@@ -48,15 +48,15 @@ namespace RccManager.Service.Services
 
             var servo = new Servo
             {
-                Active = servoTemp.Active,
+                Active = true,
                 CellPhone = servoTemp.CellPhone,
                 Birthday = Utils.formatDate2(servoTemp.Birthday),
                 Cpf = servoTemp.Cpf,
                 CreatedAt = Helpers.DateTimeNow(),
                 Email = servoTemp.Email,
                 GrupoOracaoId = servoTemp.GrupoOracaoId,
-                MainMinistry = servoTemp.MainMinistry,
-                SecondaryMinistry = servoTemp.SecondaryMinistry,
+                MainMinistry = Ministerios.returnMinistryValue(servoTemp.MainMinistry),
+                SecondaryMinistry = Ministerios.returnMinistryValue(servoTemp.SecondaryMinistry),
                 Name = servoTemp.Name,
 
             };
@@ -133,7 +133,7 @@ namespace RccManager.Service.Services
 
             var servo = new Servo
             {
-                Active = servo_.Active,
+                Active = true,
                 CellPhone = servo_.CellPhone,
                 Birthday = Utils.formatDate2(servo_.Birthday),
                 Cpf = servo_.Cpf,
