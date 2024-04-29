@@ -38,6 +38,7 @@ public class UserService : IUserService
             return new HttpResponse { Message = "Já existe um usuario com este email.", StatusCode = (int)HttpStatusCode.NotFound };
 
         _user.Password = mD5Service.ReturnMD5(_user.Password);
+        _user.Active = true;
 
         var result = await userRepository.Insert(_user);
 
