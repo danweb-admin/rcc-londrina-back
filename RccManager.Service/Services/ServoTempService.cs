@@ -41,11 +41,6 @@ namespace RccManager.Service.Services
             if (exists)
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
 
-            exists = await _repo.GetByEmail(servoTemp.Email);
-
-            if (exists)
-                throw new ValidateByCpfOrEmailException("Este EMAIL já está sendo utilizado.");
-
             var servo = new Servo
             {
                 Active = true,
@@ -140,8 +135,8 @@ namespace RccManager.Service.Services
                 CreatedAt = Helpers.DateTimeNow(),
                 Email = servo_.Email,
                 GrupoOracaoId = servo_.GrupoOracaoId,
-                MainMinistry = servo_.MainMinistry,
-                SecondaryMinistry = servo_.SecondaryMinistry,
+                MainMinistry = Ministerios.returnMinistryValue(servoTemp.MainMinistry),
+                SecondaryMinistry = Ministerios.returnMinistryValue(servoTemp.SecondaryMinistry),
                 Name = servo_.Name,
 
             };
