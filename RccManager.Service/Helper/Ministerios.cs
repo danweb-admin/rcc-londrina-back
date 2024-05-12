@@ -36,6 +36,7 @@ namespace RccManager.Service.Helper
                 { "Em discernimento", "em-discernimento" },
                 { "coordenadores", "coordenadores" },
                 { "comunicacao", "comunicacao" },
+                { "comunicacao-social", "comunicacao-social" },
                 { "criancas-adolescentes", "criancas-adolescentes" },
                 { "cristo-sacerdote", "cristo-sacerdote" },
                 { "cura-libertacao", "cura-libertacao" },
