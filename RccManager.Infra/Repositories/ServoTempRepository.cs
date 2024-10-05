@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
@@ -23,16 +24,23 @@ namespace RccManager.Infra.Repositories
                     .OrderBy(x => x.Name).ToListAsync();
         }
 
-        public async Task<ServoTemp> GetById(Guid id)
+        public async Task<IEnumerable<ServoTemp>> GetByCpfGrupoOracao(Guid grupoOracaoId, string cpf)
+        {
+            return await dbSet.Include(x => x.GrupoOracao).Where(x =>
+                                                  x.Cpf == cpf &&
+                                                  x.GrupoOracaoId == grupoOracaoId).ToListAsync();
+        }
+
+            public async Task<ServoTemp> GetById(Guid id)
         {
             return await dbSet.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<ServoTemp> GetByNameCpfEmail(string name, string cpf, string email)
+        public async Task<IEnumerable<ServoTemp>> GetByNameCpfEmail(string name, string cpf, string email)
         {
-            return await dbSet.FirstOrDefaultAsync(x => x.Name == name &&
+            return await dbSet.Include(x => x.GrupoOracao).Where(x => x.Name == name &&
                                                   x.Cpf == cpf &&
-                                                  x.Email == email);
+                                                  x.Email == email).ToListAsync();
         }
 
         public bool ValidateServoTemp(string name, string birthday, string cpf, string email, string cellPhone)

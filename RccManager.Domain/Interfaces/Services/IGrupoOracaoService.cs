@@ -11,6 +11,9 @@ namespace RccManager.Domain.Interfaces.Services
         Task<HttpResponse> Create(GrupoOracaoDto grupoOracao);
 
         Task<HttpResponse> Update(GrupoOracaoDto grupoOracao, Guid id);
+
+        Task<HttpResponse> ImportCSV(Guid id, UserDtoResult user);
+
     }
 }
 

@@ -19,6 +19,8 @@ public class GrupoOracao : BaseEntity
 	public string Site { get; set; }
 	public string Telephone { get; set; }
 	public int NumberOfParticipants { get; set; }
+	public string FormsUrl { get; set; }
+	public string CsvUrl { get; set; }
 	public List<Servo> Servos { get; set; }
     public List<ServoTemp> ServosTemp { get; set; }
 

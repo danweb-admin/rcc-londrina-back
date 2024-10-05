@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mssql-deploy
-  namespace: rcc-manager
+  name: mssql-deploy1
 spec:
   replicas: 1
   selector:
@@ -25,11 +24,11 @@ spec:
         - name: ACCEPT_EULA
           value: "Y"
         - name: SA_PASSWORD
-          value: ""
+          value: "RccManager@2023"
         volumeMounts:
-        - name: mssql-mount
+        - name: mssql-mount1
           mountPath: /var/opt/mssql
       volumes:
-      - name: mssql-mount
+      - name: mssql-mount1
         persistentVolumeClaim:
-          claimName: mssql-data
+          claimName: mssql-data1

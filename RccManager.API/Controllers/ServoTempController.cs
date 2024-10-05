@@ -109,7 +109,7 @@ namespace RccManager.API.Controllers
 
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                await _servoService.UploadFile(reader, grupoOracaoId);
+                await _servoService.UploadFile(grupoOracaoId);
             }
 
             // Se necessário, você pode retornar uma resposta de sucesso

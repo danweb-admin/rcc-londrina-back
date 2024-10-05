@@ -10,6 +10,7 @@ using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Entities;
 using RccManager.Service.Helper;
+using static RccManager.Application.Mapper.EntityToDtoProfile;
 
 namespace RccManager.Application.Mapper;
 

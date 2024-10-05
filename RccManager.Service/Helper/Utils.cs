@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using RccManager.Domain.Helpers;
 
 namespace RccManager.Service.Helper;
@@ -52,7 +54,19 @@ public static class Utils
         return new DateTime(now.Year, now.Month, now.Day, hours, minutes, 0);
     }
 
-    
+    public static DateTime formatDateTime(string dateString)
+    {
+        string format = "dd/MM/yyyy HH:mm:ss";
+        DateTime dateTime;
+
+        if (DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            return dateTime; 
+        else
+            return DateTime.Now;
+
+    }
+
+
 
     public static string Encrypt(string text)
     {

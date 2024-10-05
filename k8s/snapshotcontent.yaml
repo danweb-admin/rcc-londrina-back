@@ -1,0 +1,13 @@
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotContent
+metadata:
+  name: manually-created-snapshot-content
+spec:
+  deletionPolicy: Retain
+  driver: dobs.csi.digitalocean.com
+  source:
+    snapshotHandle: 4e322c3b-625d-11ef-8e92-0a58ac144c08
+  volumeSnapshotRef:
+    name: test-snapshot
+    namespace: default 
+ 

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Net;
 using AutoMapper;
+using CsvHelper;
+using CsvHelper.Configuration;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Users;
@@ -17,12 +20,15 @@ namespace RccManager.Service.Services
 	{
         private readonly IMapper mapper;
         private readonly IGrupoOracaoRepository repository;
+        private readonly IServoTempRepository servoTempRepository;
+
         private readonly IHistoryRepository history;
 
-        public GrupoOracaoService(IMapper _mapper, IGrupoOracaoRepository _repository, IHistoryRepository _history)
+        public GrupoOracaoService(IMapper _mapper, IGrupoOracaoRepository _repository, IHistoryRepository _history, IServoTempRepository _servoTempRepository)
         {
             mapper = _mapper;
             repository = _repository;
+            servoTempRepository = _servoTempRepository;
             history = _history;
         }
 
@@ -48,7 +54,86 @@ namespace RccManager.Service.Services
         {
             var user_ = mapper.Map<User>(user);
             var entities = await repository.GetAll(search, user_);
+
+            if (user.Name != "administrador")
+            {
+                foreach (var item in entities)
+                    item.CsvUrl = string.Empty;
+                
+            }
             return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
+        }
+
+        public async Task<HttpResponse> ImportCSV(Guid id, UserDtoResult user)
+        {
+            if (user.Name != "administrador")
+                throw new Exception("Usuário não permitido");
+
+            var grupoOracao = await repository.GetById(id);
+
+            var list = await servoTempRepository.GetAll(id);
+
+            string csvUrl = grupoOracao.CsvUrl;
+
+            using (HttpClient client = new HttpClient())
+            {
+                // Baixa o conteúdo do CSV
+                var csvData = await client.GetStringAsync(csvUrl);
+
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    BadDataFound = null,
+                };
+
+                // Lê o CSV e processa
+                using (var reader1 = new StringReader(csvData))
+                using (var csv = new CsvReader(reader1, CultureInfo.InvariantCulture))
+                {
+                    csv.Read();
+                    csv.ReadHeader(); // Lê o cabeçalho (nomes das colunas)
+
+                    while (csv.Read())
+                    {
+
+                        var createdAt = csv.GetField("Carimbo de data/hora");
+                        var name = csv.GetField("Nome");
+                        var email = csv.GetField("Email");
+                        var cpf = csv.GetField<string>(10);
+                        var phone = csv.GetField("Celular/WhatsApp (DD) 99000-9999");
+                        var birthdate = csv.GetField("Data de Nascimento");
+                        var mainMinistry = csv.GetField("Ministério Principal");
+                        var secondaryMinistry = csv.GetField("Ministério Principal");
+
+                        cpf = cpf.Replace(".", "").Replace("-", "").Trim();
+
+                        var result = list.Where(x => x.Cpf == Utils.Encrypt(cpf) && x.GrupoOracaoId == id);
+
+
+                        if (!result.Any())
+                        {
+                            var servoTemp = new ServoTemp
+                            {
+                                CreatedAt = Utils.formatDateTime(createdAt),
+                                Name = Utils.Encrypt(name),
+                                Email = Utils.Encrypt(email),
+                                Cpf = Utils.Encrypt(cpf),
+                                CellPhone = Utils.Encrypt(phone),
+                                Birthday = birthdate,
+                                Checked = false,
+                                GrupoOracaoId = id,
+                                MainMinistry = Ministerios.returnMinistryValue(mainMinistry),
+                                SecondaryMinistry = Ministerios.returnMinistryValue(secondaryMinistry)
+                            };
+
+                            await servoTempRepository.Insert(servoTemp);
+
+                        }
+                    }
+                }
+            }
+
+       
+            return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
         public async Task<HttpResponse> Update(GrupoOracaoDto grupoOracao, Guid id)

@@ -81,6 +81,14 @@ namespace RccManager.Infra.Mappings
                 .IsRequired()
                 .HasColumnName("active");
 
+            builder.Property(x => x.FormsUrl)
+                .HasColumnName("formsUrl")
+                .HasMaxLength(300);
+
+            builder.Property(x => x.CsvUrl)
+                .HasColumnName("csvUrl")
+                .HasMaxLength(300);
+
             // Relacionamento com a entidade ParoquiaCapela
             builder.HasOne(x => x.ParoquiaCapela)
                 .WithMany()

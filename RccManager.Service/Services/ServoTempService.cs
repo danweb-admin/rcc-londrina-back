@@ -11,6 +11,11 @@ using RccManager.Domain.Helpers;
 using RccManager.Service.Enum;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StackExchange.Redis;
+using System.Formats.Asn1;
+using System.Globalization;
+using CsvHelper;
+using CsvHelper.Configuration;
+using System.Diagnostics;
 
 namespace RccManager.Service.Services
 {
@@ -157,57 +162,109 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-        public async Task<HttpResponse> UploadFile(StreamReader reader, Guid grupoOracaoId)
+        public async Task<HttpResponse> UploadFile(Guid grupoOracaoId)
         {
-            var i = 0;
-            while (reader.Peek() >= 0)
+            string csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTAIZ_hpWPKIhKtYJ52Lf3UE7d5rrQ6ruER_UVeKcbiqWMB10KmYEvOfB1oiU9IOI9rZbiOSQfqG8_y/pub?output=csv";
+            
+            using (HttpClient client = new HttpClient())
             {
-                
-                var line = await reader.ReadLineAsync();
+                // Baixa o conteúdo do CSV
+                var csvData = await client.GetStringAsync(csvUrl);
 
-                if (i == 0)
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
-                    i++;
-                    continue;
-                }
+                    BadDataFound = null,
+                };
 
-                var split = line.Split(",");
-
-                var temp = split[5];
-                
-                var createdAt = split[0];
-                var name = split[1];
-                var email = split[2];
-                var cpf = split[3];
-                var phone = split[4];
-                var birthdate = temp.Contains("/") || temp.Contains("-") ? DateTime.Parse(temp).ToString("dd/MM/yyyy") : temp;
-                var mainMinistry = split[6];
-                var secondaryMinistry = split[7];
-
-                try
+                // Lê o CSV e processa
+                using (var reader1 = new StringReader(csvData))
+                using (var csv = new CsvReader(reader1, CultureInfo.InvariantCulture))
                 {
-                    var servoTemp = new ServoTemp
+                    csv.Read();
+                    csv.ReadHeader(); // Lê o cabeçalho (nomes das colunas)
+
+                    
+
+                    var header = csv.HeaderRecord;
+                    foreach (var columnName in header)
                     {
-                        CreatedAt = DateTime.Parse(createdAt),
-                        Name = Utils.Encrypt(name.ToUpper()),
-                        Email = Utils.Encrypt(email),
-                        Cpf = Utils.Encrypt(cpf),
-                        CellPhone = Utils.Encrypt(phone),
-                        Birthday = birthdate,
-                        MainMinistry = mainMinistry,
-                        SecondaryMinistry = secondaryMinistry,
-                        GrupoOracaoId = grupoOracaoId
+                        Console.WriteLine($"Column: {columnName}");
+                    }
 
-                    };
+                    while (csv.Read())
+                    {
 
-                    await _repository.Insert(servoTemp);
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException.Message.Contains("UNIQUE KEY"))
-                        continue;
+                        var createdAt = csv.GetField("Carimbo de data/hora");
+                        var name = csv.GetField("Nome");
+                        var email = csv.GetField("Email");
+                        var cpf = csv.GetField<string>(10);
+                        var phone = csv.GetField("Celular/WhatsApp (DD) 99000-9999");
+                        var birthdate = csv.GetField("Data de Nascimento");
+                        var mainMinistry = csv.GetField("Ministério Principal");
+                        var secondaryMinistry = csv.GetField("Ministério Principal");
+
+                        var result = await _repository.GetByNameCpfEmail(Utils.Encrypt(name.ToUpper()), Utils.Encrypt(cpf), Utils.Encrypt(email));
+
+                        foreach (var item in result)
+                        {
+                            var a = Utils.Decrypt(item.Name);
+                        }
+                        
+                    }
+
                 }
             }
+
+
+            //var i = 0;
+            //while (reader.Peek() >= 0)
+            //{
+                
+            //    var line = await reader.ReadLineAsync();
+
+            //    if (i == 0)
+            //    {
+            //        i++;
+            //        continue;
+            //    }
+
+            //    var split = line.Split(",");
+
+            //    var temp = split[5];
+                
+            //    var createdAt = split[0];
+            //    var name = split[1];
+            //    var email = split[2];
+            //    var cpf = split[3];
+            //    var phone = split[4];
+            //    var birthdate = temp.Contains("/") || temp.Contains("-") ? DateTime.Parse(temp).ToString("dd/MM/yyyy") : temp;
+            //    var mainMinistry = split[6];
+            //    var secondaryMinistry = split[7];
+
+            //    try
+            //    {
+            //        var servoTemp = new ServoTemp
+            //        {
+            //            CreatedAt = DateTime.Parse(createdAt),
+            //            Name = Utils.Encrypt(name.ToUpper()),
+            //            Email = Utils.Encrypt(email),
+            //            Cpf = Utils.Encrypt(cpf),
+            //            CellPhone = Utils.Encrypt(phone),
+            //            Birthday = birthdate,
+            //            MainMinistry = Ministerios.returnMinistryValue(mainMinistry),
+            //            SecondaryMinistry = Ministerios.returnMinistryValue(secondaryMinistry),
+            //            GrupoOracaoId = grupoOracaoId
+
+            //        };
+
+            //        await _repository.Insert(servoTemp);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        if (ex.InnerException.Message.Contains("UNIQUE KEY"))
+            //            continue;
+            //    }
+            //}
 
             return new HttpResponse { Message = "Servo(a) validado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }

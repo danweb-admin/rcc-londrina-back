@@ -14,6 +14,12 @@ namespace RccManager.Infra.Repositories
             dbSet = context.Set<GrupoOracao>();
         }
 
+        public new async Task<GrupoOracao> GetById(Guid id)
+        {
+
+            return await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public new async Task<IEnumerable<GrupoOracao>> GetAll(string search)
         {
             search = search.ToUpper();

@@ -27,6 +27,8 @@ public class GrupoOracaoDtoResult
     public string Site { get; set; }
     public string Telephone { get; set; }
     public int NumberOfParticipants { get; set; }
+    public string FormsUrl { get; set; }
+    public string CsvUrl { get; set; }
     public List<ServoTempDtoResult>  ServosTemp { get; set; }
 }
 
