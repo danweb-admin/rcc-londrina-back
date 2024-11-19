@@ -44,7 +44,11 @@ namespace RccManager.Service.Services
             var exists = await _repo.GetByCPF(servoTemp.Cpf);
 
             if (exists)
+            {
+                await _repository.Delete(id);
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
+            }
+                
 
             var servo = new Servo
             {
@@ -113,6 +117,12 @@ namespace RccManager.Service.Services
         public async Task<IEnumerable<ServoTempDtoResult>> GetAll(Guid grupoOracaoId)
         {
             var list = _mapper.Map<IEnumerable<ServoTempDtoResult>>(await _repository.GetAll(grupoOracaoId));
+            return list.OrderBy(x => x.Name);
+        }
+
+        public async Task<IEnumerable<ServoTempDtoResult>> LoadServos()
+        {
+            var list =  _mapper.Map<IEnumerable<ServoTempDtoResult>>(await _repository.GetAll());
             return list.OrderBy(x => x.Name);
         }
 

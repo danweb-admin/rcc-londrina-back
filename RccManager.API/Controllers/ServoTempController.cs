@@ -16,7 +16,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/servos-temporarios")]
-    //[Authorize]
+    [Authorize]
     public class ServoTempController : ControllerBase
     {
         private readonly IServoTempService _servoService;
@@ -30,6 +30,13 @@ namespace RccManager.API.Controllers
         public async Task<IActionResult> Get(Guid grupoOracaoId)
         {
             var servos = await _servoService.GetAll(grupoOracaoId);
+            return Ok(servos);
+        }
+
+        [HttpGet("load-servos")]
+        public async Task<IActionResult> GetAll()
+        {
+            var servos = await _servoService.LoadServos();
             return Ok(servos);
         }
 

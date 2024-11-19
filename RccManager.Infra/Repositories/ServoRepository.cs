@@ -28,6 +28,13 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
         return await dbSet.AnyAsync(x => x.Cpf.Equals(cpf));
     }
 
+    public async Task Remove(Guid id)
+    {
+        var entity = await dbSet.FindAsync(id);
+        dbSet.Remove(entity);
+
+    }
+
     public async Task<bool> GetByCPF(Guid id, string cpf)
     {
         var a = await dbSet.Where(x => x.Cpf == cpf && x.Id != id).ToListAsync();

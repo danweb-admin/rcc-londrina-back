@@ -1,4 +1,6 @@
 ﻿using System;
+using RccManager.Domain.Dtos.GrupoOracao;
+
 namespace RccManager.Domain.Dtos.ServoTemp;
 
 public class ServoTempDtoResult
@@ -16,5 +18,6 @@ public class ServoTempDtoResult
     public bool Checked { get; set; }
     public string SecondaryMinistry { get; set; }
     public Guid GrupoOracaoId { get; set; }
+    public GrupoOracaoDtoResult GrupoOracao { get; set; }
 }
 

@@ -24,6 +24,14 @@ namespace RccManager.Infra.Repositories
                     .OrderBy(x => x.Name).ToListAsync();
         }
 
+        public async Task<IEnumerable<ServoTemp>> GetAll()
+        {
+            return await dbSet
+                    .Include(x => x.GrupoOracao)
+                    .Include(x => x.GrupoOracao.ParoquiaCapela.DecanatoSetor)
+                    .OrderBy(x => x.Name).ToListAsync();
+        }
+
         public async Task<IEnumerable<ServoTemp>> GetByCpfGrupoOracao(Guid grupoOracaoId, string cpf)
         {
             return await dbSet.Include(x => x.GrupoOracao).Where(x =>
