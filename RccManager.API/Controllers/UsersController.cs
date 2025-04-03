@@ -19,13 +19,15 @@ public class UsersController : ControllerBase
     private readonly IUserService userService;
     private readonly ITokenService tokenService;
     private readonly ILogger<UsersController> logger;
+    private readonly IEmailService emailService;
 
 
-    public UsersController(IUserService _userService, ITokenService _tokenService, ILogger<UsersController> _logger)
+    public UsersController(IUserService _userService, ITokenService _tokenService, ILogger<UsersController> _logger, IEmailService _emailService)
     {
         userService = _userService;
         tokenService = _tokenService;
         logger = _logger;
+        emailService = _emailService;
     }
 
 
@@ -34,6 +36,25 @@ public class UsersController : ControllerBase
     public IActionResult Healthy([FromQuery] string search)
     {
         return Ok();
+    }
+
+    
+
+    [HttpGet("user/confirmacao-email")]
+    [AllowAnonymous]
+    public async Task<IActionResult> TesteEmail(string email)
+    {
+        try
+        {
+            await userService.EmailConfirmed(email);
+
+            return Ok("Email confirmado com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Domain.Responses.HttpResponse { StatusCode = 404, Message = ex.Message });
+        }
+        
     }
 
     [HttpGet("user")]

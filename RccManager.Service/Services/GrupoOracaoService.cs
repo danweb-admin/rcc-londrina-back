@@ -124,9 +124,9 @@ namespace RccManager.Service.Services
                                 MainMinistry = Ministerios.returnMinistryValue(mainMinistry),
                                 SecondaryMinistry = Ministerios.returnMinistryValue(secondaryMinistry)
                             };
-
+                            
                             await servoTempRepository.Insert(servoTemp);
-
+                           
                         }
                     }
                 }
@@ -134,6 +134,25 @@ namespace RccManager.Service.Services
 
        
             return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public async Task<HttpResponse> ImportCSV(UserDtoResult user)
+        {
+            
+            var grupos = await GetAll("", user);
+
+            var gg = grupos.Where(x => x.CsvUrl != null);
+
+            foreach (var grupo in gg)
+            {
+                if (string.IsNullOrEmpty(grupo.CsvUrl))
+                    continue;
+
+                await ImportCSV(grupo.Id,user);
+            }
+
+            return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+
         }
 
         public async Task<HttpResponse> Update(GrupoOracaoDto grupoOracao, Guid id)

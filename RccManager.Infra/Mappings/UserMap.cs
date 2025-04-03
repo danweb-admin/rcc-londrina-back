@@ -50,6 +50,11 @@ public class UserMap : IEntityTypeConfiguration<User>
 
         builder.Property(c => c.DecanatoSetorId);
 
+        builder.Property(c => c.ConfirmationDate)
+            .HasColumnType("datetime");
+
+        builder.Property(c => c.EmailConfirmed)
+            .HasColumnType("bit");
     }
 }
 

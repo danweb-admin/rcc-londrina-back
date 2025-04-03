@@ -140,5 +140,20 @@ public class UserService : IUserService
 
         return null;
     }
+
+    public async Task EmailConfirmed(string email)
+    {
+        var user = await userRepository.GetByEmail(email);
+
+        if (user == null)
+            throw new Exception("Email não encontrado");
+
+        user.EmailConfirmed = true;
+        user.ConfirmationDate = DateTime.Now;
+
+        await userRepository.Update(user);
+        
+       
+    }
 }
 

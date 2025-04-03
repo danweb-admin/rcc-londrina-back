@@ -25,6 +25,8 @@ namespace RccManager.Domain.Interfaces.Services
         Task<UserDtoResult> GetByEmail(string email);
 
         Task<UserDtoResult> GetUserContext(ClaimsPrincipal claimsPrincipal);
+
+        Task EmailConfirmed(string email);
     }
 }
 

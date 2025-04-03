@@ -35,10 +35,19 @@ public static class Utils
             return new DateTime(year, month, day);
         }
 
-        split = date.Split("/");
-        year = int.Parse(split[2]);
-        day = int.Parse(split[0]);
-        month = int.Parse(split[1]);
+        if (date.Contains("/"))
+        {
+            split = date.Split("/");
+            year = int.Parse(split[2]);
+            day = int.Parse(split[0]);
+            month = int.Parse(split[1]);
+
+            return new DateTime(year, month, day);
+        }
+
+        day = int.Parse(date.Substring(0, 2));
+        month = int.Parse(date.Substring(2, 2));
+        year = int.Parse(date.Substring(4));
 
         return new DateTime(year, month, day);
     }

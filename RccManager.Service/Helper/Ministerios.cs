@@ -35,7 +35,7 @@ namespace RccManager.Service.Helper
                 { "Universidades Renovadas", "universidades" },
                 { "Em discernimento", "em-discernimento" },
                 { "coordenadores", "coordenadores" },
-                { "comunicacao", "comunicacao" },
+                { "comunicacao", "comunicacao-social" },
                 { "comunicacao-social", "comunicacao-social" },
                 { "criancas-adolescentes", "criancas-adolescentes" },
                 { "cristo-sacerdote", "cristo-sacerdote" },

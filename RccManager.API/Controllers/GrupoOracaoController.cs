@@ -12,7 +12,7 @@ namespace RccManager.API.Controllers;
 
 [ApiController]
 [Route("api/v1/grupo-oracao")]
-//[Authorize]
+[Authorize]
 public class GrupoOracaoController : ControllerBase
 {
     private readonly IGrupoOracaoService _grupoOracaoService;
@@ -66,6 +66,20 @@ public class GrupoOracaoController : ControllerBase
         var user = await _userService.GetUserContext(User);
 
         var updatedGrupoOracao = await _grupoOracaoService.ImportCSV(id,user);
+        if (updatedGrupoOracao == null)
+            return NotFound();
+
+        return Ok(HttpStatusCode.NoContent);
+
+    }
+
+
+    [HttpPut("import-csv/all")]
+    public async Task<IActionResult> ImportCSV()
+    {
+        var user = await _userService.GetUserContext(User);
+
+        var updatedGrupoOracao = await _grupoOracaoService.ImportCSV(user);
         if (updatedGrupoOracao == null)
             return NotFound();
 
