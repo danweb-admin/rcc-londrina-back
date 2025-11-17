@@ -70,7 +70,7 @@ namespace RccManager.Service.Services
                 },
                 notification_urls = new[]
                 {
-                    "https://backend.swr-locacoes-agenda.online/api/webhook"
+                    "https://backend.rcc-londrina.online/api/webhook"
                 }
             };
 
@@ -143,7 +143,7 @@ namespace RccManager.Service.Services
 
                 notification_urls = new[]
                 {
-                    "https://backend.swr-locacoes-agenda.online/api/webhook"
+                    "https://backend.rcc-londrina.online/api/webhook"
                 },
 
                 charges = new[]
