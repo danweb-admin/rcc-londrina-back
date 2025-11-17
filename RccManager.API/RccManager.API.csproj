@@ -47,6 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Templates\" />
+    <Content Include="Templates/**/*.html" CopyToOutputDirectory="Always" />
   </ItemGroup>
 </Project>

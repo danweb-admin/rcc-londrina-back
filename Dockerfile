@@ -12,6 +12,8 @@ COPY "RccManager.Domain/RccManager.Domain.csproj" "RccManager.Domain/RccManager.
 COPY "RccManager.Infra/RccManager.Infra.csproj" "RccManager.Infra/RccManager.Infra.csproj"
 COPY "RccManager.Service/RccManager.Service.csproj" "RccManager.Service/RccManager.Service.csproj"
 COPY "RccManager.Test/RccManager.Test.csproj" "RccManager.Test/RccManager.Test.csproj"
+COPY "RccManager.API/Templates" "./Templates"
+
 
 RUN dotnet restore "RccManager.sln"
 
