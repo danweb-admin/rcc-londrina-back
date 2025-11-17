@@ -13,5 +13,7 @@ public interface IServoService
     Task<HttpResponse> Create(ServoDto servo);
 
     Task<HttpResponse> Update(ServoDto servo, Guid id);
+
+    Task<ServoDtoResult> GetByCPF(string cpf);
 }
 

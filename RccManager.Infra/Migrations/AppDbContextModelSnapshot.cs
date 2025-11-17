@@ -49,6 +49,85 @@ namespace RccManager.Infra.Migrations
                     b.ToTable("Decanatos");
                 });
 
+            modelBuilder.Entity("RccManager.Domain.Entities.Evento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnName("active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .IsRequired()
+                        .HasColumnName("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DecanatoId")
+                        .HasColumnName("decanatoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("DecanatoSetorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnName("end_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("EventImage")
+                        .HasColumnName("event_image")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("EventInfo")
+                        .HasColumnName("event_info")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnName("event_name")
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
+
+                    b.Property<string>("OrganizerEmail")
+                        .HasColumnName("organizer_email")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("OrganizerPhone")
+                        .HasColumnName("organizer_phone")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<string>("Pix")
+                        .HasColumnName("pix")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnName("start_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnName("status")
+                        .HasColumnType("nvarchar(15)")
+                        .HasMaxLength(15);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnName("updatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnName("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DecanatoSetorId");
+
+                    b.ToTable("Eventos");
+                });
+
             modelBuilder.Entity("RccManager.Domain.Entities.Formacao", b =>
                 {
                     b.Property<Guid>("Id")
@@ -269,6 +348,86 @@ namespace RccManager.Infra.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("RccManager.Domain.Entities.InscricoesEvento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnName("active")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnName("amount_paid")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnName("birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CellPhone")
+                        .IsRequired()
+                        .HasColumnName("cellphone")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasColumnName("cpf")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .IsRequired()
+                        .HasColumnName("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnName("email")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("GrupoOracaoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Registered")
+                        .HasColumnName("registered")
+                        .HasColumnType("nvarchar(1)")
+                        .HasMaxLength(1);
+
+                    b.Property<string>("Status")
+                        .HasColumnName("status")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnName("updatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnName("value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("GrupoOracaoId");
+
+                    b.ToTable("InscricoesEvento");
                 });
 
             modelBuilder.Entity("RccManager.Domain.Entities.ParoquiaCapela", b =>
@@ -533,6 +692,13 @@ namespace RccManager.Infra.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("RccManager.Domain.Entities.Evento", b =>
+                {
+                    b.HasOne("RccManager.Domain.Entities.DecanatoSetor", "DecanatoSetor")
+                        .WithMany()
+                        .HasForeignKey("DecanatoSetorId");
+                });
+
             modelBuilder.Entity("RccManager.Domain.Entities.FormacoesServo", b =>
                 {
                     b.HasOne("RccManager.Domain.Entities.Formacao", "Formacao")
@@ -570,6 +736,19 @@ namespace RccManager.Infra.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RccManager.Domain.Entities.InscricoesEvento", b =>
+                {
+                    b.HasOne("RccManager.Domain.Entities.Evento", "Evento")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RccManager.Domain.Entities.GrupoOracao", "GrupoOracao")
+                        .WithMany()
+                        .HasForeignKey("GrupoOracaoId");
                 });
 
             modelBuilder.Entity("RccManager.Domain.Entities.ParoquiaCapela", b =>

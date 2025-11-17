@@ -64,6 +64,16 @@ namespace RccManager.Service.Services
             return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
         }
 
+        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll()
+        {
+            var entities = await repository.GetAll();
+
+            foreach (var item in entities)
+                item.CsvUrl = string.Empty;
+
+            return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities); 
+        }
+
         public async Task<HttpResponse> ImportCSV(Guid id, UserDtoResult user)
         {
             if (user.Name != "administrador")

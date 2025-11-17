@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using RccManager.Domain.Interfaces.Services;
+using RccManager.Domain.Services;
 using RccManager.Infra.Context;
 using RccManager.Service.Services;
 
@@ -21,6 +22,10 @@ namespace RccManager.Application.DI
             services.AddSingleton<IMD5Service, MD5Service>();
             services.AddScoped<IServoTempService, ServoTempService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEventoService, EventoService>();
+            services.AddScoped<IInscricoesEventoService, InscricoesEventoService>();
+            services.AddScoped<IPagSeguroService, PagSeguroService>();
+
             services.AddScoped<AppDbContext>();
 
         }

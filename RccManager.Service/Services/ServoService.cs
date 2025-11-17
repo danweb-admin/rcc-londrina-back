@@ -59,6 +59,23 @@ namespace RccManager.Service.Services
 
         }
 
+        public async Task<ServoDtoResult> GetByCPF(string cpf)
+        {
+            var cpf_ = Utils.Encrypt(cpf);
+
+            var servo = await _repository.GetServoByCPF(cpf_);
+
+
+            if (servo == null)
+            {
+                cpf_ = Utils.Encrypt(cpf.Replace(".","").Replace("-",""));
+
+                servo = await _repository.GetServoByCPF(cpf_);
+            }
+
+            return _mapper.Map<ServoDtoResult>(servo);
+        }
+
         public async Task<HttpResponse> Update(ServoDto servo, Guid id)
         {
             servo.Birthday = Utils.formatDate(servo.Birthday1);

@@ -1,0 +1,14 @@
+﻿using System;
+using RccManager.Domain.Entities;
+
+namespace RccManager.Domain.Interfaces.Repositories
+{
+	public interface IInscricaoRepository : IRepository<Inscricao>
+    {
+        Task<IEnumerable<Inscricao>> GetAll(Guid eventoId);
+        Task<bool> CheckByCpf(Guid eventId, string cpf);
+        Task<Inscricao> GetByCodigo(string codigoInscricao);
+
+    }
+}
+

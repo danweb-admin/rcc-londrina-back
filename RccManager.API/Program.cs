@@ -100,10 +100,10 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.
 
 
 
-using (var serviceScope = app.Services.CreateScope())
-{ 
-    serviceScope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
-}
+//using (var serviceScope = app.Services.CreateScope())
+//{ 
+//    serviceScope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
+//}
 
 app.UseHttpsRedirection();
 

@@ -14,6 +14,7 @@
     <None Remove="Validators\DecanatoSetor\" />
     <None Remove="Helper\" />
     <None Remove="Enum\" />
+    <None Remove="Template\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -21,6 +22,7 @@
     <Folder Include="Validators\DecanatoSetor\" />
     <Folder Include="Helper\" />
     <Folder Include="Enum\" />
+    <Folder Include="Template\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RccManager.Domain\RccManager.Domain.csproj" />

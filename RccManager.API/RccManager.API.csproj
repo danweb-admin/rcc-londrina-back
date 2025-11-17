@@ -43,8 +43,10 @@
   <ItemGroup>
     <None Remove="Microsoft.EntityFrameworkCore.SqlServer" />
     <None Remove="Models\" />
+    <None Remove="Templates\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="Templates\" />
   </ItemGroup>
 </Project>

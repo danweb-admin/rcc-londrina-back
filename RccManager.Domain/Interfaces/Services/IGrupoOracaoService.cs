@@ -6,6 +6,8 @@ namespace RccManager.Domain.Interfaces.Services
 {
     public interface IGrupoOracaoService
 	{
+        Task<IEnumerable<GrupoOracaoDtoResult>> GetAll();
+
         Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user);
 
         Task<HttpResponse> Create(GrupoOracaoDto grupoOracao);

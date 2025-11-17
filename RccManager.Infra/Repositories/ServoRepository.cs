@@ -16,6 +16,8 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
         dbSet = _context.Set<Servo>();
     }
 
+
+
     public async Task<IEnumerable<Servo>> GetAll(Guid grupoOracaoId)
     {
         return await dbSet
@@ -37,7 +39,6 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
 
     public async Task<bool> GetByCPF(Guid id, string cpf)
     {
-        var a = await dbSet.Where(x => x.Cpf == cpf && x.Id != id).ToListAsync();
         return await dbSet.AnyAsync(x => x.Cpf == cpf && x.Id != id);
     }
 
@@ -52,5 +53,20 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
         return await dbSet.AnyAsync(x => x.Email == email && x.Id != id);
 
     }
+
+    public async Task<Servo> GetServoByCPF(string cpf)
+    {
+        return await dbSet
+            .Include(x => x.GrupoOracao)
+            .Include(x => x.GrupoOracao.ParoquiaCapela.DecanatoSetor)
+            .FirstOrDefaultAsync(x => x.Cpf.Contains(cpf) && x.Active);
+    }
+
+    public new async Task<Servo> GetById(Guid id)
+    {
+        return await dbSet.FirstOrDefaultAsync(x => x.Id.Equals(id));
+    }
+
+    
 }
 

@@ -1,9 +1,11 @@
 ﻿using System;
 using AutoMapper;
 using RccManager.Domain.Dtos.DecanatoSetor;
+using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Dtos.Formacao;
 using RccManager.Domain.Dtos.FormacoesServo;
 using RccManager.Domain.Dtos.GrupoOracao;
+using RccManager.Domain.Dtos.InscricoesEvento;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
 using RccManager.Domain.Dtos.ServoTemp;
@@ -60,6 +62,18 @@ public class DtoToEntityProfile : Profile
         CreateMap<FormacoesServo, FormacoesServoDtoResult>()
             .ReverseMap();
 
+        //CreateMap<Evento, EventoDto>()
+        //    .ReverseMap();
+
+        //CreateMap<Evento, EventoDtoResult>()
+        //    .ReverseMap();
+
+        //CreateMap<InscricoesEvento, InscricoesEventoDto>()
+        //    .ReverseMap();
+
+        //CreateMap<InscricoesEvento, InscricoesEventoDtoResult>()
+        //    .ReverseMap();
+
         CreateMap<User, UserDto>()
             .ReverseMap();
 
@@ -68,6 +82,78 @@ public class DtoToEntityProfile : Profile
 
         CreateMap<User, UserDtoResult>()
             .ReverseMap();
+
+        // ======================================================
+        // EVENTO
+        // ======================================================
+
+        CreateMap<Evento, EventoDtoResult>()
+            .ForMember(dest => dest.Sobre, opt => opt.MapFrom(src => src.Sobre))
+            .ForMember(dest => dest.LotesInscricoes, opt => opt.MapFrom(src => src.LotesInscricoes))
+            .ForMember(dest => dest.Programacao, opt => opt.MapFrom(src => src.Programacao))
+            .ForMember(dest => dest.Participacoes, opt => opt.MapFrom(src => src.Participacoes))
+            .ForMember(dest => dest.InformacoesAdicionais, opt => opt.MapFrom(src => src.InformacoesAdicionais))
+            .ReverseMap();
+
+        CreateMap<Evento, EventoDto>()
+            .ForMember(dest => dest.Sobre, opt => opt.MapFrom(src => src.Sobre))
+            .ForMember(dest => dest.LotesInscricoes, opt => opt.Ignore())
+            .ForMember(dest => dest.Programacao, opt => opt.Ignore())
+            .ForMember(dest => dest.Participacoes, opt => opt.Ignore())
+            .ForMember(dest => dest.InformacoesAdicionais, opt => opt.MapFrom(src => src.InformacoesAdicionais))
+            .ReverseMap()
+            .ForMember(dest => dest.LotesInscricoes, opt => opt.Ignore())
+            .ForMember(dest => dest.Programacao, opt => opt.Ignore())
+            .ForMember(dest => dest.Participacoes, opt => opt.Ignore());
+
+
+        // ======================================================
+        // LOCAL
+        // ======================================================
+        CreateMap<Local, LocalDto>().ReverseMap();
+
+        // ======================================================
+        // SOBRE
+        // ======================================================
+        CreateMap<Sobre, SobreDto>()
+            .ForMember(dest => dest.Conteudo, opt => opt.MapFrom(src => src.Conteudo))
+            .ReverseMap();
+
+        // ======================================================
+        // LOTE DE INSCRIÇÃO
+        // ======================================================
+        CreateMap<LoteInscricao, LoteDto>()
+            .ForMember(dest => dest.Nome, opt => opt.MapFrom(src => src.Nome))
+            .ForMember(dest => dest.Valor, opt => opt.MapFrom(src => src.Valor))
+            .ForMember(dest => dest.DataInicio, opt => opt.MapFrom(src => src.DataInicio))
+            .ForMember(dest => dest.DataFim, opt => opt.MapFrom(src => src.DataFim))
+            .ForMember(dest => dest.Quantidade, opt => opt.Ignore()) // campo não existe na entidade, mas mantido no DTO
+            .ReverseMap();
+
+        // ======================================================
+        // PROGRAMAÇÃO
+        // ======================================================
+        CreateMap<Programacao, ProgramacaoDto>()
+            .ReverseMap();
+
+        // ======================================================
+        // INFORMAÇÕES ADICIONAIS
+        // ======================================================
+        CreateMap<InformacoesAdicionais, InformacaoAdicionalDto>()
+            .ReverseMap();
+
+        // ======================================================
+        // PARTICIPACOES
+        // ======================================================
+        CreateMap<Participacao, ParticipacaoDto>()
+            .ReverseMap();
+
+        // ======================================================
+        // INSCRICOES
+        // ======================================================
+        CreateMap<Inscricao, InscricaoDto>()
+            .ReverseMap();
+
     }
 
     public class TextDecrypter : IValueConverter<string, string>

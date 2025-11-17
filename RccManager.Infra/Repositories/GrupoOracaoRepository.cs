@@ -82,6 +82,13 @@ namespace RccManager.Infra.Repositories
         {
             return dbSet.FirstOrDefault(x => x.Name == name && x.ParoquiaCapela.Name == paroquiaCapelaName);
         }
+
+        public async Task<IEnumerable<GrupoOracao>> GetAll()
+        {
+            return await dbSet
+                .Include(x => x.ParoquiaCapela)
+                .Include(x => x.ParoquiaCapela.DecanatoSetor).ToListAsync();
+        }
     }
 }
 

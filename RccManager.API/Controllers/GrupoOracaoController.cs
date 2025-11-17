@@ -26,6 +26,14 @@ public class GrupoOracaoController : ControllerBase
 
     }
 
+    [HttpGet("get-all")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAll()
+    {
+        var grupoOracoes = await _grupoOracaoService.GetAll();
+        return Ok(grupoOracoes);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string search)
     {

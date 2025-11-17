@@ -31,6 +31,19 @@ namespace RccManager.API.Controllers
             return Ok(servos);
         }
 
+        [HttpGet("by-cpf")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByCPF([FromQuery] string cpf)
+        {
+            var servo = await _servoService.GetByCPF(cpf);
+
+            if (servo != null)
+                return Ok(servo);
+
+            return NotFound("Servo não encontrado");
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ServoDto servoViewModel)
         {

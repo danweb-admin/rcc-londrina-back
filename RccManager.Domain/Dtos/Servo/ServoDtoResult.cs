@@ -1,4 +1,6 @@
 ﻿using System;
+using RccManager.Domain.Dtos.GrupoOracao;
+
 namespace RccManager.Domain.Dtos.Servo
 {
 	public class ServoDtoResult
@@ -15,6 +17,7 @@ namespace RccManager.Domain.Dtos.Servo
         public string MainMinistry { get; set; }
         public string SecondaryMinistry { get; set; }
         public Guid GrupoOracaoId { get; set; }
+        public GrupoOracaoDtoResult GrupoOracao { get; set; }
     }
 }
 

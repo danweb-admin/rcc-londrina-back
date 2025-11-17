@@ -15,6 +15,14 @@ public class AppDbContext : DbContext
     public DbSet<Formacao> Formacoes { get; set; }
     public DbSet<FormacoesServo> FormacoesServos { get; set; }
     public DbSet<History> Histories { get; set; }
+    public DbSet<Evento> Eventos { get; set; }
+    public DbSet<Sobre> Sobre { get; set; }
+    public DbSet<Local> Locais { get; set; }
+    public DbSet<InformacoesAdicionais> InformacoesAdicionais { get; set; }
+    public DbSet<Participacao> Participacoes { get; set; }
+    public DbSet<Programacao> Programacoes { get; set; }
+    public DbSet<Inscricao> Inscricoes { get; set; }
+    public DbSet<LoteInscricao> LotesInscricao { get; set; }
 
 
     public DbSet<User> Users { get; set; }
@@ -47,5 +55,9 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new FormacoesServoMap());
         modelBuilder.ApplyConfiguration(new UserMap());
         modelBuilder.ApplyConfiguration(new HistoryMap());
+        modelBuilder.ApplyConfiguration(new EventoMap());
+        modelBuilder.ApplyConfiguration(new InscricoesEventoMap());
+        modelBuilder.ApplyConfiguration(new InscricaoMap());
+
     }
 }

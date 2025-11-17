@@ -23,6 +23,7 @@ public class DecanatoSetorController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Get()
     {
         var decanatoSetores = await _decanatoSetorService.GetAll();

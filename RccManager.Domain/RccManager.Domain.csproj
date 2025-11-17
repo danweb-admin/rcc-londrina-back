@@ -31,6 +31,8 @@
     <None Remove="Dtos\FormacoesServo\" />
     <None Remove="Dtos\ServoTemp\" />
     <None Remove="Helpers\" />
+    <None Remove="Dtos\Evento\" />
+    <None Remove="Dtos\InscricoesEvento\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -51,5 +53,7 @@
     <Folder Include="Dtos\FormacoesServo\" />
     <Folder Include="Dtos\ServoTemp\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Dtos\Evento\" />
+    <Folder Include="Dtos\InscricoesEvento\" />
   </ItemGroup>
 </Project>

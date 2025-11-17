@@ -4,7 +4,7 @@ metadata:
   name: configuration
   namespace: rcc-manager
 data:
-  db_user: "SA"
+  db_user: "app_user"
   database: "RccManager"
   db_port: "1433"
   db_server: "mysql-service.default.svc.cluster.local"
