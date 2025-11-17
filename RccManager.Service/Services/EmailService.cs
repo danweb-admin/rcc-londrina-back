@@ -20,53 +20,52 @@ namespace RccManager.Service.Services
 
         public async Task EnviarEmailPagamentoConfirmado(Inscricao inscricao)
         {
-            var smtpServer = Environment.GetEnvironmentVariable("SmtpServer");
-            var porta = Environment.GetEnvironmentVariable("Port");
-            var senderEmail = Environment.GetEnvironmentVariable("SenderEmail");
-            var senderPassword = Environment.GetEnvironmentVariable("SenderPassword");
-
-            var nomeOrganizacao = "Renovação Carismática Católica Arquidiocese de Londrina";
-            var logoUrl = "https://res.cloudinary.com/dgcpvxvcj/image/upload/v1763292856/Fotos%20Eventos/Rcc.jpg";
-
-            string html = File.ReadAllText("Templates/email-confirmacao.html");
-
-            html = html
-                .Replace("{{NOME}}", inscricao.Nome)
-                .Replace("{{EMAIL}}", inscricao.Email)
-                .Replace("{{CPF}}", inscricao.Cpf)
-                .Replace("{{CODIGO_INSCRICAO}}", inscricao.CodigoInscricao)
-                .Replace("{{VALOR}}",$"R$ {inscricao.ValorInscricao.ToString().Replace(".",",")}")
-                .Replace("{{NOME_EVENTO}}", inscricao.Evento.Nome)
-                .Replace("{{DATA_INICIAL}}", inscricao.Evento.DataInicio.ToString("dd/MM/yyyy"))
-                .Replace("{{DATA_FINAL}}", inscricao.Evento.DataFim.ToString("dd/MM/yyyy"))
-                .Replace("{{LOCAL_EVENTO}}", formatarLocal(inscricao.Evento.Local))
-                .Replace("{{ORGANIZADOR}}", inscricao.Evento.OrganizadorNome)
-                .Replace("{{LOGO_URL}}", logoUrl)
-                .Replace("{{NOME_ORGANIZACAO}}", nomeOrganizacao);
-
-            using var smtp = new SmtpClient(smtpServer, int.Parse(porta))
-            {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(
-                    senderEmail,
-                    senderPassword
-                )
-            };
-
-            var message = new MailMessage
-            {
-                From = new MailAddress(senderEmail),
-                Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.Evento.Nome}",
-                Body = html,
-                IsBodyHtml = true
-            };
-
-            message.To.Add("william.nascimento2010@gmail.com");
-
-
             try
             {
+                var smtpServer = Environment.GetEnvironmentVariable("SmtpServer");
+                var porta = Environment.GetEnvironmentVariable("Port");
+                var senderEmail = Environment.GetEnvironmentVariable("SenderEmail");
+                var senderPassword = Environment.GetEnvironmentVariable("SenderPassword");
+
+                var nomeOrganizacao = "Renovação Carismática Católica Arquidiocese de Londrina";
+                var logoUrl = "https://res.cloudinary.com/dgcpvxvcj/image/upload/v1763292856/Fotos%20Eventos/Rcc.jpg";
+
+                string html = File.ReadAllText("Templates/email-confirmacao.html");
+
+                html = html
+                    .Replace("{{NOME}}", inscricao.Nome)
+                    .Replace("{{EMAIL}}", inscricao.Email)
+                    .Replace("{{CPF}}", inscricao.Cpf)
+                    .Replace("{{CODIGO_INSCRICAO}}", inscricao.CodigoInscricao)
+                    .Replace("{{VALOR}}",$"R$ {inscricao.ValorInscricao.ToString().Replace(".",",")}")
+                    .Replace("{{NOME_EVENTO}}", inscricao.Evento.Nome)
+                    .Replace("{{DATA_INICIAL}}", inscricao.Evento.DataInicio.ToString("dd/MM/yyyy"))
+                    .Replace("{{DATA_FINAL}}", inscricao.Evento.DataFim.ToString("dd/MM/yyyy"))
+                    .Replace("{{LOCAL_EVENTO}}", formatarLocal(inscricao.Evento.Local))
+                    .Replace("{{ORGANIZADOR}}", inscricao.Evento.OrganizadorNome)
+                    .Replace("{{LOGO_URL}}", logoUrl)
+                    .Replace("{{NOME_ORGANIZACAO}}", nomeOrganizacao);
+
+                using var smtp = new SmtpClient(smtpServer, int.Parse(porta))
+                {
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(
+                        senderEmail,
+                        senderPassword
+                    )
+                };
+
+                var message = new MailMessage
+                {
+                    From = new MailAddress(senderEmail),
+                    Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.Evento.Nome}",
+                    Body = html,
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(inscricao.Email);
+            
                 await smtp.SendMailAsync(message);
             }
             catch (Exception ex)
