@@ -134,6 +134,17 @@ namespace RccManager.Domain.Services
             if (inscricao.TipoPagamento == "cartao")
             {
                 var qrCode = await _pagSeguroService.GerarPagamentoCartaoAsync(inscricao);
+
+                var charge = qrCode.Charges.FirstOrDefault();
+
+                if (charge != null)
+                {
+                    if (charge.Status == "DECLINED")
+                        throw new WebException("Transação do cartão foi negada, utilize outra forma!");
+
+                }
+
+
             }
             
             var result = await _inscricaoRepository.Insert(inscricao_);
