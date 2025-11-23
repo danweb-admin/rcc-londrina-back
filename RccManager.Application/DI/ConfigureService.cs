@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Services;
 using RccManager.Infra.Context;
+using RccManager.Service.MQ;
 using RccManager.Service.Services;
 
 namespace RccManager.Application.DI
@@ -27,6 +29,8 @@ namespace RccManager.Application.DI
             services.AddScoped<IPagSeguroService, PagSeguroService>();
 
             services.AddScoped<AppDbContext>();
+            services.AddSingleton<RabbitMQConnection>();
+
 
         }
     }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.Json.Serialization;
+
 namespace RccManager.Domain.Entities
 {
     public class Inscricao : BaseEntity
@@ -21,6 +23,7 @@ namespace RccManager.Domain.Entities
         public string LinkQrCodePNG { get; set; }
         public string LinkQrCodeBase64 { get; set; }
         public string QRCodeCopiaCola { get; set; }
+        [JsonIgnore]
         public virtual Evento Evento { get; set; }
     }
 }

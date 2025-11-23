@@ -8,7 +8,8 @@ namespace RccManager.Domain.Interfaces.Services
 {
 	public interface IEventoService
 	{
-        Task<IEnumerable<EventoDtoResult>> GetAll(bool? active);
+        Task<IEnumerable<EventoDtoResult>> GetAll();
+        Task<IEnumerable<EventoDtoResult>> GetAllHome();
         Task<EventoDto> GetById(Guid id);
         Task<HttpResponse> Create(EventoDto dto);
         Task<HttpResponse> Update(EventoDto dto, Guid id);

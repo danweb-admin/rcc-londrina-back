@@ -18,16 +18,10 @@ namespace RccManager.Infra.Repositories
             dbSet = context.Set<Evento>();
         }
 
-        public async Task<IEnumerable<Evento>> GetAll(bool active)
+        public async Task<IEnumerable<Evento>> GetAllHome()
         {
             return await dbSet
-                .Include(x => x.Local)
-                .Include(x => x.Sobre)
-                .Include(x => x.InformacoesAdicionais)
-                .Include(x => x.LotesInscricoes)
-                .Include(x => x.Programacao)
-                .Include(x => x.Participacoes)
-                .Include(x => x.Inscricoes)
+                .Where(x => x.Status == "Publicado")
                 .OrderBy(x => x.Nome)
                 .ToListAsync();
              
@@ -41,6 +35,7 @@ namespace RccManager.Infra.Repositories
                 .Include(x => x.InformacoesAdicionais)
                 .Include(x => x.LotesInscricoes)
                 .Include(x => x.Programacao)
+                .Include(x => x.Participacoes)
                 .Include(x => x.Participacoes)
                 .OrderBy(x => x.Nome)
                 .ToListAsync();

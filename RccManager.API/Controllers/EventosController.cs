@@ -21,10 +21,10 @@ namespace RccManager.API.Controllers
             _eventoService = eventoService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get(bool active)
+        [HttpGet("get-all-home")]
+        public async Task<IActionResult> GetAllHome()
         {
-            var eventos = await _eventoService.GetAll(active);
+            var eventos = await _eventoService.GetAllHome();
             return Ok(eventos);
         }
 
@@ -39,7 +39,7 @@ namespace RccManager.API.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> Get()
         {
-            var eventos = await _eventoService.GetAll(true);
+            var eventos = await _eventoService.GetAll();
             return Ok(eventos);
         }
 

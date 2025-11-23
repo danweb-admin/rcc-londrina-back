@@ -11,6 +11,7 @@ using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.MQ;
 
 namespace RccManager.Domain.Services
 {
@@ -21,21 +22,21 @@ namespace RccManager.Domain.Services
         private readonly IGrupoOracaoRepository _grupoOracaoRepository;
         private readonly IDecanatoSetorRepository _decanatoRepository;
         private readonly IPagSeguroService _pagSeguroService;
-        private readonly IEmailService _emailService;
+        private readonly EmailQueueProducer _producer;
 
 
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, IEmailService emailService, IMapper mapper)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
             _decanatoRepository = decanatoRepository;
             _grupoOracaoRepository = grupoOracaoRepository;
             _pagSeguroService = pagSeguroService;
-            _emailService = emailService;
             _mapper = mapper;
+            _producer = producer;
         }
 
         public async Task<HttpResponse> Create(EventoDto dto)
@@ -74,9 +75,14 @@ namespace RccManager.Domain.Services
 
         }
 
-        public async Task<IEnumerable<EventoDtoResult>> GetAll(bool? active)
+        public async Task<IEnumerable<EventoDtoResult>> GetAll()
         {
-            return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAll(active.Value));
+            return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAll());
+        }
+
+        public async Task<IEnumerable<EventoDtoResult>> GetAllHome()
+        {
+            return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAllHome());
         }
 
         public async Task<EventoDto> GetById(Guid id)
@@ -222,7 +228,9 @@ namespace RccManager.Domain.Services
 
             await _inscricaoRepository.Update(inscricao);
 
-            await _emailService.EnviarEmailPagamentoConfirmado(inscricao);
+            var inscricaoMQ = ConvertInscricaoMQ(inscricao);
+
+            await _producer.PublishEmail(inscricaoMQ);
 
             return ValidationResult.Success;
         }
@@ -358,6 +366,45 @@ namespace RccManager.Domain.Services
             return telefone;
         }
 
-        
+        private InscricaoMQResponse ConvertInscricaoMQ(Inscricao inscricao) 
+        {
+            var retorno = new InscricaoMQResponse
+            {
+                CodigoInscricao = inscricao.CodigoInscricao,
+                Cpf = inscricao.Cpf,
+                DataFim = inscricao.Evento.DataFim,
+                DataInicio = inscricao.Evento.DataInicio,
+                Email = inscricao.Email,
+                Nome = inscricao.Nome,
+                NomeEvento = inscricao.Evento.Nome,
+                ValorInscricao = inscricao.ValorInscricao,
+                OrganizadorNome = inscricao.Evento.OrganizadorNome,
+                Local = formatarLocal(inscricao.Evento.Local)
+            };
+
+            return retorno;
+        }
+
+        private string formatarLocal(Local local)
+        {
+            var partes = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(local.Endereco))
+                partes.Add(local.Endereco);
+
+            if (!string.IsNullOrWhiteSpace(local.Complemento))
+                partes.Add(local.Complemento);
+
+            if (!string.IsNullOrWhiteSpace(local.Bairro))
+                partes.Add(local.Bairro);
+
+            if (!string.IsNullOrWhiteSpace(local.Cidade))
+                partes.Add(local.Cidade);
+
+            if (!string.IsNullOrWhiteSpace(local.Estado))
+                partes.Add(local.Estado);
+
+            return string.Join(", ", partes);
+        }
     }
 }

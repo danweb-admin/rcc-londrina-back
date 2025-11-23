@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using RccManager.Service.MQ;
 
 var builder = WebApplication.CreateBuilder(args);
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
@@ -91,6 +92,11 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<EmailQueueProducer>();
+
+// Adiciona o background service que vai consumir os e-mails
+builder.Services.AddHostedService<RabbitMQEmailConsumer>();
 
 var app = builder.Build();
 
