@@ -42,18 +42,8 @@ namespace RccManager.Service.MQ
 
                     Console.WriteLine("📩 Enviar email: " + message.Email);
 
-                    try
-                    {
-                        await EnviarEmailPagamentoConfirmado(message);
-                        await channel.BasicAckAsync(ea.DeliveryTag, false);
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        // devolve pra fila
-                        await channel.BasicNackAsync(ea.DeliveryTag, false, true);
-                    }
-
+                    await EnviarEmailPagamentoConfirmado(message);
+                    await channel.BasicAckAsync(ea.DeliveryTag, false);
                     
                 };
 
@@ -61,6 +51,7 @@ namespace RccManager.Service.MQ
             }
             catch (Exception ex)
             {
+                Console.WriteLine("-*-*-*-ERRO CONSUMER-*-*-*-");
                 Console.WriteLine(ex.Message);
             }
 
