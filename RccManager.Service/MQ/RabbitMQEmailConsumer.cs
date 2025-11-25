@@ -24,14 +24,15 @@ namespace RccManager.Service.MQ
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var channel = await _rmq.CreateChannelAsync();
-
-            await channel.QueueDeclareAsync("email_queue", durable: true, exclusive: false, autoDelete: false);
-
-            var consumer = new AsyncEventingBasicConsumer(channel);
-
             try
             {
+                var channel = await _rmq.CreateChannelAsync();
+
+                await channel.QueueDeclareAsync("email_queue", durable: true, exclusive: false, autoDelete: false);
+
+                var consumer = new AsyncEventingBasicConsumer(channel);
+
+            
                 consumer.ReceivedAsync += async (model, ea) =>
                 {
 

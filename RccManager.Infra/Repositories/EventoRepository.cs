@@ -50,6 +50,7 @@ namespace RccManager.Infra.Repositories
                 .Include(x => x.LotesInscricoes)
                 .Include(x => x.Programacao)
                 .Include(x => x.Participacoes)
+                .Include(x => x.Inscricoes)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
     }

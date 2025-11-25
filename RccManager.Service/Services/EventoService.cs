@@ -87,6 +87,9 @@ namespace RccManager.Domain.Services
 
         public async Task<EventoDto> GetById(Guid id)
         {
+            var a = await _eventoRepository.GetById(id);
+            var b = _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
+
             return _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
         }
 
@@ -94,8 +97,8 @@ namespace RccManager.Domain.Services
         {
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
 
-            //if (verificaCPF)
-            //    throw new WebException("CPF já está cadastrado no Evento!");
+            if (verificaCPF != null && inscricao.Status == "pagamento_confirmado")
+                throw new WebException("CPF já está cadastrado no Evento!");
 
             if (inscricao.Status == null)
                 inscricao.Status = "pendente";

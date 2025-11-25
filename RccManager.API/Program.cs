@@ -145,5 +145,11 @@ void ConfigureAppDbContext(WebApplicationBuilder builder)
         connectionString = $"Server={server}, {port};Initial Catalog={database};User ID={user};Password={password}";
 
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(connectionString));
+    {
+        options.UseSqlServer(connectionString);
+
+        // 🔇 Desliga logs do EF Core completamente
+        options.EnableDetailedErrors(false);
+        options.EnableSensitiveDataLogging(false);
+    });
 }

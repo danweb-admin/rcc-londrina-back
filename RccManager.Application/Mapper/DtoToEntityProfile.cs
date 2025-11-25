@@ -97,14 +97,13 @@ public class DtoToEntityProfile : Profile
 
         CreateMap<Evento, EventoDto>()
             .ForMember(dest => dest.Sobre, opt => opt.MapFrom(src => src.Sobre))
-            .ForMember(dest => dest.LotesInscricoes, opt => opt.Ignore())
-            .ForMember(dest => dest.Programacao, opt => opt.Ignore())
-            .ForMember(dest => dest.Participacoes, opt => opt.Ignore())
+            .ForMember(dest => dest.LotesInscricoes, opt => opt.MapFrom(src => src.LotesInscricoes))
+            .ForMember(dest => dest.Programacao, opt => opt.MapFrom(src => src.Programacao))
+            .ForMember(dest => dest.Participacoes, opt => opt.MapFrom(src => src.Participacoes))
             .ForMember(dest => dest.InformacoesAdicionais, opt => opt.MapFrom(src => src.InformacoesAdicionais))
-            .ReverseMap()
-            .ForMember(dest => dest.LotesInscricoes, opt => opt.Ignore())
-            .ForMember(dest => dest.Programacao, opt => opt.Ignore())
-            .ForMember(dest => dest.Participacoes, opt => opt.Ignore());
+            .ForMember(dest => dest.Inscricoes, opt => opt.MapFrom(src => src.Inscricoes))
+
+             .ReverseMap();
 
 
         // ======================================================
