@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Infra.Context;
@@ -15,6 +16,11 @@ namespace RccManager.Infra.Repositories
         public InscricaoRepository(AppDbContext _context) : base(_context)
         {
             dbSet = _context.Set<Inscricao>();
+        }
+
+        public async Task<bool> AnyInscricao(string codigoInscricao)
+        {
+            return await dbSet.AnyAsync(x => x.CodigoInscricao == codigoInscricao);
         }
 
         public async Task<Inscricao> CheckByCpf(Guid eventId, string cpf)

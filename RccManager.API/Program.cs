@@ -151,5 +151,6 @@ void ConfigureAppDbContext(WebApplicationBuilder builder)
         // 🔇 Desliga logs do EF Core completamente
         options.EnableDetailedErrors(false);
         options.EnableSensitiveDataLogging(false);
+        options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
     });
 }

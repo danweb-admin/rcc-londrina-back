@@ -181,7 +181,7 @@ namespace RccManager.Service.MQ
 
                 var message = new MailMessage
                 {
-                    From = new MailAddress(senderEmail),
+                    From = new MailAddress(senderEmail,"RCC Londrina - Cadastramento"),
                     Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.NomeEvento}",
                     Body = html,
                     IsBodyHtml = true

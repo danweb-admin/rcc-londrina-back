@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Newtonsoft.Json;
@@ -104,7 +106,10 @@ namespace RccManager.Domain.Services
                 inscricao.Status = "pendente";
 
             if (string.IsNullOrEmpty(inscricao.CodigoInscricao))
+            {
                 inscricao.CodigoInscricao = GerarCodigoInscricao();
+            }
+                
 
             if (inscricao.Cpf.Length == 11)
                 inscricao.Cpf = FormatarCpf(inscricao.Cpf);
@@ -318,16 +323,42 @@ namespace RccManager.Domain.Services
                 entidades.Remove(item);
         }
 
+        public static string GerarToken6()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var bytes = new byte[6];
+            var token = new StringBuilder(6);
+
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(bytes);
+            }
+
+            foreach (var b in bytes)
+            {
+                token.Append(chars[b % chars.Length]);
+            }
+
+            return token.ToString();
+        }
+
         private string GerarCodigoInscricao()
         {
-            var random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            string parteAleatoria = new string(Enumerable.Repeat(chars, 6)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
+            var bytes = new byte[6];
+            var token = new StringBuilder(6);
 
-            // Exemplo: INS-20251109-AB12CD
-            string codigo = $"INS-{DateTime.Now:ddMMyyHHMMss}-{parteAleatoria}";
-            return codigo;
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(bytes);
+            }
+
+            foreach (var b in bytes)
+            {
+                token.Append(chars[b % chars.Length]);
+            }
+
+            return $"INS-{token}";
         }
 
         private  string FormatarCpf(string cpf)
