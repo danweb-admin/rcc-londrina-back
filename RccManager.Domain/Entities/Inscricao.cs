@@ -23,7 +23,8 @@ namespace RccManager.Domain.Entities
         public string LinkQrCodePNG { get; set; }
         public string LinkQrCodeBase64 { get; set; }
         public string QRCodeCopiaCola { get; set; }
-        [JsonIgnore]
+        public bool? CheckIn { get; set; }
+        public DateTime? DataCheckIn { get; set; }
         public virtual Evento Evento { get; set; }
     }
 }

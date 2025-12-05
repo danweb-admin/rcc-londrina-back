@@ -80,6 +80,12 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(l => l.QRCodeCopiaCola)
                 .HasColumnType("varchar(200)");
+
+            builder.Property(l => l.CheckIn)
+                .HasColumnType("bit");
+
+            builder.Property(l => l.DataCheckIn)
+                .HasColumnType("datetime");
         }
     }
 }

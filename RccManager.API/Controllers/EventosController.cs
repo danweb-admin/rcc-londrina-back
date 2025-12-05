@@ -91,6 +91,27 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpGet("reenvio-comprovante")]
+        public async Task<IActionResult> InscricaoReenvioComprovante([FromQuery] string codigoInscricao, string email)
+        {
+            try
+            {
+                var inscricao_ = await _eventoService.ReenvioComprovante(codigoInscricao,email);
+
+                return Ok(inscricao_);
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] EventoDto eventoViewModel)
         {

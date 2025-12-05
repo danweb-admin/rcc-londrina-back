@@ -89,8 +89,6 @@ namespace RccManager.Domain.Services
 
         public async Task<EventoDto> GetById(Guid id)
         {
-            var a = await _eventoRepository.GetById(id);
-            var b = _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
 
             return _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
         }
@@ -210,6 +208,22 @@ namespace RccManager.Domain.Services
 
             return new HttpResponse { Message = "Evento atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 
+        }
+
+        public async Task<ValidationResult> ReenvioComprovante(string codigoInscricao, string email)
+        {
+            var inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
+
+            if (inscricao == null)
+                throw new WebException("Inscrição não encontrado!");
+
+            var inscricaoMQ = ConvertInscricaoMQ(inscricao);
+
+            inscricaoMQ.Email = email;
+
+            await _producer.PublishEmail(inscricaoMQ);
+
+            return ValidationResult.Success;
         }
 
         //  WEBHOOK
@@ -440,5 +454,7 @@ namespace RccManager.Domain.Services
 
             return string.Join(", ", partes);
         }
+
+        
     }
 }

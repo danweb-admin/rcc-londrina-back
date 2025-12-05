@@ -43,15 +43,20 @@ namespace RccManager.Infra.Repositories
 
         public async Task<Evento> GetById(Guid id)
         {
-            return await dbSet
+            var evento = await dbSet
                 .Include(x => x.Local)
                 .Include(x => x.Sobre)
                 .Include(x => x.InformacoesAdicionais)
-                .Include(x => x.LotesInscricoes)
-                .Include(x => x.Programacao)
-                .Include(x => x.Participacoes)
-                .Include(x => x.Inscricoes)
                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (evento == null) return null;
+
+            await context.Entry(evento).Collection(x => x.LotesInscricoes).LoadAsync();
+            await context.Entry(evento).Collection(x => x.Programacao).LoadAsync();
+            await context.Entry(evento).Collection(x => x.Participacoes).LoadAsync();
+            await context.Entry(evento).Collection(x => x.Inscricoes).LoadAsync();
+
+            return evento;
         }
     }
 }

@@ -109,7 +109,7 @@ namespace RccManager.Service.Services
                 return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
 
             // adiciona a tabela de histórico de alteracao
-            _history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Criacao.ToString());
+            //_history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Criacao.ToString());
 
             return new HttpResponse { Message = "Servo(a) criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
