@@ -74,7 +74,7 @@ namespace RccManager.Service.Services
                 }
             };
 
-            Console.WriteLine("request: " + body);
+            Console.WriteLine("request: " + body.ToString());
 
             var response = await http.PostAsJsonAsync($"{url}/orders", body);
 
@@ -179,7 +179,7 @@ namespace RccManager.Service.Services
                 }
             };
 
-            Console.WriteLine("request: " + body);
+            Console.WriteLine("request: " + body.ToString());
 
 
             var response = await http.PostAsJsonAsync($"{url}/orders", body);
