@@ -74,10 +74,14 @@ namespace RccManager.Service.Services
                 }
             };
 
+            Console.WriteLine("request: " + body);
+
             var response = await http.PostAsJsonAsync($"{url}/orders", body);
 
             if (!response.IsSuccessStatusCode)
                 Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
+
+            Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
 
             var result = await response.Content.ReadFromJsonAsync<PagSeguroResponse>();
 
@@ -175,6 +179,9 @@ namespace RccManager.Service.Services
                 }
             };
 
+            Console.WriteLine("request: " + body);
+
+
             var response = await http.PostAsJsonAsync($"{url}/orders", body);
 
             if (!response.IsSuccessStatusCode)
@@ -183,6 +190,8 @@ namespace RccManager.Service.Services
                 var error = await response.Content.ReadFromJsonAsync<PagSeguroErrorResponse>();
                 throw new WebException("Houve um problema para efetuar a transação, verifique os dados do cartão.");
             }
+
+            Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
 
             var result = await response.Content.ReadFromJsonAsync<PagSeguroResponse>();
 
