@@ -45,7 +45,7 @@ namespace RccManager.Service.Services
 
             if (exists)
             {
-                await _repository.Delete(id);
+                await _repository.Disable(id);
                 throw new ValidateByCpfOrEmailException("Este CPF já está sendo utilizado.");
             }
                 
@@ -112,6 +112,16 @@ namespace RccManager.Service.Services
             //_history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Criacao.ToString());
 
             return new HttpResponse { Message = "Servo(a) criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public async Task<HttpResponse> Delete(Guid id)
+        {
+            var result = await _repository.Disable(id);
+
+            if (result)
+              return new HttpResponse { Message = "Cadastro removido com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+            return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
+
         }
 
         public async Task<IEnumerable<ServoTempDtoResult>> GetAll(Guid grupoOracaoId)

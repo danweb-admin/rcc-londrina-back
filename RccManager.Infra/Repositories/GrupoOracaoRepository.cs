@@ -39,44 +39,41 @@ namespace RccManager.Infra.Repositories
         {
             search = search.ToUpper();
 
-            var sql = await dbSet
-                .Include("ParoquiaCapela")
-                .Include("Servos")
-                .Include("ServosTemp")
-                .Include(x => x.ParoquiaCapela.DecanatoSetor).ToListAsync();
+            IQueryable<GrupoOracao> query = dbSet
+              .Include(x => x.ParoquiaCapela)
+              .ThenInclude(x => x.DecanatoSetor)
+              .Include(x => x.Servos)
+              .Include(x => x.ServosTemp);
 
-            if (!user.DecanatoSetorId.HasValue && !user.GrupoOracaoId.HasValue)
-            {
-                return sql.Where(
-                    x => x.Name.Contains(search) ||
-                    x.Address.Contains(search) ||
-                    x.Neighborhood.Contains(search) ||
-                    x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
-                    .OrderBy(x => x.Name).ToList();
-            }
-
+            // 🔥 Filtro por Decanato (se existir)
             if (user.DecanatoSetorId.HasValue)
             {
-                sql = sql.Where(x => 
-                            x.ParoquiaCapela.DecanatoId == user.DecanatoSetorId)
-                         .Where(
-                            x => x.Name.Contains(search) ||
-                            x.Address.Contains(search) ||
-                            x.Neighborhood.Contains(search) ||
-                            x.ParoquiaCapela.DecanatoSetor.Name.Contains(search))
-                         .ToList();
+              query = query.Where(x =>
+                  x.ParoquiaCapela.DecanatoId == user.DecanatoSetorId);
             }
 
-
+            // 🔥 Filtro por Grupo de Oração (se existir)
             if (user.GrupoOracaoId.HasValue)
             {
-                sql = sql.Where(x =>
-                        x.Id == user.GrupoOracaoId).ToList();
+              query = query.Where(x => x.Id == user.GrupoOracaoId);
             }
 
-            return sql.OrderBy(x => x.Name);
+            // 🔥 Filtro de busca
+            if (!string.IsNullOrEmpty(search))
+            {
+              query = query.Where(x =>
+                  x.Name.ToUpper().Contains(search) ||
+                  x.Address.ToUpper().Contains(search) ||
+                  x.Neighborhood.ToUpper().Contains(search) ||
+                  x.ParoquiaCapela.DecanatoSetor.Name.ToUpper().Contains(search));
+            }
 
+            // 🔥 Ordenação e execução final
+            return await query
+                .OrderBy(x => x.Name)
+                .ToListAsync();
         }
+
 
         public GrupoOracao GetByName(string name, string paroquiaCapelaName)
         {

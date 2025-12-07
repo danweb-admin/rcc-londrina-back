@@ -76,6 +76,28 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+              var updatedServo = await _servoService.Delete(id);
+
+              if (updatedServo == null)
+                return NotFound();
+
+              return Ok(HttpStatusCode.NoContent);
+            }
+            catch (ValidateByCpfOrEmailException ex)
+            {
+              return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (Exception e)
+            {
+              return BadRequest(e);
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] ServoTempDto servoViewModel)
         {

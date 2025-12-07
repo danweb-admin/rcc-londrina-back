@@ -7,6 +7,7 @@ namespace RccManager.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<ServoTemp>> GetAll(Guid grupoOracaoId);
         Task<IEnumerable<ServoTemp>> GetAll();
+        Task<bool> Disable(Guid id);
 
         bool ValidateServoTemp(string name, string birthday, string cpf, string email, string cellPhone);
         Task<ServoTemp> GetById(Guid id);

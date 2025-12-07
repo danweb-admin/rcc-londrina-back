@@ -50,21 +50,34 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Grupo de Oração criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
+    public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
+    {
+      var userEntity = mapper.Map<User>(user);
+      var entities = await repository.GetAll(search, userEntity);
+
+      var result = mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
+
+      if (user.Name != "administrador")
+      {
+        foreach (var item in result)
+          item.CsvUrl = string.Empty;
+      }
+
+      foreach (var grupo in result)
+      {
+        if (grupo.ServosTemp != null)
         {
-            var user_ = mapper.Map<User>(user);
-            var entities = await repository.GetAll(search, user_);
-
-            if (user.Name != "administrador")
-            {
-                foreach (var item in entities)
-                    item.CsvUrl = string.Empty;
-                
-            }
-            return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
+          grupo.ServosTemp = grupo.ServosTemp
+              .Where(s => s.Active == true)
+              .ToList();
         }
+      }
 
-        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll()
+      return result;
+    }
+
+
+    public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll()
         {
             var entities = await repository.GetAll();
 

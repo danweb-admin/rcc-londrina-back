@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Helpers;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Infra.Context;
 
@@ -15,6 +16,20 @@ namespace RccManager.Infra.Repositories
         public ServoTempRepository(AppDbContext _context) : base(_context)
         {
             dbSet = _context.Set<ServoTemp>();
+        }
+
+        public async Task<bool> Disable(Guid id)
+        {
+            var result = await dbSet.SingleOrDefaultAsync(x => x.Id.Equals(id));
+
+            result.CreatedAt = result.CreatedAt;
+            result.UpdatedAt = Helpers.DateTimeNow();
+            result.Active = !result.Active;
+
+            dbSet.Update(result);
+            await context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<IEnumerable<ServoTemp>> GetAll(Guid grupoOracaoId)
