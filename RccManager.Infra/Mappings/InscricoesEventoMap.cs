@@ -5,10 +5,10 @@ using RccManager.Domain.Entities;
 
 namespace RccManager.Infra.Mappings
 {
-	public class InscricoesEventoMap : IEntityTypeConfiguration<InscricoesEvento>
+	public class InscricoesEventoMap : IEntityTypeConfiguration<PagamentoAsaas>
     {
 
-        public void Configure(EntityTypeBuilder<InscricoesEvento> builder)
+        public void Configure(EntityTypeBuilder<PagamentoAsaas> builder)
         {
             builder.ToTable("InscricoesEvento");
             builder.HasKey(x => x.Id);

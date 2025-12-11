@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using Newtonsoft.Json;
 using RccManager.Domain.Dtos.Evento;
@@ -17,20 +13,21 @@ using RccManager.Service.MQ;
 
 namespace RccManager.Domain.Services
 {
-    public class EventoService : IEventoService
+  public class EventoService : IEventoService
     {
         private readonly IEventoRepository _eventoRepository;
         private readonly IInscricaoRepository _inscricaoRepository;
         private readonly IGrupoOracaoRepository _grupoOracaoRepository;
         private readonly IDecanatoSetorRepository _decanatoRepository;
         private readonly IPagSeguroService _pagSeguroService;
+        private readonly IPagamentoAsaasService _pagamentoAsaasService;
         private readonly EmailQueueProducer _producer;
 
 
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
@@ -39,6 +36,7 @@ namespace RccManager.Domain.Services
             _pagSeguroService = pagSeguroService;
             _mapper = mapper;
             _producer = producer;
+            _pagamentoAsaasService = pagamentoAsaasService;
         }
 
         public async Task<HttpResponse> Create(EventoDto dto)
@@ -127,38 +125,34 @@ namespace RccManager.Domain.Services
                 inscricao.GrupoOracao = grupoOracao.Name;
             }
 
+            var slug = await _eventoRepository.GetSlug(inscricao.EventoId);
+
             var inscricao_ = _mapper.Map<Inscricao>(inscricao);
 
             inscricao_.CreatedAt = DateTime.Now;
 
+            // ✅ PIX ASAAS
             if (inscricao.TipoPagamento == "pix")
             {
-                var qrCode = await _pagSeguroService.GerarLinkPagamentoAsync(inscricao);
+                var cobranca = await _pagamentoAsaasService.CreatePixAsync(inscricao_,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
 
-                if (qrCode == null)
-                    throw new WebException("Houve um problema para gerar QRCode do pagamento da inscrição!");
+                if (cobranca == null)
+                    throw new WebException("Erro ao gerar cobrança PIX no Asaas!");
 
-                inscricao_.QRCodeCopiaCola = qrCode.Qr_Codes?.FirstOrDefault()?.Text;
-                inscricao_.LinkQrCodePNG = qrCode.Qr_Codes?.FirstOrDefault()?.Links?.FirstOrDefault(l => l.Rel == "QRCODE.PNG")?.Href;
-                inscricao_.LinkQrCodeBase64 = qrCode.Qr_Codes?.FirstOrDefault()?.Links?.FirstOrDefault(l => l.Rel == "QRCODE.BASE64")?.Href;
+                inscricao_.QRCodeCopiaCola = cobranca.PixPayload;
+                inscricao_.LinkQrCodePNG = cobranca.BillingType;
+                inscricao_.LinkQrCodeBase64 = cobranca.PixQrBase64;
+                inscricao_.Status = "pendente";
             }
 
             if (inscricao.TipoPagamento == "cartao")
             {
-                var qrCode = await _pagSeguroService.GerarPagamentoCartaoAsync(inscricao);
+                var cobranca = await _pagamentoAsaasService.CreateCartaoCreditoAsync(inscricao,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
 
-                var charge = qrCode.Charges.FirstOrDefault();
-
-                if (charge != null)
-                {
-                    if (charge.Status == "DECLINED")
-                        throw new WebException("Transação do cartão foi negada, utilize outra forma!");
-
-                }
-
-
+                if (cobranca.Status == "DECLINED" )
+                  throw new WebException("Transação do cartão foi negada, utilize outra forma!");
             }
-            
+
             var result = await _inscricaoRepository.Insert(inscricao_);
 
             if (result == null)
@@ -229,24 +223,27 @@ namespace RccManager.Domain.Services
         //  WEBHOOK
         public async Task<ValidationResult> EventosWebhook(string response)
         {
-            var webhookResponse = JsonConvert.DeserializeObject<PagSeguroWebhook>(response);
+            var webhookResponse = JsonConvert.DeserializeObject<AsaasWebhookPayload>(response);
 
-            string codigoInscricao = webhookResponse.Reference_Id;
+            var split = webhookResponse.payment.description.Split("|");
+
+            var codigoInscricao = split[0].Trim();
 
             var inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
 
             if (inscricao == null)
-                return ValidationResult.Success;
+                return new ValidationResult("❌ Erro no processamento do webhook.");
+
+            if (webhookResponse.@event != "PAYMENT_RECEIVED")
+                return new ValidationResult("❌ Erro no processamento do pagamento.");
 
             // Se já estava paga, ignore
             //if (inscricao.Status == "pagamento_confirmado")
             //    return ValidationResult.Success;
 
-            var charge = webhookResponse.Charges.First();
-
             // Atualizar status para pago
             inscricao.Status = "pagamento_confirmado";
-            inscricao.DataPagamento = charge.Paid_At ?? DateTime.Now;
+            inscricao.DataPagamento = webhookResponse.dateCreated ?? DateTime.Now;
 
             await _inscricaoRepository.Update(inscricao);
 
@@ -335,25 +332,6 @@ namespace RccManager.Domain.Services
 
             foreach (var item in remover)
                 entidades.Remove(item);
-        }
-
-        public static string GerarToken6()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var bytes = new byte[6];
-            var token = new StringBuilder(6);
-
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(bytes);
-            }
-
-            foreach (var b in bytes)
-            {
-                token.Append(chars[b % chars.Length]);
-            }
-
-            return token.ToString();
         }
 
         private string GerarCodigoInscricao()

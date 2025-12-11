@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<Programacao> Programacoes { get; set; }
     public DbSet<Inscricao> Inscricoes { get; set; }
     public DbSet<LoteInscricao> LotesInscricao { get; set; }
+    public DbSet<PagamentosAsaas> PagamentosAsaas { get; set; }
 
 
     public DbSet<User> Users { get; set; }

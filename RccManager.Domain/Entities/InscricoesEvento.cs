@@ -1,7 +1,7 @@
 ﻿using System;
 namespace RccManager.Domain.Entities
 {
-	public class InscricoesEvento : BaseEntity
+	public class PagamentoAsaas : BaseEntity
 	{
         public string Name { get; set; }
         public DateTime Birthday { get; set; }

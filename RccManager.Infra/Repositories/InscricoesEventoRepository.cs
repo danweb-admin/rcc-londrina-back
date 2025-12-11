@@ -6,13 +6,13 @@ using RccManager.Infra.Context;
 
 namespace RccManager.Infra.Repositories
 {
-	public class InscricoesEventoRepository : BaseRepository<InscricoesEvento>, IInscricoesEventoRepository
+	public class InscricoesEventoRepository : BaseRepository<PagamentoAsaas>, IInscricoesEventoRepository
     {
-        private readonly DbSet<InscricoesEvento> dbSet;
+        private readonly DbSet<PagamentoAsaas> dbSet;
 
         public InscricoesEventoRepository(AppDbContext _context) : base(_context)
         {
-            dbSet = _context.Set<InscricoesEvento>();
+            dbSet = _context.Set<PagamentoAsaas>();
         }
 
         public async Task<bool> CheckByCpf(Guid eventId, string cpf)

@@ -62,7 +62,7 @@ public class EntityToDtoProfile : Profile
         CreateMap<EventoDtoResult, Evento>()
             .ReverseMap();
 
-        CreateMap<InscricoesEventoDtoResult, InscricoesEvento>()
+        CreateMap<InscricoesEventoDtoResult, PagamentoAsaas>()
             .ReverseMap();
 
         CreateMap<FormacoesServoDtoResult, FormacoesServo>()

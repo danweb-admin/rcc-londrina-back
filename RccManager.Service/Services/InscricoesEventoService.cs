@@ -30,7 +30,7 @@ namespace RccManager.Service.Services
         public async Task<HttpResponse> Create(InscricoesEventoDto inscricao)
         {
             inscricao.Birthday = Utils.formatDate2(inscricao.Birthday1);
-            var inscricao_ = _mapper.Map<InscricoesEvento>(inscricao);
+            var inscricao_ = _mapper.Map<PagamentoAsaas>(inscricao);
 
             var result = await _repository.Insert(inscricao_);
 

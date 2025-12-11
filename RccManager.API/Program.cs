@@ -11,6 +11,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RccManager.Service.MQ;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using RccManager.Domain.Interfaces.Services;
+using RccManager.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
@@ -95,8 +99,24 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<EmailQueueProducer>();
 
+var UrlAsaas = Environment.GetEnvironmentVariable("UrlAsaas");
+var AccessToken = Environment.GetEnvironmentVariable("AccessToken");
+
+builder.Services.AddHttpClient("asaas", (sp, client) =>
+{
+    
+    client.BaseAddress = new Uri(UrlAsaas);
+    client.DefaultRequestHeaders.Add("access_token", AccessToken);
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+});
+
 // Adiciona o background service que vai consumir os e-mails
 builder.Services.AddHostedService<RabbitMQEmailConsumer>();
+
+
+// Seus serviços
+builder.Services.AddScoped<IAsaasClient, AsaasClient>();
+builder.Services.AddScoped<IPagamentoAsaasService, PagamentoAsaasService>();
 
 var app = builder.Build();
 
@@ -127,6 +147,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+    
 
 
 void ConfigureAppDbContext(WebApplicationBuilder builder)

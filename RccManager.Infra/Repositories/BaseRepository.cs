@@ -63,16 +63,24 @@ namespace RccManager.Infra.Repositories
 
         public async Task<T> Insert(T entity)
         {
+            try
+            {
+                if (entity.Id == Guid.Empty)
+                    entity.Id = Guid.NewGuid();
+
+                entity.CreatedAt = entity.CreatedAt == null ? Helpers.DateTimeNow() : entity.CreatedAt;
+                dbSet.Add(entity);
+
+                await context.SaveChangesAsync();
+
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
             
-            if (entity.Id == Guid.Empty)
-                entity.Id = Guid.NewGuid();
-
-            entity.CreatedAt = entity.CreatedAt == null ? Helpers.DateTimeNow() : entity.CreatedAt;
-            dbSet.Add(entity);
-
-            await context.SaveChangesAsync();
-
-            return entity;
             
 
         }

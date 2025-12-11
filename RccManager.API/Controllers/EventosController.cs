@@ -11,7 +11,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/eventos")]
-    //[Authorize]
+    [Authorize]
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventoService;
@@ -22,6 +22,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("get-all-home")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllHome()
         {
             var eventos = await _eventoService.GetAllHome();
@@ -29,6 +30,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("lote-inscricao")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetLoteInscricao(Guid eventoId)
         {
             var eventos = await _eventoService.LoteInscricao(eventoId);
@@ -72,6 +74,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpPost("inscricao")]
+        [AllowAnonymous]
         public async Task<IActionResult> Inscricao([FromBody] InscricaoDto inscricao)
         {
             try

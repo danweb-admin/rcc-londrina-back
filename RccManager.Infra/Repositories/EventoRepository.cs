@@ -58,5 +58,16 @@ namespace RccManager.Infra.Repositories
 
             return evento;
         }
-    }
+
+        public async Task<string> GetSlug(Guid id)
+        {
+            var evento = await dbSet.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (evento == null)
+              return "sem-grupo";
+
+            return evento.Slug;
+
+        }
+  }
 }
