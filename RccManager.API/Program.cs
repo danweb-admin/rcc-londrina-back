@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 using RccManager.Application.DI;
 using RccManager.Application.Mapper;
 using AutoMapper;
@@ -17,6 +17,7 @@ using RccManager.Domain.Interfaces.Services;
 using RccManager.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
 var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 
@@ -27,39 +28,41 @@ builder.Services.AddStackExchangeRedisCache(o =>
 });
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.ReferenceLoopHandling =
+            Newtonsoft.Json.ReferenceLoopHandling.Ignore)
     .AddFluentValidation(options =>
-        {
-            options.ImplicitlyValidateChildProperties = true;
-            options.ImplicitlyValidateRootCollectionElements = true;
-            options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        }
-    );
+    {
+        options.ImplicitlyValidateChildProperties = true;
+        options.ImplicitlyValidateRootCollectionElements = true;
+        options.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    });
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RCCManager.API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "RCCManager.API",
+        Version = "v1"
+    });
 });
 
 builder.Services.AddCors(options =>
 {
-
-    options.AddPolicy("AppCors",
-        policy =>
-        {
-            policy.AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .WithExposedHeaders()
-                  .AllowAnyOrigin();
-        });
+    options.AddPolicy("AppCors", policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .WithExposedHeaders()
+              .AllowAnyOrigin();
+    });
 });
-
 
 ConfigureService.ConfigureDependenciesService(builder.Services);
 ConfigureRepository.ConfigureDependenciesRepository(builder.Services);
 ConfigureAppDbContext(builder);
 
-// Setup AutoMapper e dependency injection
+// AutoMapper
 var config = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile(new DtoToEntityProfile());
@@ -71,6 +74,7 @@ builder.Services.AddSingleton(mapper);
 
 var configurationKey = Environment.GetEnvironmentVariable("KeyMD5");
 var key = Encoding.ASCII.GetBytes(configurationKey);
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -104,32 +108,22 @@ var AccessToken = Environment.GetEnvironmentVariable("AccessToken");
 
 builder.Services.AddHttpClient("asaas", (sp, client) =>
 {
-    
     client.BaseAddress = new Uri(UrlAsaas);
     client.DefaultRequestHeaders.Add("access_token", AccessToken);
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-// Adiciona o background service que vai consumir os e-mails
+// Background service
 builder.Services.AddHostedService<RabbitMQEmailConsumer>();
 
-
-// Seus serviços
 builder.Services.AddScoped<IAsaasClient, AsaasClient>();
 builder.Services.AddScoped<IPagamentoAsaasService, PagamentoAsaasService>();
 
 var app = builder.Build();
 
-
 app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.API v1"));
-
-
-
-//using (var serviceScope = app.Services.CreateScope())
-//{ 
-//    serviceScope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
-//}
+app.UseSwaggerUI(c =>
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.API v1"));
 
 app.UseHttpsRedirection();
 
@@ -141,7 +135,6 @@ app.Use(async (context, next) =>
 });
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();
@@ -149,8 +142,9 @@ app.MapControllers();
 app.Run();
 
 
-    
-
+// ----------------------------------------------
+//       ConfigureAppDbContext
+// ----------------------------------------------
 
 void ConfigureAppDbContext(WebApplicationBuilder builder)
 {
@@ -160,20 +154,22 @@ void ConfigureAppDbContext(WebApplicationBuilder builder)
     var password = Environment.GetEnvironmentVariable("Password");
     var database = Environment.GetEnvironmentVariable("Database");
     var development = Environment.GetEnvironmentVariable("Development");
+
     var connectionString = string.Empty;
 
     if (development == "True")
         connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SolucaoDB;";
     else
-        connectionString = $"Server={server}, {port};Initial Catalog={database};User ID={user};Password={password}";
+        connectionString =
+            $"Server={server}, {port};Initial Catalog={database};User ID={user};Password={password}";
 
     builder.Services.AddDbContext<AppDbContext>(options =>
     {
         options.UseSqlServer(connectionString);
         options.EnableSensitiveDataLogging();
-        // 🔇 Desliga logs do EF Core completamente
-        //options.EnableDetailedErrors(false);
-        //options.EnableSensitiveDataLogging(false);
-        //options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
+        // options.EnableDetailedErrors(false);
+        // options.EnableSensitiveDataLogging(false);
+        // options.ConfigureWarnings(w =>
+        //     w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
     });
 }
