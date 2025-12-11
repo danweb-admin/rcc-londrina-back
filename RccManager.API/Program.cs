@@ -41,18 +41,16 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "RCCManager.API", Version = "v1" });
 });
 
-
-// 🔥 CORS AJUSTADO (permite qualquer origem + Authorization)
 builder.Services.AddCors(options =>
 {
+
     options.AddPolicy("AppCors",
         policy =>
         {
-            policy
-                .SetIsOriginAllowed(origin => true)   // permite QUALQUER ORIGEM
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();                  // necessário para Authorization
+            policy.AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .WithExposedHeaders()
+                  .AllowAnyOrigin();
         });
 });
 
@@ -61,7 +59,7 @@ ConfigureService.ConfigureDependenciesService(builder.Services);
 ConfigureRepository.ConfigureDependenciesRepository(builder.Services);
 ConfigureAppDbContext(builder);
 
-// Setup AutoMapper
+// Setup AutoMapper e dependency injection
 var config = new MapperConfiguration(cfg =>
 {
     cfg.AddProfile(new DtoToEntityProfile());
@@ -73,7 +71,6 @@ builder.Services.AddSingleton(mapper);
 
 var configurationKey = Environment.GetEnvironmentVariable("KeyMD5");
 var key = Encoding.ASCII.GetBytes(configurationKey);
-
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -107,34 +104,53 @@ var AccessToken = Environment.GetEnvironmentVariable("AccessToken");
 
 builder.Services.AddHttpClient("asaas", (sp, client) =>
 {
+    
     client.BaseAddress = new Uri(UrlAsaas);
     client.DefaultRequestHeaders.Add("access_token", AccessToken);
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-// Background service
+// Adiciona o background service que vai consumir os e-mails
 builder.Services.AddHostedService<RabbitMQEmailConsumer>();
 
-// Services
+
+// Seus serviços
 builder.Services.AddScoped<IAsaasClient, AsaasClient>();
 builder.Services.AddScoped<IPagamentoAsaasService, PagamentoAsaasService>();
 
 var app = builder.Build();
 
+
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.API v1"));
 
+
+
+//using (var serviceScope = app.Services.CreateScope())
+//{ 
+//    serviceScope.ServiceProvider.GetService<AppDbContext>().Database.Migrate();
+//}
+
 app.UseHttpsRedirection();
 
-// 🔥 CORS antes de Authentication
 app.UseCors("AppCors");
 
+app.Use(async (context, next) =>
+{
+    await next();
+});
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+    
+
 
 void ConfigureAppDbContext(WebApplicationBuilder builder)
 {
@@ -155,5 +171,9 @@ void ConfigureAppDbContext(WebApplicationBuilder builder)
     {
         options.UseSqlServer(connectionString);
         options.EnableSensitiveDataLogging();
+        // 🔇 Desliga logs do EF Core completamente
+        //options.EnableDetailedErrors(false);
+        //options.EnableSensitiveDataLogging(false);
+        //options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
     });
 }
