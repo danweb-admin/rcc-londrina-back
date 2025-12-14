@@ -238,7 +238,7 @@ namespace RccManager.Domain.Services
             if (inscricao == null)
                 return new ValidationResult("❌ Erro no processamento do webhook.");
 
-            if (webhookResponse.@event != "PAYMENT_RECEIVED")
+            if (webhookResponse.@event != "PAYMENT_RECEIVED" && webhookResponse.@event != "PAYMENT_CONFIRMED")
                 return new ValidationResult("❌ Erro no processamento do pagamento.");
 
             // Se já estava paga, ignore
