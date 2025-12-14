@@ -69,6 +69,15 @@ namespace RccManager.Infra.Mappings
                 .IsRequired()
                 .HasColumnName("active");
 
+            builder.Property(e => e.HabilitarPix)
+                .HasColumnType("bit");
+
+            builder.Property(e => e.HabilitarCartao)
+                .HasColumnType("bit");
+
+            builder.Property(e => e.QtdParcelas)
+                .HasColumnType("int");
+
             // 🔹 Relacionamentos 1:1
             
 

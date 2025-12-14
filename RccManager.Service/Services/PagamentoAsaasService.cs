@@ -22,7 +22,7 @@ namespace RccManager.Service.Services
         _log = log;
     }
 
-    public async Task<AsaasCardPaymentResult> CreateCartaoCreditoAsync(InscricaoDto inscricao, decimal value, string description)
+    public async Task<AsaasPaymentResponse> CreateCartaoCreditoAsync(InscricaoDto inscricao, decimal value, string description)
     {
       // Ensure customer exists in Asaas (you can pass customer id as string or create on the fly)
 
@@ -37,31 +37,8 @@ namespace RccManager.Service.Services
         var createReq = new AsaasCreatePaymentRequest(cliente.Id, "CREDIT_CARD", value, description, DateTime.Now.AddDays(1));
         var asaasRes = await _asaas.CriarCobrancaCartaoAsync(createReq);
 
-        var cartaoDto = new CartaoDto
-        {
-          Cpf = inscricao.Cpf,
-          Nome = inscricao.NomeCartao,
-          Numero = inscricao.NumeroCartao,
-          Cvv = inscricao.Cvv,
-          ValidadeMes = inscricao.Validade.Substring(0, 2),
-          ValidadeAno = inscricao.Validade.Substring(2),
-         
-          CreditCardHolderInfo = new CreditCardHolderInfoRequest
-          {
-            CpfCnpj = inscricao.Cpf,
-            Email = inscricao.Email,
-            Name = inscricao.NomeCartao,
-            Phone = inscricao.Telefone,
-            AddressNumber = "1",
-            PostalCode = "86050494" 
-          }
-        };
 
-        var resultado = await _asaas.PagarComCartaoAsync(asaasRes.Id, cartaoDto);
-
-         
-
-        return resultado;
+        return asaasRes;
     }
 
     public async Task<PagamentosAsaas> CreatePixAsync(Inscricao inscricao, decimal value, string description)

@@ -18,6 +18,9 @@ namespace RccManager.Domain.Dtos.Evento
         public bool ExibirPregadores { get; set; }
         public bool ExibirProgramacao { get; set; }
         public bool ExibirInformacoesAdicionais { get; set; }
+        public bool HabilitarPix { get; set; }
+        public bool HabilitarCartao { get; set; }
+        public int QtdParcelas { get; set; }
 
         // 🔗 Relações
         public LocalDto Local { get; set; }
@@ -109,12 +112,7 @@ namespace RccManager.Domain.Dtos.Evento
         public Guid? ServoId { get; set; }
         public string LinkQrCodePNG { get; set; }
         public string LinkQrCodeBase64 { get; set; }
-        public string QRCodeCopiaCola { get; set; }
-        public string NumeroCartao { get; set; }
-        public string NomeCartao { get; set; }
-        public string Validade { get; set; }
-        public string Cvv { get; set; }
-        public int QuantidadeParcelas { get; set; }
+        public string LinkPgtoCartao { get; set; }
 
     }
 }

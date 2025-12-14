@@ -126,7 +126,6 @@ namespace RccManager.Domain.Responses
       public decimal NetValue { get; set; }
 
       public string Status { get; set; } // PENDING | RECEIVED | CONFIRMED | OVERDUE | REFUNDED
-
       public DateTime DueDate { get; set; }
       public DateTime? PaymentDate { get; set; }
       public DateTime? ClientPaymentDate { get; set; }

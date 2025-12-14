@@ -16,6 +16,9 @@ namespace RccManager.Domain.Dtos.Evento
         public bool ExibirPregadores { get; set; }
         public bool ExibirProgramacao { get; set; }
         public bool ExibirInformacoesAdicionais { get; set; }
+        public bool HabilitarPix { get; set; }
+        public bool HabilitarCartao { get; set; }
+        public int QtdParcelas { get; set; }
 
         // 🔗 Relações
         public LocalDto Local { get; set; }

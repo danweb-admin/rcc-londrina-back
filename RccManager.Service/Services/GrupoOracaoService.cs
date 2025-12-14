@@ -136,6 +136,7 @@ namespace RccManager.Service.Services
                         {
                             var servoTemp = new ServoTemp
                             {
+                                Active = true,
                                 CreatedAt = Utils.formatDateTime(createdAt),
                                 Name = Utils.Encrypt(name),
                                 Email = Utils.Encrypt(email),

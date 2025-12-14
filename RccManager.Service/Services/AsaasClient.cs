@@ -151,7 +151,7 @@ namespace RccManager.Service.Services
           http.DefaultRequestHeaders.Add("access_token", token);
           http.DefaultRequestHeaders.Add("User-Agent", "EventosRCC/1.0" );
 
-          var response = await http.PostAsync($"{urlBase}/payments", content);
+          var response = await http.PostAsync($"{urlBase}/lean/payments", content);
           var result = await response.Content.ReadAsStringAsync();
 
           if (!response.IsSuccessStatusCode)

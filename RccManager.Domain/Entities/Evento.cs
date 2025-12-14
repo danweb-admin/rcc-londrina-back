@@ -17,6 +17,9 @@ namespace RccManager.Domain.Entities
         public bool ExibirPregadores { get; set; }
         public bool ExibirProgramacao { get; set; }
         public bool ExibirInformacoesAdicionais { get; set; }
+        public bool HabilitarPix { get; set; }
+        public bool HabilitarCartao { get; set; }
+        public bool QtdParcelas { get; set; }
 
         public virtual Local Local { get; set; }
         public virtual Sobre Sobre { get; set; }

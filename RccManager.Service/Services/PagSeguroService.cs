@@ -161,15 +161,15 @@ namespace RccManager.Service.Services
                             },
                             payment_method = new {
                                 type = "CREDIT_CARD",
-                                installments = inscricao.QuantidadeParcelas == 0 ? 1 : inscricao.QuantidadeParcelas,
+                                //installments = inscricao.QuantidadeParcelas == 0 ? 1 : inscricao.QuantidadeParcelas,
                                 capture = true,
-                                card = new {
-                                    number = inscricao.NumeroCartao,
-                                    exp_month = inscricao.Validade.Substring(0, 2),
-                                    exp_year = "20" + inscricao.Validade.Substring(2),
-                                    security_code = inscricao.Cvv,
-                                    store = false
-                                },
+                                //card = new {
+                                //    number = inscricao.NumeroCartao,
+                                //    exp_month = inscricao.Validade.Substring(0, 2),
+                                //    exp_year = "20" + inscricao.Validade.Substring(2),
+                                //    security_code = inscricao.Cvv,
+                                //    store = false
+                                //},
                                 holder = new {
                                     name = inscricao.Nome,
                                     tax_id = cpfSomenteNumeros

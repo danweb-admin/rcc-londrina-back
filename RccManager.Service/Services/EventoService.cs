@@ -77,6 +77,8 @@ namespace RccManager.Domain.Services
 
         public async Task<IEnumerable<EventoDtoResult>> GetAll()
         {
+                  var a = _mapper.Map<EventoDto>(await _eventoRepository.GetAll());
+
             return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAll());
         }
 
@@ -87,6 +89,7 @@ namespace RccManager.Domain.Services
 
         public async Task<EventoDto> GetById(Guid id)
         {
+            var a = _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
 
             return _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
         }
@@ -130,6 +133,7 @@ namespace RccManager.Domain.Services
             var inscricao_ = _mapper.Map<Inscricao>(inscricao);
 
             inscricao_.CreatedAt = DateTime.Now;
+            inscricao_.Status = "pendente";
 
             // ✅ PIX ASAAS
             if (inscricao.TipoPagamento == "pix")
@@ -142,15 +146,15 @@ namespace RccManager.Domain.Services
                 inscricao_.QRCodeCopiaCola = cobranca.PixPayload;
                 inscricao_.LinkQrCodePNG = cobranca.BillingType;
                 inscricao_.LinkQrCodeBase64 = cobranca.PixQrBase64;
-                inscricao_.Status = "pendente";
+                
             }
 
             if (inscricao.TipoPagamento == "cartao")
             {
                 var cobranca = await _pagamentoAsaasService.CreateCartaoCreditoAsync(inscricao,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
 
-                if (cobranca.Status == "DECLINED" )
-                  throw new WebException("Transação do cartão foi negada, utilize outra forma!");
+                inscricao_.LinkPgtoCartao = cobranca.InvoiceUrl;
+               
             }
 
             var result = await _inscricaoRepository.Insert(inscricao_);
