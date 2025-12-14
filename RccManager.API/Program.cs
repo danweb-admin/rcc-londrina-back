@@ -51,10 +51,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AppCors", policy =>
     {
-        policy.AllowAnyHeader()
-              .AllowAnyMethod()
-              .WithExposedHeaders()
-              .AllowAnyOrigin();
+        policy.WithOrigins(
+                "https://eventos.rcc-londrina.online",
+                "http://localhost:4200",
+                "http://161.35.255.131:32597/"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
