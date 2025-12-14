@@ -77,9 +77,9 @@ namespace RccManager.Domain.Services
 
         public async Task<IEnumerable<EventoDtoResult>> GetAll()
         {
-                  var a = _mapper.Map<EventoDto>(await _eventoRepository.GetAll());
+            var eventos = await _eventoRepository.GetAll();
 
-            return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAll());
+            return _mapper.Map<IEnumerable<EventoDtoResult>>(eventos);
         }
 
         public async Task<IEnumerable<EventoDtoResult>> GetAllHome()
