@@ -9,7 +9,7 @@ namespace RccManager.Domain.Responses
       public string CpfCnpj { get; set; }
       public string Email { get; set; }
       public string MobilePhone { get; set; }
-      public bool NotificationDisabled = true;
+      public bool NotificationDisabled { get; set; }
   }
 
   public class AsaasCustomerListResponse
