@@ -31,7 +31,8 @@ namespace RccManager.Service.Services
             Name = inscricao.Nome,
             CpfCnpj = inscricao.Cpf,
             Email = inscricao.Email,
-            MobilePhone = inscricao.Telefone
+            MobilePhone = inscricao.Telefone,
+            NotificationDisabled = true
         });
 
         var createReq = new AsaasCreatePaymentRequest(cliente.Id, "CREDIT_CARD", value, description, DateTime.Now.AddDays(1));
@@ -50,7 +51,8 @@ namespace RccManager.Service.Services
             Name = inscricao.Nome,
             CpfCnpj = inscricao.Cpf,
             Email = inscricao.Email,
-            MobilePhone = inscricao.Telefone
+            MobilePhone = inscricao.Telefone,
+            NotificationDisabled = true
         });
 
         var createReq = new AsaasCreatePaymentRequest(cliente.Id, "PIX", value, description, DateTime.Now.AddDays(1));
