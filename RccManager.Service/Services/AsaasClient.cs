@@ -17,11 +17,12 @@ namespace RccManager.Service.Services
       private readonly HttpClient _http;
       private readonly ILogger<AsaasClient> _log;
       private string token;
-      private string urlBase = "https://sandbox.asaas.com/api/v3";
+      private string urlBase;
 
       public AsaasClient(ILogger<AsaasClient> log)
       {
            token = Environment.GetEnvironmentVariable("AccessToken");
+           urlBase = Environment.GetEnvironmentVariable("UrlAsaas");
           _log = log;
       }
 
