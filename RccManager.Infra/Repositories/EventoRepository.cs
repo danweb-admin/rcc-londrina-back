@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Helpers;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Infra.Context;
 
@@ -59,6 +60,8 @@ namespace RccManager.Infra.Repositories
             return evento;
         }
 
+
+
         public async Task<string> GetSlug(Guid id)
         {
             var evento = await dbSet.FirstOrDefaultAsync(x => x.Id == id);
@@ -69,5 +72,34 @@ namespace RccManager.Infra.Repositories
             return evento.Slug;
 
         }
+
+        public async Task<Evento> Update(Evento entity)
+        {
+            var result = await dbSet
+                .AsTracking()
+                .SingleOrDefaultAsync(x => x.Id.Equals(entity.Id));
+
+            if (result == null)
+                return null;
+
+            // Preserva datas
+            entity.CreatedAt = result.CreatedAt;
+            entity.UpdatedAt = Helpers.DateTimeNow();
+
+            // Atualiza propriedades escalares
+            context.Entry(result).CurrentValues.SetValues(entity);
+
+            // 🔒 BLOQUEIA APENAS A COLEÇÃO INSCRIÇÕES
+            var inscricoesNav = context.Entry(result).Navigation("Inscricoes");
+            if (inscricoesNav != null)
+            {
+                inscricoesNav.IsModified = false;
+            }
+
+            await context.SaveChangesAsync();
+
+            return result;
+        }
+        
   }
 }

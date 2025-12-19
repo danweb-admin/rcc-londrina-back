@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using CsvHelper;
 using CsvHelper.Configuration;
+using RccManager.Domain.Dtos;
 using RccManager.Domain.Dtos.GrupoOracao;
 using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Users;
@@ -50,34 +53,34 @@ namespace RccManager.Service.Services
             return new HttpResponse { Message = "Grupo de Oração criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
 
-    public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
-    {
-      var userEntity = mapper.Map<User>(user);
-      var entities = await repository.GetAll(search, userEntity);
-
-      var result = mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
-
-      if (user.Name != "administrador")
-      {
-        foreach (var item in result)
-          item.CsvUrl = string.Empty;
-      }
-
-      foreach (var grupo in result)
-      {
-        if (grupo.ServosTemp != null)
+        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
         {
-          grupo.ServosTemp = grupo.ServosTemp
-              .Where(s => s.Active == true)
-              .ToList();
+            var userEntity = mapper.Map<User>(user);
+            var entities = await repository.GetAll(search, userEntity);
+
+            var result = mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities);
+
+            if (user.Name != "administrador")
+            {
+            foreach (var item in result)
+                item.CsvUrl = string.Empty;
+            }
+
+            foreach (var grupo in result)
+            {
+            if (grupo.ServosTemp != null)
+            {
+                grupo.ServosTemp = grupo.ServosTemp
+                    .Where(s => s.Active == true)
+                    .ToList();
+            }
+            }
+
+            return result;
         }
-      }
-
-      return result;
-    }
 
 
-    public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll()
+        public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll()
         {
             var entities = await repository.GetAll();
 
@@ -87,16 +90,119 @@ namespace RccManager.Service.Services
             return mapper.Map<IEnumerable<GrupoOracaoDtoResult>>(entities); 
         }
 
-        public async Task<HttpResponse> ImportCSV(Guid id, UserDtoResult user)
+        public async Task<HttpResponse> ImportCSV(Guid grupoOracaoId, UserDtoResult user)
         {
-            if (user.Name != "administrador")
-                throw new Exception("Usuário não permitido");
+            var url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQSRbikz2NWNIiNZY9rzEkKw9bjTuioP8NGUvkTmdlZQl57IRP1z1ym8tFRC8xpvKnGe1C_OX_ypLTq/pub?output=csv";
 
-            var grupoOracao = await repository.GetById(id);
 
+            using (HttpClient client = new HttpClient())
+            {
+                // Baixa o conteúdo do CSV
+                var csvData = await client.GetStringAsync(url);
+
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    BadDataFound = null,
+                };
+
+                // Lê o CSV e processa
+                using (var reader1 = new StringReader(csvData))
+                using (var csv = new CsvReader(reader1, CultureInfo.InvariantCulture))
+                {
+                    csv.Read();
+                    csv.ReadHeader(); // Lê o cabeçalho (nomes das colunas)
+
+                    while (csv.Read())
+                    {
+
+                        
+                        var id = csv.GetField("Id");
+                        var grupoOracao = csv.GetField("GrupoOracao");
+                        var decanato = csv.GetField("Decanato");
+                        var planilha = csv.GetField("Planilha");
+
+                        if (string.IsNullOrEmpty(planilha))
+                            continue;
+
+                        if (grupoOracaoId != Guid.Parse(id))
+                            continue;
+
+                        try
+                        {
+                            await ImportCSV(planilha, Guid.Parse(id), grupoOracao, decanato);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Grupo Oracao: {grupoOracao}, Decanato: {decanato}");
+                            Console.WriteLine(ex.Message);
+
+                        }
+                        
+
+                    }
+                }
+            }
+
+            return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public async Task<HttpResponse> ImportCSV(UserDtoResult user)
+        {
+            
+            var url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQSRbikz2NWNIiNZY9rzEkKw9bjTuioP8NGUvkTmdlZQl57IRP1z1ym8tFRC8xpvKnGe1C_OX_ypLTq/pub?output=csv";
+
+
+            using (HttpClient client = new HttpClient())
+            {
+                // Baixa o conteúdo do CSV
+                var csvData = await client.GetStringAsync(url);
+
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    BadDataFound = null,
+                };
+
+                // Lê o CSV e processa
+                using (var reader1 = new StringReader(csvData))
+                using (var csv = new CsvReader(reader1, CultureInfo.InvariantCulture))
+                {
+                    csv.Read();
+                    csv.ReadHeader(); // Lê o cabeçalho (nomes das colunas)
+
+                    while (csv.Read())
+                    {
+
+                        
+                        var id = csv.GetField("Id");
+                        var grupoOracao = csv.GetField("GrupoOracao");
+                        var decanato = csv.GetField("Decanato");
+                        var planilha = csv.GetField("Planilha");
+
+                        if (string.IsNullOrEmpty(planilha))
+                            continue;
+                        try
+                        {
+                            await ImportCSV(planilha, Guid.Parse(id), grupoOracao, decanato);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Grupo Oracao: {grupoOracao}, Decanato: {decanato}");
+                            Console.WriteLine(ex.Message);
+
+                        }
+                        
+
+                    }
+                }
+            }
+
+            return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+
+        }
+
+        public async Task<HttpResponse> ImportCSV(string csvUrl, Guid id, string grupoOracao, string decanato)
+        {
             var list = await servoTempRepository.GetAll(id);
-
-            string csvUrl = grupoOracao.CsvUrl;
 
             using (HttpClient client = new HttpClient())
             {
@@ -148,8 +254,18 @@ namespace RccManager.Service.Services
                                 MainMinistry = Ministerios.returnMinistryValue(mainMinistry),
                                 SecondaryMinistry = Ministerios.returnMinistryValue(secondaryMinistry)
                             };
+
+                            try
+                            {
+                                await servoTempRepository.Insert(servoTemp);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Servo: {name}, GrupoOracao: {grupoOracao}, Decanato: {decanato}");
+                                Console.WriteLine(ex.Message);
+                            }
                             
-                            await servoTempRepository.Insert(servoTemp);
+                            
                            
                         }
                     }
@@ -158,25 +274,6 @@ namespace RccManager.Service.Services
 
        
             return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
-        }
-
-        public async Task<HttpResponse> ImportCSV(UserDtoResult user)
-        {
-            
-            var grupos = await GetAll("", user);
-
-            var gg = grupos.Where(x => x.CsvUrl != null);
-
-            foreach (var grupo in gg)
-            {
-                if (string.IsNullOrEmpty(grupo.CsvUrl))
-                    continue;
-
-                await ImportCSV(grupo.Id,user);
-            }
-
-            return new HttpResponse { Message = "Servos Temporário importado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
-
         }
 
         public async Task<HttpResponse> Update(GrupoOracaoDto grupoOracao, Guid id)
@@ -196,9 +293,6 @@ namespace RccManager.Service.Services
 
             return new HttpResponse { Message = "Grupo de Oração atualizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
         }
-
-        
-
         
     }
 }

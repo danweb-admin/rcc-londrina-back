@@ -14,9 +14,13 @@ CREATE TABLE Eventos (
     Status NVARCHAR(50) NULL,
     ExibirPregadores BIT NOT NULL DEFAULT 1,
     ExibirProgramacao BIT NOT NULL DEFAULT 1,
-    ExibirInformacoesAdicionais BIT NOT NULL DEFAULT 1
+    ExibirInformacoesAdicionais BIT NOT NULL DEFAULT 1,
+    createdAt datetime not null,
+    updatedAt datetime null,
+    active BIT NOT NULL DEFAULT 1
 );
 GO
+
 
 -- =============================
 -- TABELA: SOBRE
@@ -83,7 +87,8 @@ GO
 -- =============================
 -- TABELA: PROGRAMACAO
 -- =============================
-CREATE TABLE Progamacoes (
+
+CREATE TABLE Programacoes (
     Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
     EventoId UNIQUEIDENTIFIER NOT NULL,
     Dia NVARCHAR(50) NULL,
@@ -130,16 +135,13 @@ CREATE TABLE LotesInscricao (
 );
 GO
 
+alter table inscricoes
+add  LinkQrCodeBase64 varchar(max) NULL
 
-ALTER TABLE Inscricoes
-ADD 
-GrupoOracaoId UNIQUEIDENTIFIER,
-DecanatoId UNIQUEIDENTIFIER,
-ServoId UNIQUEIDENTIFIER,
-Email varchar(50),
-CreatedAt datetime,
-UpdatedAt datetime,
-Active bit,
-ValorInscricao decimal(10,2),
-DataPagamento datetime
-GO
+ALTER TABLE Eventos
+ADD HabilitarPix bit DEFAULT 0,
+HabilitarCartao bit DEFAULT 0
+
+alter table Inscricoes
+add LinkPgtoCartao varchar(255)
+
