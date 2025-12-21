@@ -45,6 +45,7 @@ namespace RccManager.Infra.Repositories
         public async Task<Evento> GetById(Guid id)
         {
             var evento = await dbSet
+                .AsTracking()
                 .Include(x => x.Local)
                 .Include(x => x.Sobre)
                 .Include(x => x.InformacoesAdicionais)
@@ -71,6 +72,19 @@ namespace RccManager.Infra.Repositories
 
             return evento.Slug;
 
+        }
+
+        public async Task<Evento> GetSlug(string slug)
+        {
+            return await dbSet
+                .Include(x => x.Local)
+                .Include(x => x.Sobre)
+                .Include(x => x.InformacoesAdicionais)
+                .Include(x => x.LotesInscricoes)
+                .Include(x => x.Programacao)
+                .Include(x => x.Participacoes)
+                .Include(x => x.Participacoes)
+                .FirstOrDefaultAsync(x => x.Slug == slug);
         }
 
         public async Task<Evento> Update(Evento entity)
@@ -100,6 +114,12 @@ namespace RccManager.Infra.Repositories
 
             return result;
         }
+
+        public Task<IEnumerable<Evento>> GetAΩll()
+        {
+            throw new NotImplementedException();
+        }
+
         
-  }
+    }
 }

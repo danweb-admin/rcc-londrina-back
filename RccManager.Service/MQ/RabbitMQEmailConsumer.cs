@@ -109,8 +109,8 @@ namespace RccManager.Service.MQ
                     // Aguardar antes de tentar reconectar
                     if (!stoppingToken.IsCancellationRequested)
                     {
-                        Console.WriteLine("⏳ Aguardando 5 segundos antes de reconectar...");
-                        await Task.Delay(5000, stoppingToken);
+                        Console.WriteLine("⏳ Aguardando 55 segundos antes de reconectar...");
+                        await Task.Delay(55000, stoppingToken);
                     }
                 }
             }

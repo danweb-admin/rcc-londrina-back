@@ -33,8 +33,17 @@ namespace RccManager.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetLoteInscricao(Guid eventoId)
         {
-            var eventos = await _eventoService.LoteInscricao(eventoId);
-            return Ok(eventos);
+            try
+            {
+                var eventos = await _eventoService.LoteInscricao(eventoId);
+                return Ok(eventos);
+            }
+            catch (Exception ex)
+            {
+                 return BadRequest(new Models.ValidationResult { Code = "500", Message = ex.Message, PropertyName = ex.Source });
+
+            }
+            
         }
 
 
@@ -43,6 +52,13 @@ namespace RccManager.API.Controllers
         {
             var eventos = await _eventoService.GetAll();
             return Ok(eventos);
+        }
+
+        [HttpGet("get-slug")]
+        public async Task<IActionResult> GetSlug(string slug)
+        {
+            var evento = await _eventoService.GetSlug(slug);
+            return Ok(evento);
         }
 
         [HttpGet("{id}")]

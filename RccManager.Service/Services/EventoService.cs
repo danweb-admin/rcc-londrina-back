@@ -89,9 +89,12 @@ namespace RccManager.Domain.Services
 
         public async Task<EventoDto> GetById(Guid id)
         {
-            var a = _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
-
             return _mapper.Map<EventoDto>(await _eventoRepository.GetById(id));
+        }
+
+        public async Task<EventoDto> GetSlug(string slug)
+        {
+            return _mapper.Map<EventoDto>(await _eventoRepository.GetSlug(slug));
         }
 
         public async Task<InscricaoDto> Inscricao(InscricaoDto inscricao)
@@ -186,7 +189,24 @@ namespace RccManager.Domain.Services
             if (evento == null)
                 throw new KeyNotFoundException("Evento não encontrado.");
 
-            _mapper.Map(dto, evento);
+            //_mapper.Map(dto, evento);
+
+            evento.BannerImagem = dto.BannerImagem;
+            evento.Nome = dto.Nome;
+            evento.Slug = dto.Slug;
+            evento.DataInicio = dto.DataInicio;
+            evento.DataFim = dto.DataFim;
+            evento.OrganizadorNome = dto.OrganizadorNome;
+            evento.OrganizadorEmail = dto.OrganizadorEmail;
+            evento.OrganizadorContato = dto.OrganizadorContato;
+            evento.Status = dto.Status;
+            evento.ExibirPregadores = dto.ExibirPregadores;
+            evento.ExibirProgramacao = dto.ExibirProgramacao;
+            evento.ExibirInformacoesAdicionais = dto.ExibirInformacoesAdicionais;
+            evento.HabilitarPix = dto.HabilitarPix;
+            evento.HabilitarCartao = dto.HabilitarCartao;
+            evento.QtdParcelas = dto.QtdParcelas;
+
 
             // =============== ENTIDADES 1:1 =================
             AtualizarOuCriarFilha(dto.Local, evento.Local, v => evento.Local = v);
