@@ -15,6 +15,8 @@ namespace RccManager.Infra.Mappings
             builder.Property(l => l.Id)
                 .IsRequired();
 
+            builder.Property(l => l.NomeLocal);
+
             builder.Property(l => l.ImagemMapa)
                 .HasColumnType("nvarchar(max)")
                 .IsRequired(false);

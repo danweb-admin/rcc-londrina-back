@@ -41,6 +41,7 @@ namespace RccManager.Domain.Dtos.Evento
     {
         public Guid? Id { get; set; }
         public string ImagemMapa { get; set; }
+        public string NomeLocal { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string Endereco { get; set; }

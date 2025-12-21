@@ -6,6 +6,7 @@ namespace RccManager.Domain.Entities
     public class Local
     {
         public Guid Id { get; set; }
+        public string NomeLocal { get; set; }
         public string ImagemMapa { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
