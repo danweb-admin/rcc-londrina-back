@@ -258,6 +258,17 @@ namespace RccManager.Domain.Services
             if (inscricao == null)
                 return new ValidationResult("❌ Erro no processamento do webhook.");
 
+            if  (webhookResponse.@event == "PAYMENT_OVERDUE")
+            {
+                inscricao.Status = "pagamento_expirado";
+                await _inscricaoRepository.Update(inscricao);
+
+                Console.WriteLine($"❌ Pagamento expirado: {inscricao.CodigoInscricao} - {inscricao.Nome}");
+
+                return ValidationResult.Success;
+            }
+              
+
             if (webhookResponse.@event != "PAYMENT_RECEIVED" && webhookResponse.@event != "PAYMENT_CONFIRMED")
                 return new ValidationResult("❌ Erro no processamento do pagamento.");
 

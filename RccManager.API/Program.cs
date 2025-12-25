@@ -169,9 +169,9 @@ void ConfigureAppDbContext(WebApplicationBuilder builder)
     {
         options.UseSqlServer(connectionString);
         options.EnableSensitiveDataLogging();
-        // options.EnableDetailedErrors(false);
-        // options.EnableSensitiveDataLogging(false);
-        // options.ConfigureWarnings(w =>
-        //     w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
+        options.EnableDetailedErrors(false);
+        options.EnableSensitiveDataLogging(false);
+        options.ConfigureWarnings(w =>
+            w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.CommandExecuted));
     });
 }
