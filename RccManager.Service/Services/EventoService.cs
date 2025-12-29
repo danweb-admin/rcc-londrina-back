@@ -244,6 +244,27 @@ namespace RccManager.Domain.Services
             return ValidationResult.Success;
         }
 
+        public async Task<ValidationResult> IsentarInscricao(string codigoInscricao)
+        {
+            var inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
+
+            if (inscricao == null)
+                throw new WebException("Inscrição não encontrado!");
+
+            var inscricaoMQ = ConvertInscricaoMQ(inscricao);
+
+            inscricao.Status = "isento";
+
+            var result = await _inscricaoRepository.Update(inscricao);
+
+            if (result == null)
+                throw new WebException("Houve um problema para isentar a Inscrição!");
+
+            await _producer.PublishEmail(inscricaoMQ);
+
+            return ValidationResult.Success;
+        }
+
         //  WEBHOOK
         public async Task<ValidationResult> EventosWebhook(string response)
         {
@@ -440,7 +461,8 @@ namespace RccManager.Domain.Services
                 NomeEvento = inscricao.Evento.Nome,
                 ValorInscricao = inscricao.ValorInscricao,
                 OrganizadorNome = inscricao.Evento.OrganizadorNome,
-                Local = formatarLocal(inscricao.Evento.Local)
+                Local = formatarLocal(inscricao.Evento.Local),
+                Status = inscricao.Status
             };
 
             return retorno;

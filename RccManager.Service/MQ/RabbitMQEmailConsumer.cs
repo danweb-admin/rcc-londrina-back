@@ -155,6 +155,8 @@ namespace RccManager.Service.MQ
                     throw new FileNotFoundException($"Template não encontrado: {templatePath}");
                 }
 
+                var valorTexto = inscricao.Status == "isento" ? "Isento" : $"R$ {inscricao.ValorInscricao:F2}".Replace(".", ",");
+
                 string html = await File.ReadAllTextAsync(templatePath);
 
                 html = html
@@ -162,7 +164,7 @@ namespace RccManager.Service.MQ
                     .Replace("{{EMAIL}}", inscricao.Email)
                     .Replace("{{CPF}}", inscricao.Cpf)
                     .Replace("{{CODIGO_INSCRICAO}}", inscricao.CodigoInscricao)
-                    .Replace("{{VALOR}}", $"R$ {inscricao.ValorInscricao:F2}".Replace(".", ","))
+                    .Replace("{{VALOR}}", valorTexto)
                     .Replace("{{NOME_EVENTO}}", inscricao.NomeEvento)
                     .Replace("{{DATA_INICIAL}}", inscricao.DataInicio.ToString("dd/MM/yyyy"))
                     .Replace("{{DATA_FINAL}}", inscricao.DataFim.ToString("dd/MM/yyyy"))

@@ -131,6 +131,27 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpGet("isentar-inscricao")]
+        public async Task<IActionResult> IsentarInscricao([FromQuery] string codigoInscricao)
+        {
+            try
+            {
+                var inscricao_ = await _eventoService.IsentarInscricao(codigoInscricao);
+
+                return Ok(inscricao_);
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] EventoDto eventoViewModel)
         {

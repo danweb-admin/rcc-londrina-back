@@ -13,6 +13,8 @@ namespace RccManager.Domain.Responses
         public DateTime DataFim { get; set; }
         public string Local { get; set; }
         public string OrganizadorNome { get; set; }
+        public string Status { get; set; }
+
     }
 }
 

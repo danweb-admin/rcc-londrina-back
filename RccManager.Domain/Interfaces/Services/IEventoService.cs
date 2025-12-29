@@ -17,6 +17,7 @@ namespace RccManager.Domain.Interfaces.Services
         Task<decimal> LoteInscricao(Guid id);
         Task<InscricaoDto> Inscricao(InscricaoDto inscricao);
         Task<ValidationResult> ReenvioComprovante(string codigoInscricao, string email);
+        Task<ValidationResult> IsentarInscricao(string codigoInscricao);
         Task<ValidationResult> EventosWebhook(string response);
 
     }
