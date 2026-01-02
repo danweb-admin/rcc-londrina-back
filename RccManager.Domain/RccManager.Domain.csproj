@@ -33,6 +33,7 @@
     <None Remove="Helpers\" />
     <None Remove="Dtos\Evento\" />
     <None Remove="Dtos\InscricoesEvento\" />
+    <None Remove="Dtos\UsuarioCheckin\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -55,5 +56,6 @@
     <Folder Include="Helpers\" />
     <Folder Include="Dtos\Evento\" />
     <Folder Include="Dtos\InscricoesEvento\" />
+    <Folder Include="Dtos\UsuarioCheckin\" />
   </ItemGroup>
 </Project>

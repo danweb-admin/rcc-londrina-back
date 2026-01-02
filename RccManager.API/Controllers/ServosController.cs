@@ -35,10 +35,17 @@ namespace RccManager.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetByCPF([FromQuery] string cpf)
         {
+            Console.WriteLine($"📄 CPF: {cpf}" );
+
             var servo = await _servoService.GetByCPF(cpf);
 
+
             if (servo != null)
+            { 
+                Console.WriteLine($"✅ Nome: {servo.Name}" );
                 return Ok(servo);
+            }
+                
 
             return NotFound("Servo não encontrado");
 

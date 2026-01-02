@@ -22,6 +22,8 @@ namespace RccManager.Application.DI
             services.AddScoped<IInscricoesEventoRepository, InscricoesEventoRepository>();
             services.AddScoped<IInscricaoRepository, InscricaoRepository>();
             services.AddScoped<IPagamentoAsaasRepository, PagamentoAsaasRepository>();
+            services.AddScoped<IUsuarioCheckinRepository, UsuarioCheckinRepository>();
+
 
 
         }

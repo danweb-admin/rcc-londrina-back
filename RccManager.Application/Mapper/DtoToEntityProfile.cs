@@ -10,6 +10,7 @@ using RccManager.Domain.Dtos.ParoquiaCapela;
 using RccManager.Domain.Dtos.Servo;
 using RccManager.Domain.Dtos.ServoTemp;
 using RccManager.Domain.Dtos.Users;
+using RccManager.Domain.Dtos.UsuarioCheckin;
 using RccManager.Domain.Entities;
 using RccManager.Service.Helper;
 using static RccManager.Application.Mapper.EntityToDtoProfile;
@@ -151,6 +152,16 @@ public class DtoToEntityProfile : Profile
         // INSCRICOES
         // ======================================================
         CreateMap<Inscricao, InscricaoDto>()
+            .ReverseMap();
+
+        // ======================================================
+        // USUARIOS CHECKIN
+        // ======================================================
+        CreateMap<UsuariosCheckin, UsuarioCheckinDto>()
+            .ReverseMap();
+
+        CreateMap<UsuariosCheckin, UsuarioCheckinDtoResult>()
+            .ForMember(dest => dest.Senha, opt => opt.Ignore()) 
             .ReverseMap();
 
     }

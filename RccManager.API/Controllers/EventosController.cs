@@ -97,6 +97,8 @@ namespace RccManager.API.Controllers
             {
                 var inscricao_ = await _eventoService.Inscricao(inscricao);
 
+                Console.WriteLine($"Inscricao: {inscricao.Nome}, {inscricao.CodigoInscricao}");
+
                 return Ok(inscricao_);
             }
             catch (ValidateByNameException ex)
