@@ -83,32 +83,41 @@ namespace RccManager.Service.Services
 
       public async Task<AsaasCustomerResponse> CriarClienteAsync(AsaasCustomerRequest request)
       {
-          var options = new JsonSerializerOptions
-          {
-              PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-          };
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
 
-          var result = await BuscarClientePorCpfAsync(request.CpfCnpj);
+                var result = await BuscarClientePorCpfAsync(request.CpfCnpj);
 
-          if (result != null)
-            return result;
+                if (result != null)
+                return result;
 
-          var json = JsonSerializer.Serialize(request,options);
+                var json = JsonSerializer.Serialize(request,options);
 
-          var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-          using var http = new HttpClient();
-          http.DefaultRequestHeaders.Add("access_token", token);
-          http.DefaultRequestHeaders.Add("User-Agent", "EventosRCC/1.0" );
+                using var http = new HttpClient();
+                http.DefaultRequestHeaders.Add("access_token", token);
+                http.DefaultRequestHeaders.Add("User-Agent", "EventosRCC/1.0" );
 
-          var response = await http.PostAsync($"{urlBase}/customers", content);
+                var response = await http.PostAsync($"{urlBase}/customers", content);
 
-          var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-          if (!response.IsSuccessStatusCode)
-              throw new Exception($"Erro ao criar cliente no Asaas: {responseContent}");
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Erro ao criar cliente no Asaas: {responseContent}");
 
-          return JsonSerializer.Deserialize<AsaasCustomerResponse>(responseContent,options);
+                return JsonSerializer.Deserialize<AsaasCustomerResponse>(responseContent,options);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+          
       }
 
       public async Task<AsaasCustomerResponse> BuscarClientePorCpfAsync(string cpfCnpj)

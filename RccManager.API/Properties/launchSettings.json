@@ -6,8 +6,30 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5290",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-        
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LogPath": "/app/logs",
+        "DbUser": "app_user",
+        "Database": "RccManagerDev",
+        "DbPort": "31039",
+        "DbServer": "161.35.255.131",
+        "Password": "RccManager@2023",
+        "KeyMD5": "UmNjTWFuQGczckAyMDIz",
+        "RedisHost": "localhost",
+        "RedisPort": "6379",
+        "CryptKey": "KeyRccL0ndr1nA23",
+        "CryptIV": "23$2pIRCc$2pIj23",
+        "SmtpServer": "smtp.gmail.com",
+        "Port": "587",
+        "SenderEmail": "cadastramento.rcclondrina@gmail.com",
+        "SenderPassword": "cbzu qwae zljb jcbl",
+        "Token": "414fe0e1-34d9-42eb-8cb8-deece467b2fcbf364ec647b080a3eca6252a5fd99480db55-2dfc-4bc8-8eab-fa864ec81b1e",
+        "UrlPagSeguro": "https://sandbox.api.pagseguro.com",
+        "RabbitMQHostName": "rabbitmq",
+        "RabbitMQPort": "5672",
+        "RabbitMQUserName": "admin",
+        "RabbitMQPassword": "@Bim534126",
+        "UrlAsaas": "https://sandbox.asaas.com/api/v3",
+        "AccessToken": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmMzOThjMGJjLTUyZGUtNGE1ZS04NTA3LTMzZWMzNmQyNTA5Mzo6JGFhY2hfNDM3MDIzMGYtNGZlMi00NDQ1LWE4NGItMmJlZDQ1OTI1YzAw"
       }
     },
     "IIS Express": {

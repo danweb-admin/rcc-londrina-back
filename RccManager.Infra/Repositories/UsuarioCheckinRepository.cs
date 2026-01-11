@@ -26,7 +26,7 @@ namespace RccManager.Infra.Repositories
 
         public async Task<bool> Login(string email, string senha)
         {
-            return await dbSet.AnyAsync(x => x.Email == email && x.Senha == senha);
+            return await dbSet.AnyAsync(x => x.Email == email && x.Senha == senha && x.Active);
         }
     }
 }
