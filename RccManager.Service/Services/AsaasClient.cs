@@ -9,6 +9,7 @@ using System.Text.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using static System.Net.WebRequestMethods;
+using System.Net;
 
 namespace RccManager.Service.Services
 {
@@ -115,7 +116,7 @@ namespace RccManager.Service.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw;
+                throw new WebException("Houve um problema para efetuar a Inscrição, verifique Email!");
             }
           
       }

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Infra.Context;
+using System.Linq;
 
 namespace RccManager.Infra.Repositories
 {
@@ -25,7 +26,7 @@ namespace RccManager.Infra.Repositories
 
         public async Task<Inscricao> CheckByCpf(Guid eventId, string cpf)
         {
-            return await dbSet.FirstOrDefaultAsync(x => x.Cpf == cpf && x.EventoId == eventId);
+            return await dbSet.OrderByDescending(x => x.CreatedAt).FirstOrDefaultAsync(x => x.Cpf == cpf && x.EventoId == eventId );
 
         }
 

@@ -19,7 +19,7 @@ namespace RccManager.Infra.Repositories
         public new async Task<IEnumerable<UsuariosCheckin>> GetAll(string email)
         {
             if (string.IsNullOrEmpty(email))
-                return await dbSet.ToListAsync();
+                return await dbSet.Include(x => x.Evento).ToListAsync();
 
             return await dbSet.Where(x => x.Email == email).ToListAsync();
         }

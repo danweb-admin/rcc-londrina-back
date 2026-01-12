@@ -7,6 +7,7 @@ namespace RccManager.Domain.Entities
         public string Email { get; set; }
         public string Senha { get; set; }
         public Guid EventoId { get; set; }
+        public Evento Evento { get; set; }
     }
 }
 

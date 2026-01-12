@@ -28,6 +28,8 @@ namespace RccManager.Domain.Entities
         public virtual ICollection<LoteInscricao> LotesInscricoes { get; set; }
         public virtual ICollection<Programacao> Programacao { get; set; }
         public virtual ICollection<Inscricao> Inscricoes { get; set; }
+        public virtual ICollection<UsuariosCheckin> UsuariosCheckin { get; set; }
+
     }
 }
 

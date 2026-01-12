@@ -39,6 +39,10 @@ namespace RccManager.Infra.Mappings
         builder.Property(c => c.Active)
             .HasColumnType("bit")
             .IsRequired();
+
+        // 🔹 Relacionamento 1:N com Evento
+            builder.HasOne(s => s.Evento)
+                .WithMany(e => e.UsuariosCheckin);
         }
     }
 }

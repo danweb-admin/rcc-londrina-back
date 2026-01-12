@@ -111,7 +111,8 @@ namespace RccManager.Domain.Services
             {
                 inscricao.CodigoInscricao = GerarCodigoInscricao();
             }
-                
+            inscricao.Nome = inscricao.Nome.ToUpper();    
+
 
             if (inscricao.Cpf.Length == 11)
                 inscricao.Cpf = FormatarCpf(inscricao.Cpf);
