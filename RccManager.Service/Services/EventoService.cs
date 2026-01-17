@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
@@ -172,7 +173,14 @@ namespace RccManager.Domain.Services
 
         public async Task<decimal> LoteInscricao(Guid id)
         {
-            var hoje = DateTime.Now;
+            var timeZoneBrasil = TimeZoneInfo.FindSystemTimeZoneById(
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                    ? "E. South America Standard Time"
+                    : "America/Sao_Paulo"
+            );
+
+            var hoje = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZoneBrasil);
+
             var evento = await _eventoRepository.GetById(id);
 
             var valorInscricao = evento.LotesInscricoes.FirstOrDefault(x => hoje.Date >= x.DataInicio.Date  && hoje.Date <=  x.DataFim.Date);

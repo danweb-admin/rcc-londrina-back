@@ -28,6 +28,12 @@ namespace RccManager.Service.Services
         {
             var objeto = _mapper.Map<UsuariosCheckin>(usuarioCheckin);
 
+            var email = usuarioCheckin.Email.ToLower();
+
+            var usuarioExists = await _repository.GetByEmail(email, usuarioCheckin.EventoId);
+
+            if (usuarioExists)
+                throw new WebException("Email já está informado para esse Evento!");
 
             var result = await _repository.Insert(objeto);
 

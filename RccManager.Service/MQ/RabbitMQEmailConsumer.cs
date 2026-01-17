@@ -110,7 +110,7 @@ namespace RccManager.Service.MQ
                     if (!stoppingToken.IsCancellationRequested)
                     {
                         Console.WriteLine("⏳ Aguardando 55 segundos antes de reconectar...");
-                        await Task.Delay(55000, stoppingToken);
+                        await Task.Delay(5000, stoppingToken);
                     }
                 }
             }

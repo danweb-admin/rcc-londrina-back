@@ -7,6 +7,8 @@ namespace RccManager.Domain.Interfaces.Repositories
     {
         new Task<IEnumerable<UsuariosCheckin>> GetAll(string email);
         Task<bool> Login(string email, string senha);
+        Task<bool> GetByEmail(string email, Guid eventoId);
+
 
 
     }

@@ -24,6 +24,11 @@ namespace RccManager.Infra.Repositories
             return await dbSet.Where(x => x.Email == email).ToListAsync();
         }
 
+        public async Task<bool> GetByEmail(string email, Guid eventoId)
+        {
+            return await dbSet.AnyAsync(x => x.Email == email && x.Active && x.EventoId == eventoId);
+        }
+
         public async Task<bool> Login(string email, string senha)
         {
             return await dbSet.AnyAsync(x => x.Email == email && x.Senha == senha && x.Active);
