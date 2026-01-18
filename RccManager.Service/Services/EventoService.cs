@@ -100,10 +100,17 @@ namespace RccManager.Domain.Services
 
         public async Task<InscricaoDto> Inscricao(InscricaoDto inscricao)
         {
+
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
 
             if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
                 throw new WebException("CPF já está cadastrado no Evento!");
+
+            if (verificaCPF != null &&  verificaCPF.Status == "pendente")
+            {
+                return _mapper.Map<InscricaoDto>(verificaCPF);
+            }
+
 
             if (inscricao.Status == null)
                 inscricao.Status = "pendente";
@@ -143,6 +150,7 @@ namespace RccManager.Domain.Services
             // ✅ PIX ASAAS
             if (inscricao.TipoPagamento == "pix")
             {
+
                 var cobranca = await _pagamentoAsaasService.CreatePixAsync(inscricao_,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
 
                 if (cobranca == null)

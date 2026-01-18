@@ -9,7 +9,6 @@ namespace RccManager.Domain.Interfaces.Repositories
         Task<Inscricao> CheckByCpf(Guid eventId, string cpf);
         Task<Inscricao> GetByCodigo(string codigoInscricao);
         Task<bool> AnyInscricao(string codigoInscricao);
-             
     }
 }
 

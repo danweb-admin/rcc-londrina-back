@@ -184,7 +184,7 @@ namespace RccManager.Service.MQ
                 var message = new MailMessage
                 {
                     From = new MailAddress(senderEmail,"RCC Londrina - Cadastramento"),
-                    Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.NomeEvento}",
+                    Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.NomeEvento} - {inscricao.CodigoInscricao}",
                     Body = html,
                     IsBodyHtml = true
                 };
@@ -193,7 +193,7 @@ namespace RccManager.Service.MQ
 
                 await smtp.SendMailAsync(message);
                 
-                Console.WriteLine($"📧 Email enviado com sucesso para {inscricao.Email}");
+                Console.WriteLine($"📧 Email enviado com sucesso para {inscricao.Email}, {inscricao.Nome}");
             }
             catch (SmtpException smtpEx)
             {
