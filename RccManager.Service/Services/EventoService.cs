@@ -98,6 +98,15 @@ namespace RccManager.Domain.Services
             return _mapper.Map<EventoDto>(await _eventoRepository.GetSlug(slug));
         }
 
+        public async Task<string> VerificaStatus(string codigoInscricao)
+        {
+            var inscricao = await _inscricaoRepository.GetByInscricao(codigoInscricao);
+
+            if (inscricao.Status == "pagamento_confirmado")
+                return "PAGO";
+            return "PENDENTE";
+        }
+
         public async Task<InscricaoDto> Inscricao(InscricaoDto inscricao)
         {
 

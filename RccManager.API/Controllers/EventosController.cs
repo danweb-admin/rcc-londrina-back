@@ -133,6 +133,30 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpGet("verifica-status")]
+        public async Task<IActionResult> VerificaStatus([FromQuery] string codigoInscricao)
+        {
+            try
+            {
+                var inscricao_ = await _eventoService.VerificaStatus(codigoInscricao);
+
+                return Ok(new {
+                    status = inscricao_
+                });
+
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
         [HttpGet("isentar-inscricao")]
         public async Task<IActionResult> IsentarInscricao([FromQuery] string codigoInscricao)
         {

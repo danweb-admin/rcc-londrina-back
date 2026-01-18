@@ -41,6 +41,12 @@ namespace RccManager.Infra.Repositories
                 .Include(x => x.Evento.Local)
                 .FirstOrDefaultAsync(x => x.CodigoInscricao == codigoInscricao);
         }
+
+        public async Task<Inscricao> GetByInscricao(string codigoInscricao)
+        {
+            return await dbSet.FirstOrDefaultAsync(x => x.CodigoInscricao == codigoInscricao);
+
+        }
     }
 }
 
