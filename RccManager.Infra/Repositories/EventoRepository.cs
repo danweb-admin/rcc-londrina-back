@@ -56,7 +56,7 @@ namespace RccManager.Infra.Repositories
             await context.Entry(evento).Collection(x => x.LotesInscricoes).LoadAsync();
             await context.Entry(evento).Collection(x => x.Programacao).LoadAsync();
             await context.Entry(evento).Collection(x => x.Participacoes).LoadAsync();
-            await context.Entry(evento).Collection(x => x.Inscricoes).Query().Where(i => i.Active).LoadAsync();
+            await context.Entry(evento).Collection(x => x.Inscricoes).LoadAsync();
 
             return evento;
         }

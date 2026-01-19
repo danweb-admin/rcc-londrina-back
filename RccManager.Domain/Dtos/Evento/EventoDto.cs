@@ -115,6 +115,8 @@ namespace RccManager.Domain.Dtos.Evento
         public string LinkQrCodeBase64 { get; set; }
         public string LinkPgtoCartao { get; set; }
         public string QRCodeCopiaCola { get; set; }
+        public bool Active { get; set; }
+
 
   }
 }
