@@ -54,6 +54,13 @@ namespace RccManager.API.Controllers
             return Ok(eventos);
         }
 
+        [HttpGet("get-events-by-email")]
+        public async Task<IActionResult> GetByEmailCheckin(string email)
+        {
+            var eventos = await _eventoService.GetEventsByEmail(email);
+            return Ok(eventos);
+        }
+
         [HttpGet("get-slug")]
         public async Task<IActionResult> GetSlug(string slug)
         {

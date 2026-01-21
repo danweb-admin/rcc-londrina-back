@@ -120,6 +120,11 @@ namespace RccManager.Infra.Repositories
             throw new NotImplementedException();
         }
 
-        
+        public async Task<IEnumerable<Evento>> GetEventsByEmail(string email)
+        {
+            var events = context.UsuariosCheckin.Where(x => x.Email == email).Select(x => x.EventoId);
+
+            return await dbSet.Where(x => events.Contains(x.Id)).ToListAsync();
+        }
     }
 }

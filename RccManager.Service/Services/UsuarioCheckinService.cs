@@ -55,13 +55,13 @@ namespace RccManager.Service.Services
             throw new NotImplementedException();
         }
 
-        public async Task<HttpResponse> Login(string email, string senha)
+        public async Task<UsuarioCheckinDtoResult> Login(string email, string senha)
         {
             var result = await _repository.Login(email, senha);
-            if (!result)
-                return new HttpResponse { Message = "Email e senha estão incorretos", StatusCode = (int)HttpStatusCode.BadRequest };
+            if (result == null)
+                throw new WebException("Email e senha estão incorretos");
 
-            return new HttpResponse { Message = "Login realizado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+            return _mapper.Map<UsuarioCheckinDtoResult>(result);
         }
 
         public async Task<HttpResponse> Update(UsuarioCheckinDto usuarioCheckin, Guid id)

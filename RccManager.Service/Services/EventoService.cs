@@ -107,6 +107,11 @@ namespace RccManager.Domain.Services
             return "PENDENTE";
         }
 
+        public async Task<IEnumerable<EventoDtoResult>> GetEventsByEmail(string email)
+        {
+            return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetEventsByEmail(email));
+        }
+
         public async Task<InscricaoDto> Inscricao(InscricaoDto inscricao)
         {
 

@@ -11,6 +11,7 @@ namespace RccManager.Domain.Interfaces.Repositories
         Task<bool> AnyInscricao(string codigoInscricao);
         Task<Inscricao> GetByInscricao(string codigoInscricao);
 
+
     }
 }
 

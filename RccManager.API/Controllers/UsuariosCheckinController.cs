@@ -2,9 +2,11 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using RccManager.Domain.Dtos.Servo;
+using RccManager.Domain.Dtos.Users;
 using RccManager.Domain.Dtos.UsuarioCheckin;
 using RccManager.Domain.Exception.Servo;
 using RccManager.Domain.Interfaces.Services;
+using RccManager.Service.Services;
 
 namespace RccManager.API.Controllers
 {
@@ -13,10 +15,13 @@ namespace RccManager.API.Controllers
     public class UsuariosCheckinController : ControllerBase
     {
         private readonly IUsuarioCheckinService _service;
+        private readonly ITokenService _tokenService;
 
-        public UsuariosCheckinController(IUsuarioCheckinService service)
+
+        public UsuariosCheckinController(IUsuarioCheckinService service, ITokenService tokenService)
         {
             _service = service;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -75,14 +80,21 @@ namespace RccManager.API.Controllers
 
                 var usuario = await _service.Login(viewModel.Email, viewModel.Senha);
 
-                return Ok(HttpStatusCode.Created);
+                var token = _tokenService.GenerateTokenCheckin(usuario);
+
+                return Ok(new
+                {
+                    usuario,
+                    token
+                });
             }
-            catch (ValidateByCpfOrEmailException ex)
+            catch (WebException ex)
             {
                 return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
             }
 
         }
+
     }
 }
 

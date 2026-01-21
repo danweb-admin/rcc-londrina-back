@@ -54,6 +54,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "https://eventos.rcc-londrina.online",
+                "http://gerenciador.rcc-londrina.online",
                 "http://localhost:4200",
                 "http://161.35.255.131:32597"
             )

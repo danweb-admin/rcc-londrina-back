@@ -9,6 +9,7 @@ namespace RccManager.Domain.Interfaces.Services
 	public interface IEventoService
 	{
         Task<IEnumerable<EventoDtoResult>> GetAll();
+        Task<IEnumerable<EventoDtoResult>> GetEventsByEmail(string email);
         Task<IEnumerable<EventoDtoResult>> GetAllHome();
         Task<EventoDto> GetSlug(string slug);
         Task<EventoDto> GetById(Guid id);
@@ -20,6 +21,7 @@ namespace RccManager.Domain.Interfaces.Services
         Task<ValidationResult> IsentarInscricao(string codigoInscricao);
         Task<string> VerificaStatus(string codigoInscricao);
         Task<ValidationResult> EventosWebhook(string response);
+
 
     }
 }
