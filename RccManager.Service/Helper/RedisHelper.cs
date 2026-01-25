@@ -18,19 +18,29 @@ namespace RccManager.Service.Helper
             var redisHost = Environment.GetEnvironmentVariable("RedisHost");
             var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 
-            if (multiplexer == null)
+            try
             {
-                lock (sync)
+                if (multiplexer == null)
                 {
-                    if (multiplexer == null)
+                    lock (sync)
                     {
-                        multiplexer = ConnectionMultiplexer
-                            .Connect($"{redisHost}:{redisPort},allowAdmin=true");
+                        if (multiplexer == null)
+                        {
+                            multiplexer = ConnectionMultiplexer
+                                .Connect($"{redisHost}:{redisPort},allowAdmin=true");
+                        }
                     }
                 }
+
+                return multiplexer;
+            }
+            catch (Exception ex)
+            {
+                 Console.WriteLine(ex);
+                throw;
             }
 
-            return multiplexer;
+            
         }
     }
 }

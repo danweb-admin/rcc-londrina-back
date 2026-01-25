@@ -16,7 +16,21 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
         dbSet = _context.Set<Servo>();
     }
 
+    public async Task<IEnumerable<Servo>> GetAll()
+    {
+        
 
+        var servos = await context.Servos
+            .AsNoTracking()
+            .Where(s => s.Active )
+            .Include(s => s.GrupoOracao)
+                .ThenInclude(g => g.ParoquiaCapela)
+                    .ThenInclude(p => p.DecanatoSetor)
+            .OrderBy(s => s.Name)
+            .ToListAsync();
+
+        return servos;
+    }
 
     public async Task<IEnumerable<Servo>> GetAll(Guid grupoOracaoId)
     {

@@ -10,6 +10,8 @@ public interface IServoService
 {
     Task<IEnumerable<ServoDtoResult>> GetAll(Guid grupoOracaoId);
 
+    Task<IEnumerable<ServoDtoResult>> GetAll(string search);
+
     Task<HttpResponse> Create(ServoDto servo);
 
     Task<HttpResponse> Update(ServoDto servo, Guid id);

@@ -13,7 +13,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/servos")]
-    [Authorize]
+    //[Authorize]
     public class ServosController : ControllerBase
     {
         private readonly IServoService _servoService;
@@ -28,6 +28,13 @@ namespace RccManager.API.Controllers
         public async Task<IActionResult> Get(Guid grupoOracaoId)
         {
             var servos = await _servoService.GetAll(grupoOracaoId);
+            return Ok(servos);
+        }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAll([FromQuery] string search)
+        {
+            var servos = await _servoService.GetAll(search.ToUpper());
             return Ok(servos);
         }
 

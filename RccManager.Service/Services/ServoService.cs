@@ -59,6 +59,14 @@ namespace RccManager.Service.Services
 
         }
 
+        public async Task<IEnumerable<ServoDtoResult>> GetAll(string search)
+        {
+            var result = _mapper.Map<IEnumerable<ServoDtoResult>>(await _repository.GetAll());
+
+            return result.Where(x => x.Name.Contains(search));
+
+        }
+
         public async Task<ServoDtoResult> GetByCPF(string cpf)
         {
             var cpf_ = Utils.Encrypt(cpf);
