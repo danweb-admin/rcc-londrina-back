@@ -11,7 +11,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/transferencia-servo")]
-    //[Authorize]
+    [Authorize]
     public class TransferenciaServosController : ControllerBase
     {
         private readonly ITransferenciaServoService _service;
