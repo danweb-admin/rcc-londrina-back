@@ -26,6 +26,9 @@ namespace RccManager.Domain.Entities
         public string LinkPgtoCartao { get; set; }
         public bool? CheckIn { get; set; }
         public DateTime? DataCheckIn { get; set; }
+        public string NumeroFatura { get; set; }
+        public decimal ValorLiquido { get; set; }
+        public decimal TaxaServico { get; set; }
         public virtual Evento Evento { get; set; }
     }
 }

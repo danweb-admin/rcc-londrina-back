@@ -215,6 +215,32 @@ namespace RccManager.Service.Services
 
           return JsonSerializer.Deserialize<AsaasCardPaymentResult>(result,options);
       }
-  }
+
+        public async Task<AsaasPaymentConfirmedResponse> ConfirmarRecebimentoDinheiroAsyn(AsaasConfirmarRecebimentoDinheiroRequest req)
+        {
+            var options = new JsonSerializerOptions
+            {
+              PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+
+            var json = JsonSerializer.Serialize(req,options);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            using var http = new HttpClient();
+            http.DefaultRequestHeaders.Add("access_token", token);
+            http.DefaultRequestHeaders.Add("User-Agent", "EventosRCC/1.0" );
+
+            var response = await http.PostAsync($"{urlBase}/payments/{req.id}/receiveInCash",content);
+
+            var content_ = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Erro ao buscar cliente: {content_}");
+
+            var result = JsonSerializer.Deserialize<AsaasPaymentConfirmedResponse>(content_);
+
+            return result;
+        }
+    }
 }
 

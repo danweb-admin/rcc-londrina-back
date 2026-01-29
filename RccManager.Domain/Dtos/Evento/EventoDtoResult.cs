@@ -18,6 +18,7 @@ namespace RccManager.Domain.Dtos.Evento
         public bool ExibirInformacoesAdicionais { get; set; }
         public bool HabilitarPix { get; set; }
         public bool HabilitarCartao { get; set; }
+        public bool HabilitarDinheiro { get; set; }
         public int QtdParcelas { get; set; }
 
         // 🔗 Relações

@@ -20,6 +20,7 @@ namespace RccManager.Domain.Dtos.Evento
         public bool ExibirInformacoesAdicionais { get; set; }
         public bool HabilitarPix { get; set; }
         public bool HabilitarCartao { get; set; }
+        public bool HabilitarDinheiro { get; set; }
         public int QtdParcelas { get; set; }
 
         // 🔗 Relações
@@ -116,6 +117,9 @@ namespace RccManager.Domain.Dtos.Evento
         public string LinkPgtoCartao { get; set; }
         public string QRCodeCopiaCola { get; set; }
         public bool Active { get; set; }
+        public decimal NumeroFatura { get; set; }
+        public decimal ValorLiquido { get; set; }
+        public decimal TaxaServico { get; set; }
 
 
   }

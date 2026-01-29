@@ -7,6 +7,8 @@ namespace RccManager.Domain.Interfaces.Services
   {
     Task<AsaasCustomerResponse> CriarClienteAsync(AsaasCustomerRequest request);
     Task<AsaasCustomerResponse> BuscarClientePorCpfAsync(string cpfCnpj);
+    Task<AsaasPaymentConfirmedResponse> ConfirmarRecebimentoDinheiroAsyn(AsaasConfirmarRecebimentoDinheiroRequest req);
+
     Task<AsaasPaymentCreatedResponse> CreatePaymentAsync(AsaasCreatePaymentRequest req);
     Task<AsaasPixResponse> GetPixQrCodeAsync(string paymentId);
     Task SimulatePaymentAsync(string paymentId); // sandbox: optional

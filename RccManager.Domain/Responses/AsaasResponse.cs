@@ -12,6 +12,13 @@ namespace RccManager.Domain.Responses
       public bool NotificationDisabled { get; set; }
   }
 
+    public class AsaasConfirmarRecebimentoDinheiroRequest
+      {
+          public string id { get; set; }
+          public decimal value { get; set; }
+          public DateTime paymentDate { get; set; }
+      }
+
   public class AsaasCustomerListResponse
   {
       public string Object { get; set; }
@@ -35,6 +42,17 @@ namespace RccManager.Domain.Responses
       public string id { get; set; }
       public string status { get; set; }
       public decimal value { get; set; }
+      public string invoiceNumber { get; set; }
+
+  }
+
+  public class AsaasPaymentConfirmedResponse
+  {
+      public string id { get; set; }
+      public string status { get; set; }
+      public decimal value { get; set; }
+      public string invoiceNumber { get; set; }
+
   }
 
   public class AsaasPixResponse
@@ -134,6 +152,7 @@ namespace RccManager.Domain.Responses
       public string ExternalReference { get; set; }
 
       public string InvoiceUrl { get; set; }
+      public long InvoiceNumber { get; set; }
       public string TransactionReceiptUrl { get; set; }
   }
 

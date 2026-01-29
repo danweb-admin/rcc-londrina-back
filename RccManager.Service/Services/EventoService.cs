@@ -117,13 +117,13 @@ namespace RccManager.Domain.Services
 
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
 
-            if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
-                throw new WebException("CPF já está cadastrado no Evento!");
+            //if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
+            //    throw new WebException("CPF já está cadastrado no Evento!");
 
-            if (verificaCPF != null &&  verificaCPF.Status == "pendente")
-            {
-                return _mapper.Map<InscricaoDto>(verificaCPF);
-            }
+            //if (verificaCPF != null &&  verificaCPF.Status == "pendente")
+            //{
+            //    return _mapper.Map<InscricaoDto>(verificaCPF);
+            //}
 
 
             if (inscricao.Status == null)
@@ -162,7 +162,7 @@ namespace RccManager.Domain.Services
             inscricao_.Status = "pendente";
 
             // ✅ PIX ASAAS
-            if (inscricao.TipoPagamento == "pix")
+            if (inscricao.TipoPagamento == "pix" || inscricao.TipoPagamento == "dinheiro")
             {
 
                 var cobranca = await _pagamentoAsaasService.CreatePixAsync(inscricao_,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
@@ -173,6 +173,16 @@ namespace RccManager.Domain.Services
                 inscricao_.QRCodeCopiaCola = cobranca.PixPayload;
                 inscricao_.LinkQrCodePNG = cobranca.BillingType;
                 inscricao_.LinkQrCodeBase64 = cobranca.PixQrBase64;
+                inscricao_.NumeroFatura = cobranca.InvoiceNumber;
+
+                if (inscricao.TipoPagamento == "dinheiro")
+                {
+                    var cobranc = await _pagamentoAsaasService.ConfirmarRecebimentoDinheiro(inscricao_.NumeroFatura,inscricao.ValorInscricao,DateTime.Now );
+
+
+
+                }
+
                 
             }
 
@@ -235,6 +245,7 @@ namespace RccManager.Domain.Services
             evento.ExibirProgramacao = dto.ExibirProgramacao;
             evento.ExibirInformacoesAdicionais = dto.ExibirInformacoesAdicionais;
             evento.HabilitarPix = dto.HabilitarPix;
+            evento.HabilitarDinheiro = dto.HabilitarDinheiro;
             evento.HabilitarCartao = dto.HabilitarCartao;
             evento.QtdParcelas = dto.QtdParcelas;
 

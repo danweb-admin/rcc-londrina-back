@@ -22,7 +22,21 @@ namespace RccManager.Service.Services
         _log = log;
     }
 
-    public async Task<AsaasPaymentResponse> CreateCartaoCreditoAsync(InscricaoDto inscricao, decimal value, string description)
+        public async Task<AsaasPaymentConfirmedResponse> ConfirmarRecebimentoDinheiro(string id, decimal value, DateTime paymentDate)
+        {
+            var confirmacao = new AsaasConfirmarRecebimentoDinheiroRequest
+            {
+                id = id,
+                value = value,
+                paymentDate = paymentDate
+            };
+
+            var asaasRes = await _asaas.ConfirmarRecebimentoDinheiroAsyn(confirmacao);
+
+            return asaasRes;
+        }
+
+        public async Task<AsaasPaymentResponse> CreateCartaoCreditoAsync(InscricaoDto inscricao, decimal value, string description)
     {
       // Ensure customer exists in Asaas (you can pass customer id as string or create on the fly)
 
@@ -71,7 +85,8 @@ namespace RccManager.Service.Services
             Status = asaasRes.status,
             PixPayload = pix.payload,
             PixQrBase64 = pix.encodedImage,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            InvoiceNumber = asaasRes.invoiceNumber
         };
 
         await _repo.AddAsync(payment);

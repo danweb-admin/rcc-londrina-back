@@ -10,6 +10,7 @@ namespace RccManager.Domain.Entities
       public string Status { get; set; }      // PENDING, RECEIVED, etc
       public string PixPayload { get; set; }  // copia e cola
       public string PixQrBase64 { get; set; } // imagem base64
-  }
+      public string InvoiceNumber { get; set; }
+    }
 }
 
