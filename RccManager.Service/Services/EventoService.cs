@@ -117,13 +117,13 @@ namespace RccManager.Domain.Services
 
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
 
-            //if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
-            //    throw new WebException("CPF já está cadastrado no Evento!");
+            if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
+                throw new WebException("CPF já está cadastrado no Evento!");
 
-            //if (verificaCPF != null &&  verificaCPF.Status == "pendente")
-            //{
-            //    return _mapper.Map<InscricaoDto>(verificaCPF);
-            //}
+            if (verificaCPF != null && verificaCPF.Status == "pendente")
+            {
+                return _mapper.Map<InscricaoDto>(verificaCPF);
+            }
 
 
             if (inscricao.Status == null)
