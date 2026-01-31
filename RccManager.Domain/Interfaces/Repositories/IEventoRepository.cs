@@ -15,6 +15,7 @@ namespace RccManager.Domain.Interfaces.Repositories
         Task<string> GetSlug(Guid id);
         Task<Evento> GetSlug(string slug);
         Task<Evento> Update(Evento evento);
+        Task<IEnumerable<Inscricao>> GetAllInscricoesByEvento(Guid eventoId);
 
     }
 }

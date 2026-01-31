@@ -6,6 +6,7 @@ using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Dtos.Formacao;
 using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces.Services;
+using RccManager.Service.Services;
 
 namespace RccManager.API.Controllers
 {
@@ -15,6 +16,7 @@ namespace RccManager.API.Controllers
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventoService;
+
 
         public EventosController(IEventoService eventoService)
         {
@@ -150,6 +152,51 @@ namespace RccManager.API.Controllers
                 return Ok(new {
                     status = inscricao_
                 });
+
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
+        [HttpGet("{eventoId}/inscricoes")]
+        public async Task<IActionResult> InscricoesCheckin(Guid eventoId)
+        {
+            try
+            {
+                var inscricoes = await _eventoService.GetAllInscricoesByEvento(eventoId);
+
+                return Ok(inscricoes);
+
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
+        [HttpGet("{codigoInscricao}/checkin")]
+        public async Task<IActionResult> Checkin(string codigoInscricao)
+        {
+            try
+            {
+
+                var inscricoes = await _eventoService.FazerCheckin(codigoInscricao);
+
+                return Ok(inscricoes);
 
             }
             catch (ValidateByNameException ex)

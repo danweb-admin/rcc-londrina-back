@@ -126,5 +126,10 @@ namespace RccManager.Infra.Repositories
 
             return await dbSet.Where(x => events.Contains(x.Id)).ToListAsync();
         }
+
+        public async Task<IEnumerable<Inscricao>> GetAllInscricoesByEvento(Guid eventoId)
+        {
+            return await context.Inscricoes.Where(x => x.EventoId == eventoId).ToListAsync();
+        }
     }
 }

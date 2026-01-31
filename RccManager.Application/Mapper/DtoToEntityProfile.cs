@@ -153,6 +153,7 @@ public class DtoToEntityProfile : Profile
         // INSCRICOES
         // ======================================================
         CreateMap<Inscricao, InscricaoDto>()
+            .ForMember(dest => dest.CheckIn, opt => opt.MapFrom(src => src.CheckIn ?? false))
             .ReverseMap();
 
         // ======================================================

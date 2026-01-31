@@ -307,6 +307,34 @@ namespace RccManager.Domain.Services
             return ValidationResult.Success;
         }
 
+        public async Task<IEnumerable<InscricaoDto>> GetAllInscricoesByEvento(Guid eventoId)
+        {
+            var lista = await _eventoRepository.GetAllInscricoesByEvento(eventoId);
+
+            return _mapper.Map<IEnumerable<InscricaoDto>>(lista);
+
+        }
+
+        public async Task<HttpResponse> FazerCheckin(string codigoInscricao)
+        {
+            var inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
+
+            if (inscricao == null)
+                throw new WebException("Inscrição não encontrado!");
+
+            inscricao.CheckIn = true;
+            inscricao.DataCheckIn = DateTime.Now;
+
+            var result = await _inscricaoRepository.Update(inscricao);
+
+            if (result == null)
+                return new HttpResponse { Message = "Houve um problema para fazer o checkin", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            return new HttpResponse { Message = "Checkin efetuado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+
+
+        }
+
         //  WEBHOOK
         public async Task<ValidationResult> EventosWebhook(string response)
         {

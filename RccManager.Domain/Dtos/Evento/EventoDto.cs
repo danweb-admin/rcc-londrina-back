@@ -117,6 +117,8 @@ namespace RccManager.Domain.Dtos.Evento
         public string LinkPgtoCartao { get; set; }
         public string QRCodeCopiaCola { get; set; }
         public bool Active { get; set; }
+        public bool? CheckIn { get; set; }
+        public DateTime? DataCheckIn { get; set; }
         public decimal NumeroFatura { get; set; }
         public decimal ValorLiquido { get; set; }
         public decimal TaxaServico { get; set; }
