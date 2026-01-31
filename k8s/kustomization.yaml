@@ -9,4 +9,4 @@ namespace: rcc-manager
 images:
 - name: williambr2022/rcc-londrina-back
   newName: williambr2022/rcc-londrina-back
-  newTag: 69145b5cc8acde4946c94eaccb4ac6698adba365
+  newTag: 11536beb285c508fe05060e711665dec38cd93f7
