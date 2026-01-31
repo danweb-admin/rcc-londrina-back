@@ -129,7 +129,8 @@ namespace RccManager.Infra.Repositories
 
         public async Task<IEnumerable<Inscricao>> GetAllInscricoesByEvento(Guid eventoId)
         {
-            return await context.Inscricoes.Where(x => x.EventoId == eventoId).ToListAsync();
+            var statuts_ = new List<string> { "isento","pagamento_confirmado"};
+            return await context.Inscricoes.Where(x => x.EventoId == eventoId && statuts_.Contains(x.Status) ).ToListAsync();
         }
     }
 }
