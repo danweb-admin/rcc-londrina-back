@@ -152,7 +152,7 @@ namespace RccManager.Domain.Responses
       public string ExternalReference { get; set; }
 
       public string InvoiceUrl { get; set; }
-      public long InvoiceNumber { get; set; }
+      public string InvoiceNumber { get; set; }
       public string TransactionReceiptUrl { get; set; }
   }
 

@@ -26,8 +26,10 @@ namespace RccManager.Infra.Repositories
 
         public async Task<Inscricao> CheckByCpf(Guid eventId, string cpf)
         {
-            return await dbSet.LastOrDefaultAsync(x => x.Cpf == cpf && x.EventoId == eventId );
-
+            
+            return await dbSet.Where(i => i.Cpf == cpf && i.EventoId == eventId)
+                    .OrderByDescending(i => i.Id)
+                    .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Inscricao>> GetAll(Guid eventoId)
