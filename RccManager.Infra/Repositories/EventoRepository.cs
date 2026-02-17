@@ -57,6 +57,8 @@ namespace RccManager.Infra.Repositories
             await context.Entry(evento).Collection(x => x.Programacao).LoadAsync();
             await context.Entry(evento).Collection(x => x.Participacoes).LoadAsync();
             await context.Entry(evento).Collection(x => x.Inscricoes).LoadAsync();
+            await context.Entry(evento).Collection(x => x.EventoCampos).LoadAsync();
+
 
             return evento;
         }
@@ -131,6 +133,12 @@ namespace RccManager.Infra.Repositories
         {
             var statuts_ = new List<string> { "isento","pagamento_confirmado"};
             return await context.Inscricoes.Where(x => x.EventoId == eventoId && statuts_.Contains(x.Status) ).ToListAsync();
+        }
+
+        public async Task<IEnumerable<EventoCampos>> GetCamposByEvento(Guid eventoId)
+        {
+            return await context.EventoCampos.Where(x => x.EventoId == eventoId)
+                .OrderBy(x => x.Ordem).ToListAsync();
         }
     }
 }

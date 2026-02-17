@@ -10,6 +10,7 @@ namespace RccManager.Domain.Interfaces.Repositories
         Task<Inscricao> GetByCodigo(string codigoInscricao);
         Task<bool> AnyInscricao(string codigoInscricao);
         Task<Inscricao> GetByInscricao(string codigoInscricao);
+        Task InsertCamposDinamicos(InscricaoCampoValores camposDinamicos);
 
 
     }

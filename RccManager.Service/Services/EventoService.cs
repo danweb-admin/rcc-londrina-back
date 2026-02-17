@@ -83,6 +83,18 @@ namespace RccManager.Domain.Services
             return _mapper.Map<IEnumerable<EventoDtoResult>>(eventos);
         }
 
+        public async Task<IEnumerable<CamposFormularioDto>> GetCamposByEvento(Guid eventoId)
+        {
+            var campos = await _eventoRepository.GetCamposByEvento(eventoId);
+
+            foreach (var campo in campos)
+            {
+                campo.NomeCampo = GerarNomeCampo(campo.Label);
+            }
+
+            return _mapper.Map<IEnumerable<CamposFormularioDto>>(campos);
+        }
+
         public async Task<IEnumerable<EventoDtoResult>> GetAllHome()
         {
             return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetAllHome());
@@ -161,6 +173,7 @@ namespace RccManager.Domain.Services
             inscricao_.CreatedAt = DateTime.Now;
             inscricao_.Status = "pendente";
 
+
             // ✅ PIX ASAAS
             if (inscricao.TipoPagamento == "pix" || inscricao.TipoPagamento == "dinheiro")
             {
@@ -179,11 +192,7 @@ namespace RccManager.Domain.Services
                 {
                     var cobranc = await _pagamentoAsaasService.ConfirmarRecebimentoDinheiro(inscricao_.NumeroFatura,inscricao.ValorInscricao,DateTime.Now );
 
-
-
                 }
-
-                
             }
 
             if (inscricao.TipoPagamento == "cartao")
@@ -191,10 +200,18 @@ namespace RccManager.Domain.Services
                 var cobranca = await _pagamentoAsaasService.CreateCartaoCreditoAsync(inscricao,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
 
                 inscricao_.LinkPgtoCartao = cobranca.InvoiceUrl;
-               
             }
 
             var result = await _inscricaoRepository.Insert(inscricao_);
+
+            foreach (var item in inscricao.CamposDinamicos )
+            {
+                item.InscricaoId = result.Id;
+                item.Id = Guid.NewGuid();
+                var camposValores = _mapper.Map<InscricaoCampoValores>(item);
+                await _inscricaoRepository.InsertCamposDinamicos(camposValores);
+                
+            }
 
             if (result == null)
                 throw new WebException("Houve um problema para efetuar a Inscrição!");
@@ -218,7 +235,11 @@ namespace RccManager.Domain.Services
             var valorInscricao = evento.LotesInscricoes.FirstOrDefault(x => hoje.Date >= x.DataInicio.Date  && hoje.Date <=  x.DataFim.Date);
 
             if (valorInscricao == null)
+            {
+                return 10;
                 throw new KeyNotFoundException("Valor da Inscrição não encontrada.");
+            }
+                
 
             return valorInscricao.Valor;
         }
@@ -249,6 +270,8 @@ namespace RccManager.Domain.Services
             evento.HabilitarCartao = dto.HabilitarCartao;
             evento.QtdParcelas = dto.QtdParcelas;
 
+            
+
 
             // =============== ENTIDADES 1:1 =================
             AtualizarOuCriarFilha(dto.Local, evento.Local, v => evento.Local = v);
@@ -257,9 +280,12 @@ namespace RccManager.Domain.Services
 
 
             // =============== ENTIDADES 1:N (MERGE) =================
-            MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            //MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            //MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            //MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            //MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            MergeColecao(dto.EventoCampos, evento.EventoCampos, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+
 
             var result = await _eventoRepository.Update(evento);
 
@@ -560,6 +586,15 @@ namespace RccManager.Domain.Services
             return string.Join(", ", partes);
         }
 
+        private string GerarNomeCampo(string label)
+        {
+            return label
+                .ToLower()
+                .Replace(" ", "")
+                .Replace("ã", "a")
+                .Replace("á", "a")
+                .Replace("é", "e");
+        }
         
     }
 }

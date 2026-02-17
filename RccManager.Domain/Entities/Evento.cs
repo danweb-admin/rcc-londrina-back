@@ -30,6 +30,8 @@ namespace RccManager.Domain.Entities
         public virtual ICollection<Programacao> Programacao { get; set; }
         public virtual ICollection<Inscricao> Inscricoes { get; set; }
         public virtual ICollection<UsuariosCheckin> UsuariosCheckin { get; set; }
+        public virtual ICollection<EventoCampos> EventoCampos { get; set; }
+
 
     }
 }

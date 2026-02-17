@@ -167,7 +167,7 @@ public class DtoToEntityProfile : Profile
             .ReverseMap();
 
         // ======================================================
-        // USUARIOS CHECKIN
+        // TRANSFERENCIA SERVO
         // ======================================================
         CreateMap<TransferenciaServo, TransferenciaServoDto>()
             .ReverseMap();
@@ -175,6 +175,19 @@ public class DtoToEntityProfile : Profile
         CreateMap<TransferenciaServo, TransferenciaServoDtoResult>()
             .ReverseMap();
 
+        // ======================================================
+        // EventoCampos 
+        // ======================================================
+        CreateMap<EventoCampos, CamposFormularioDto>()
+            .ReverseMap();
+
+        // ======================================================
+        // InscricaoCampoValoresDto 
+        // ======================================================
+        CreateMap<InscricaoCampoValores, InscricaoCampoValoresDto>()
+            .ReverseMap();
+
+        
     }
 
     public class TextDecrypter : IValueConverter<string, string>

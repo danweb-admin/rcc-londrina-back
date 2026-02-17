@@ -81,6 +81,16 @@ namespace RccManager.API.Controllers
             return Ok(evento);
         }
 
+        [HttpGet("{eventoId}/campos")]
+        public async Task<IActionResult> EventoCampos(Guid eventoId)
+        {
+            var camposFormularios = await _eventoService.GetCamposByEvento(eventoId);
+
+            
+
+            return Ok(camposFormularios);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] EventoDto eventoViewModel)
         {

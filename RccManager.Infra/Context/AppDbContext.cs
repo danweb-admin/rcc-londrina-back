@@ -26,7 +26,8 @@ public class AppDbContext : DbContext
     public DbSet<PagamentosAsaas> PagamentosAsaas { get; set; }
     public DbSet<UsuariosCheckin> UsuariosCheckin { get; set; }
     public DbSet<TransferenciaServo> TransferenciaServos { get; set; }
-
+    public DbSet<EventoCampos> EventoCampos { get; set; }
+    public DbSet<InscricaoCampoValores> InscricaoCampoValores { get; set; }
 
 
     public DbSet<User> Users { get; set; }
@@ -64,7 +65,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new InscricaoMap());
         modelBuilder.ApplyConfiguration(new UsuariosCheckinMap());
         modelBuilder.ApplyConfiguration(new TransferenciaServoMap());
-
+        modelBuilder.ApplyConfiguration(new EventoCamposMap());
 
 
     }

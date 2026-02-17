@@ -32,6 +32,8 @@ namespace RccManager.Domain.Dtos.Evento
         public List<ProgramacaoDto> Programacao { get; set; }
         public List<ParticipacaoDto> Participacoes { get; set; }
         public List<InscricaoDto> Inscricoes { get; set; } 
+        public List<CamposFormularioDto> EventoCampos { get; set; } 
+
     }
 
     // -----------------------------------------
@@ -95,6 +97,28 @@ namespace RccManager.Domain.Dtos.Evento
         public Guid? EventoId { get; set; }
     }
 
+    public class CamposFormularioDto
+    {
+        public Guid? Id { get; set; }
+        public string Texto { get; set; }
+        public Guid? EventoId { get; set; }
+        public string Label { get; set; }
+        public string NomeCampo { get; set; }
+        public string Tipo { get; set; }
+        public bool Obrigatorio { get; set; }
+        public bool Active { get; set; }
+        public List<string> Opcoes { get; set; }
+        public int Ordem { get; set; }
+    }
+
+    public class InscricaoCampoValoresDto
+    {
+        public Guid? Id { get; set; }
+        public Guid? InscricaoId { get; set; }
+        public Guid EventoCampoId { get; set; }
+        public string Valor { get; set; }
+    }
+
     public class InscricaoDto
     {
         public Guid? Id { get; set; }
@@ -122,8 +146,9 @@ namespace RccManager.Domain.Dtos.Evento
         public decimal NumeroFatura { get; set; }
         public decimal ValorLiquido { get; set; }
         public decimal TaxaServico { get; set; }
+        public List<InscricaoCampoValoresDto> CamposDinamicos { get; set; }
 
 
-  }
+    }
 }
 

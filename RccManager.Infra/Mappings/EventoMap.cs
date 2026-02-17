@@ -121,6 +121,11 @@ namespace RccManager.Infra.Mappings
                 .WithOne(i => i.Evento)
                 .HasForeignKey(i => i.EventoId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(e => e.EventoCampos)
+                .WithOne(i => i.Evento)
+                .HasForeignKey(i => i.EventoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

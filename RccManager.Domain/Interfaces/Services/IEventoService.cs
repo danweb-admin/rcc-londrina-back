@@ -13,6 +13,7 @@ namespace RccManager.Domain.Interfaces.Services
         Task<IEnumerable<EventoDtoResult>> GetAllHome();
         Task<EventoDto> GetSlug(string slug);
         Task<EventoDto> GetById(Guid id);
+        Task<IEnumerable<CamposFormularioDto>> GetCamposByEvento(Guid eventoId);
         Task<HttpResponse> Create(EventoDto dto);
         Task<HttpResponse> Update(EventoDto dto, Guid id);
         Task<decimal> LoteInscricao(Guid id);

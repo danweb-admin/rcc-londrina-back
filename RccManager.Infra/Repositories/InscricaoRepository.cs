@@ -49,6 +49,20 @@ namespace RccManager.Infra.Repositories
             return await dbSet.FirstOrDefaultAsync(x => x.CodigoInscricao == codigoInscricao);
 
         }
+
+        public async Task InsertCamposDinamicos(InscricaoCampoValores camposDinamicos)
+        {
+            try
+            {
+                
+                context.InscricaoCampoValores.Add(camposDinamicos);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }
 

@@ -30,6 +30,8 @@ namespace RccManager.Domain.Dtos.Evento
         public List<ProgramacaoDto> Programacao { get; set; }
         public List<ParticipacaoDto> Participacoes { get; set; }
         public List<InscricaoDto> Inscricoes { get; set; }
+        public List<CamposFormularioDto> CamposFormulario { get; set; } 
+
     }
 }
 
