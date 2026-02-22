@@ -148,6 +148,11 @@ namespace RccManager.Domain.Dtos.Evento
         public decimal TaxaServico { get; set; }
         public List<InscricaoCampoValoresDto> CamposDinamicos { get; set; }
 
+        public InscricaoDto()
+        {
+            CamposDinamicos = new List<InscricaoCampoValoresDto>();
+        }
+
 
     }
 }
