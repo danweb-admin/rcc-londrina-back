@@ -4,12 +4,14 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Hubs;
 using RccManager.Service.MQ;
 
 namespace RccManager.Domain.Services
@@ -23,12 +25,12 @@ namespace RccManager.Domain.Services
         private readonly IPagSeguroService _pagSeguroService;
         private readonly IPagamentoAsaasService _pagamentoAsaasService;
         private readonly EmailQueueProducer _producer;
-
+        private readonly IHubContext<CheckinHub> _hub;
 
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
@@ -38,6 +40,7 @@ namespace RccManager.Domain.Services
             _mapper = mapper;
             _producer = producer;
             _pagamentoAsaasService = pagamentoAsaasService;
+            _hub = hub;
         }
 
         public async Task<HttpResponse> Create(EventoDto dto)
@@ -355,6 +358,9 @@ namespace RccManager.Domain.Services
 
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para fazer o checkin", StatusCode = (int)HttpStatusCode.BadRequest };
+
+            await _hub.Clients.All.SendAsync("checkin-realizado", codigoInscricao);
+
 
             return new HttpResponse { Message = "Checkin efetuado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 

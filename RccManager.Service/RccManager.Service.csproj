@@ -16,6 +16,7 @@
     <None Remove="Enum\" />
     <None Remove="Template\" />
     <None Remove="MQ\" />
+    <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -25,6 +26,7 @@
     <Folder Include="Enum\" />
     <Folder Include="Template\" />
     <Folder Include="MQ\" />
+    <Folder Include="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RccManager.Domain\RccManager.Domain.csproj" />

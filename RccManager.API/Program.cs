@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Service.Services;
+using RccManager.Service.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,14 +58,18 @@ builder.Services.AddCors(options =>
                 "https://checkin.rcc-londrina.online",
                 "http://gerenciador.rcc-londrina.online",
                 "http://localhost:4200",
+                "http://localhost:4300",
                 "http://192.168.15.5:4200",
                 "http://161.35.255.131:32597"
             )
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
             // REMOVA AllowCredentials por enquanto
     });
 });
+
+builder.Services.AddSignalR();
 
 ConfigureService.ConfigureDependenciesService(builder.Services);
 ConfigureRepository.ConfigureDependenciesRepository(builder.Services);
@@ -141,6 +146,9 @@ app.UseCors("AppCors");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<CheckinHub>("/hub/checkin");
+
 
 app.MapControllers();
 
