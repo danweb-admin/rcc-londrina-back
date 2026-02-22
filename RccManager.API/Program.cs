@@ -147,10 +147,8 @@ app.UseCors("AppCors");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<CheckinHub>("/hub/checkin");
-
-
 app.MapControllers();
+app.MapHub<CheckinHub>("/hub/checkin");
 
 app.Run();
 
