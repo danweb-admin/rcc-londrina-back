@@ -57,6 +57,7 @@ builder.Services.AddCors(options =>
                 "https://eventos.rcc-londrina.online",
                 "https://checkin.rcc-londrina.online",
                 "http://gerenciador.rcc-londrina.online",
+                "https://gerenciador.rcc-londrina.online",
                 "http://localhost:4200",
                 "http://localhost:4300",
                 "http://192.168.15.5:4200",
