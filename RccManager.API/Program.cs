@@ -142,6 +142,13 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
+var qrCodePath = Path.Combine(Directory.GetCurrentDirectory(), "qrcodes");
+
+if (!Directory.Exists(qrCodePath))
+{
+    Directory.CreateDirectory(qrCodePath);
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
