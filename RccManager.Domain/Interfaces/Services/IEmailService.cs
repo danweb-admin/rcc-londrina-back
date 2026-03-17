@@ -1,5 +1,6 @@
 ﻿using System;
 using RccManager.Domain.Entities;
+using RccManager.Domain.Responses;
 
 namespace RccManager.Domain.Interfaces.Services
 {
@@ -8,6 +9,8 @@ namespace RccManager.Domain.Interfaces.Services
         Task SendEmailAsync(string to, string subject, string body);
 
         Task EnviarEmailPagamentoConfirmado(Inscricao inscricao);
+
+        Task EnviarEmailPagamentoConfirmado(InscricaoMQResponse inscricao);
 
     }
 }

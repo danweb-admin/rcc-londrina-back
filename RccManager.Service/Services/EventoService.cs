@@ -22,15 +22,16 @@ namespace RccManager.Domain.Services
         private readonly IInscricaoRepository _inscricaoRepository;
         private readonly IGrupoOracaoRepository _grupoOracaoRepository;
         private readonly IDecanatoSetorRepository _decanatoRepository;
+        private readonly IEventoUsuariosRepository _eventoUsuariosRepository;
         private readonly IPagSeguroService _pagSeguroService;
         private readonly IPagamentoAsaasService _pagamentoAsaasService;
         private readonly EmailQueueProducer _producer;
         private readonly IHubContext<CheckinHub> _hub;
-
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub, IEventoUsuariosRepository eventoUsuariosRepository, IEmailService emailService)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
@@ -41,9 +42,11 @@ namespace RccManager.Domain.Services
             _producer = producer;
             _pagamentoAsaasService = pagamentoAsaasService;
             _hub = hub;
+            _eventoUsuariosRepository = eventoUsuariosRepository;
+            _emailService = emailService;
         }
 
-        public async Task<HttpResponse> Create(EventoDto dto)
+        public async Task<HttpResponse> Create(EventoDto dto, Guid userId)
         {
             var evento = _mapper.Map<Evento>(dto);
 
@@ -75,13 +78,23 @@ namespace RccManager.Domain.Services
             if (result == null)
                 return new HttpResponse { Message = "Houve um problema para adicionar o evento", StatusCode = (int)HttpStatusCode.BadRequest };
 
+            var eventoUsuario = new EventoUsuarios
+            {
+                Active = true,
+                CreatedAt = DateTime.Now,
+                EventoId = result.Id,
+                UserId = userId
+            };
+
+            var result1 = await _eventoUsuariosRepository.Insert(eventoUsuario);
+
             return new HttpResponse { Message = "Evento adicionado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 
         }
 
-        public async Task<IEnumerable<EventoDtoResult>> GetAll()
+        public async Task<IEnumerable<EventoDtoResult>> GetAll(Guid userId)
         {
-            var eventos = await _eventoRepository.GetAll();
+            var eventos = await _eventoRepository.GetAll(userId);
 
             return _mapper.Map<IEnumerable<EventoDtoResult>>(eventos);
         }
@@ -131,14 +144,15 @@ namespace RccManager.Domain.Services
         {
 
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
+            var financeira = Environment.GetEnvironmentVariable("Financeira");
 
             if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
                 throw new WebException("CPF já está cadastrado no Evento!");
 
-            if (verificaCPF != null && verificaCPF.Status == "pendente")
-            {
-                return _mapper.Map<InscricaoDto>(verificaCPF);
-            }
+            //if (verificaCPF != null && verificaCPF.Status == "pendente")
+            //{
+            //    return _mapper.Map<InscricaoDto>(verificaCPF);
+            //}
 
 
             if (inscricao.Status == null)
@@ -176,33 +190,57 @@ namespace RccManager.Domain.Services
             inscricao_.CreatedAt = DateTime.Now;
             inscricao_.Status = "pendente";
 
-
-            // ✅ PIX ASAAS
-            if (inscricao.TipoPagamento == "pix" || inscricao.TipoPagamento == "dinheiro")
+            if (financeira == "PagSeguro")
             {
-
-                var cobranca = await _pagamentoAsaasService.CreatePixAsync(inscricao_,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
-
-                if (cobranca == null)
-                    throw new WebException("Erro ao gerar cobrança PIX no Asaas!");
-
-                inscricao_.QRCodeCopiaCola = cobranca.PixPayload;
-                inscricao_.LinkQrCodePNG = cobranca.BillingType;
-                inscricao_.LinkQrCodeBase64 = cobranca.PixQrBase64;
-                inscricao_.NumeroFatura = cobranca.InvoiceNumber;
-
-                if (inscricao.TipoPagamento == "dinheiro")
+                if (inscricao.TipoPagamento == "pix")
                 {
-                    var cobranc = await _pagamentoAsaasService.ConfirmarRecebimentoDinheiro(inscricao_.NumeroFatura,inscricao.ValorInscricao,DateTime.Now );
+                    var qrCode = await _pagSeguroService.GerarLinkPagamentoAsync(inscricao);
 
+                    if (qrCode == null)
+                        throw new WebException("Houve um problema para gerar QRCode do pagamento da inscrição!");
+
+                    inscricao_.QRCodeCopiaCola = qrCode.Qr_Codes?.FirstOrDefault()?.Text;
+                    inscricao_.LinkQrCodePNG = qrCode.Qr_Codes?.FirstOrDefault()?.Links?.FirstOrDefault(l => l.Rel == "QRCODE.PNG")?.Href;
+                    inscricao_.LinkQrCodeBase64 = qrCode.QrCodeBase64;
+                }
+
+                if (inscricao.TipoPagamento == "cartao")
+                {
+                    var cobranca = await _pagSeguroService.GerarPagamentoCartaoAsync(inscricao);
+
+                    inscricao_.LinkPgtoCartao = cobranca.Links.First(l => l.Rel == "PAY").Href;
                 }
             }
 
-            if (inscricao.TipoPagamento == "cartao")
+            if (financeira == "Asaas")
             {
-                var cobranca = await _pagamentoAsaasService.CreateCartaoCreditoAsync(inscricao,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
+                // ✅ PIX ASAAS
+                if (inscricao.TipoPagamento == "pix" || inscricao.TipoPagamento == "dinheiro")
+                {
 
-                inscricao_.LinkPgtoCartao = cobranca.InvoiceUrl;
+                    var cobranca = await _pagamentoAsaasService.CreatePixAsync(inscricao_,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
+
+                    if (cobranca == null)
+                        throw new WebException("Erro ao gerar cobrança PIX no Asaas!");
+
+                    inscricao_.QRCodeCopiaCola = cobranca.PixPayload;
+                    inscricao_.LinkQrCodePNG = cobranca.BillingType;
+                    inscricao_.LinkQrCodeBase64 = cobranca.PixQrBase64;
+                    inscricao_.NumeroFatura = cobranca.InvoiceNumber;
+
+                    if (inscricao.TipoPagamento == "dinheiro")
+                    {
+                        var cobranc = await _pagamentoAsaasService.ConfirmarRecebimentoDinheiro(inscricao_.NumeroFatura,inscricao.ValorInscricao,DateTime.Now );
+
+                    }
+                }
+
+                if (inscricao.TipoPagamento == "cartao")
+                {
+                    var cobranca = await _pagamentoAsaasService.CreateCartaoCreditoAsync(inscricao,inscricao.ValorInscricao,$"{inscricao.CodigoInscricao} | {slug}" );
+
+                    inscricao_.LinkPgtoCartao = cobranca.InvoiceUrl;
+                }
             }
 
             var result = await _inscricaoRepository.Insert(inscricao_);
@@ -239,7 +277,7 @@ namespace RccManager.Domain.Services
 
             if (valorInscricao == null)
             {
-                return 10;
+                return 0;
                 throw new KeyNotFoundException("Valor da Inscrição não encontrada.");
             }
                 
@@ -283,10 +321,10 @@ namespace RccManager.Domain.Services
 
 
             // =============== ENTIDADES 1:N (MERGE) =================
-            //MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            //MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            //MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            //MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
+            MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.EventoCampos, evento.EventoCampos, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
 
 
@@ -309,6 +347,8 @@ namespace RccManager.Domain.Services
             var inscricaoMQ = ConvertInscricaoMQ(inscricao);
 
             inscricaoMQ.Email = email;
+
+            await _emailService.EnviarEmailPagamentoConfirmado(inscricaoMQ);
 
             await _producer.PublishEmail(inscricaoMQ);
 
@@ -370,38 +410,73 @@ namespace RccManager.Domain.Services
         //  WEBHOOK
         public async Task<ValidationResult> EventosWebhook(string response)
         {
-            var webhookResponse = JsonConvert.DeserializeObject<AsaasWebhookPayload>(response);
+            var financeira = Environment.GetEnvironmentVariable("Financeira");
 
-            var split = webhookResponse.payment.description.Split("|");
+            Inscricao inscricao = new Inscricao();
 
-            var codigoInscricao = split[0].Trim();
-
-            var inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
-
-            if (inscricao == null)
-                return new ValidationResult("❌ Erro no processamento do webhook.");
-
-            if  (webhookResponse.@event == "PAYMENT_OVERDUE")
+            if (financeira == "Asaas")
             {
-                inscricao.Status = "pagamento_expirado";
-                await _inscricaoRepository.Update(inscricao);
+                var webhookResponse = JsonConvert.DeserializeObject<AsaasWebhookPayload>(response);
 
-                Console.WriteLine($"❌ Pagamento expirado: {inscricao.CodigoInscricao} - {inscricao.Nome}");
+                var split = webhookResponse.payment.description.Split("|");
 
-                return ValidationResult.Success;
-            }
+                var codigoInscricao = split[0].Trim();
+
+                inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
+
+                if (inscricao == null)
+                    return new ValidationResult("❌ Erro no processamento do webhook.");
+
+                if  (webhookResponse.@event == "PAYMENT_OVERDUE")
+                {
+                    inscricao.Status = "pagamento_expirado";
+                    await _inscricaoRepository.Update(inscricao);
+
+                    Console.WriteLine($"❌ Pagamento expirado: {inscricao.CodigoInscricao} - {inscricao.Nome}");
+
+                    return ValidationResult.Success;
+                }
               
 
-            if (webhookResponse.@event != "PAYMENT_RECEIVED" && webhookResponse.@event != "PAYMENT_CONFIRMED")
-                return new ValidationResult("❌ Erro no processamento do pagamento.");
+                if (webhookResponse.@event != "PAYMENT_RECEIVED" && webhookResponse.@event != "PAYMENT_CONFIRMED")
+                    return new ValidationResult("❌ Erro no processamento do pagamento.");
 
-            // Se já estava paga, ignore
-            //if (inscricao.Status == "pagamento_confirmado")
-            //    return ValidationResult.Success;
+                // Se já estava paga, ignore
+                if (inscricao.Status == "pagamento_confirmado")
+                    return ValidationResult.Success;
 
-            // Atualizar status para pago
-            inscricao.Status = "pagamento_confirmado";
-            inscricao.DataPagamento = webhookResponse.dateCreated ?? DateTime.Now;
+                // Atualizar status para pago
+                inscricao.Status = "pagamento_confirmado";
+                inscricao.DataPagamento = webhookResponse.dateCreated ?? DateTime.Now;
+
+            }
+
+
+            if (financeira == "PagSeguro")
+            {
+                var webhookResponse = JsonConvert.DeserializeObject<PagSeguroWebhook>(response);
+
+                string codigoInscricao = webhookResponse.Reference_Id;
+
+                inscricao = await _inscricaoRepository.GetByCodigo(codigoInscricao);
+
+                if (inscricao == null)
+                    return new ValidationResult("❌ Erro no processamento do webhook.");
+
+                // Se já estava paga, ignore
+                if (inscricao.Status == "pagamento_confirmado")
+                    return ValidationResult.Success;
+
+                var charge = webhookResponse.Charges.First();
+
+                if (charge.Status != "PAID")
+                    return new ValidationResult("❌ Erro no processamento do pagamento.");
+
+                // Atualizar status para pago
+                inscricao.Status = "pagamento_confirmado";
+                inscricao.DataPagamento = charge.Paid_At ?? DateTime.Now;
+
+            }
 
             await _inscricaoRepository.Update(inscricao);
 

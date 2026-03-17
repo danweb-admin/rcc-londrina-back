@@ -60,6 +60,18 @@ namespace RccManager.Infra.Mappings
                 .IsRequired()
                 .HasColumnName("grupoOracaoId");
 
+            builder.Property(x => x.NamePlain)
+                .HasColumnName("name_plain");
+
+            builder.Property(x => x.CpfPlain)
+                .HasColumnName("cpf_plain");
+
+            builder.Property(x => x.CellphonePlain)
+                .HasColumnName("cellphone_plain");
+
+            builder.Property(x => x.EmailPlain)
+                .HasColumnName("email_plain");
+
             builder.HasOne(x => x.GrupoOracao)
                 .WithMany(x => x.Servos)
                 .HasForeignKey(x => x.GrupoOracaoId);

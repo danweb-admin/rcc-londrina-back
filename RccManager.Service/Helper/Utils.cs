@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using QRCoder;
+using RccManager.Domain.Entities;
 using RccManager.Domain.Helpers;
 
 namespace RccManager.Service.Helper;
@@ -127,6 +131,30 @@ public static class Utils
                 }
             }
         }
+    }
+
+    public static string GerarQrCodePNG(string codigoInscricao)
+    {
+        var pasta = Path.Combine(Directory.GetCurrentDirectory(), "qrcodes");
+
+        var urlCheckin = $"https://backend.rcc-londrina.online/api/v1/eventos/{codigoInscricao}/checkin";
+
+        if (!Directory.Exists(pasta))
+            Directory.CreateDirectory(pasta);
+
+        var caminhoArquivo = Path.Combine(pasta, $"{codigoInscricao}.png");
+
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrData = qrGenerator.CreateQrCode(urlCheckin, QRCodeGenerator.ECCLevel.Q);
+        using var qrCode = new PngByteQRCode(qrData);
+
+        byte[] bytes = qrCode.GetGraphic(20);
+
+        File.WriteAllBytes(caminhoArquivo, bytes);
+
+        Console.WriteLine(Directory.GetCurrentDirectory());
+
+        return $"/qrcodes/{codigoInscricao}.png";
     }
 }
 

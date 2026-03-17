@@ -56,6 +56,18 @@ namespace RccManager.Infra.Mappings
                 .HasColumnName("secondary_ministry")
                 .HasMaxLength(30);
 
+            builder.Property(x => x.NamePlain)
+                .HasColumnName("name_plain");
+
+            builder.Property(x => x.CpfPlain)
+                .HasColumnName("cpf_plain");
+
+            builder.Property(x => x.CellphonePlain)
+                .HasColumnName("cellphone_plain");
+
+            builder.Property(x => x.EmailPlain)
+                .HasColumnName("email_plain");
+
             builder.Property(x => x.Checked)
                 .HasColumnName("checked");
 

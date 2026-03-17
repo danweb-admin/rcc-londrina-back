@@ -14,6 +14,7 @@ namespace RccManager.Domain.Responses
 
         public List<string> Notification_Urls { get; set; }
         public List<Link> Links { get; set; }
+        public string QrCodeBase64 { get; set; }
     }
 
     public class Customer

@@ -14,6 +14,7 @@ public class User : BaseEntity
     public Guid? GrupoOracaoId { get; set; }
     public GrupoOracao GrupoOracao { get; set; }
     public DecanatoSetor DecanatoSetor { get; set; }
+    public virtual ICollection<EventoUsuarios> EventoUsuarios { get; set; }
 
 }
 

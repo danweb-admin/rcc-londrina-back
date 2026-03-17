@@ -6,13 +6,13 @@ using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Dtos.Formacao;
 using RccManager.Domain.Exception.Decanato;
 using RccManager.Domain.Interfaces.Services;
-using RccManager.Service.Services;
+using System.Security.Claims;
 
 namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/eventos")]
-    //[Authorize] 
+    [Authorize] 
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventoService;
@@ -52,7 +52,11 @@ namespace RccManager.API.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> Get()
         {
-            var eventos = await _eventoService.GetAll();
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var eventos = await _eventoService.GetAll(userId);
+
+
             return Ok(eventos);
         }
 
@@ -64,6 +68,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("get-slug")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetSlug(string slug)
         {
             var evento = await _eventoService.GetSlug(slug);
@@ -71,6 +76,8 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> GetById(Guid id)
         {
             var evento = await _eventoService.GetById(id);
@@ -82,6 +89,8 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("{eventoId}/campos")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> EventoCampos(Guid eventoId)
         {
             var camposFormularios = await _eventoService.GetCamposByEvento(eventoId);
@@ -96,8 +105,10 @@ namespace RccManager.API.Controllers
         {
             try
             {
+                Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-                var createdFormacao = await _eventoService.Create(eventoViewModel);
+
+                var createdFormacao = await _eventoService.Create(eventoViewModel, userId);
 
                 return Ok(HttpStatusCode.Created);
             }
@@ -153,6 +164,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("verifica-status")]
+        [AllowAnonymous]
         public async Task<IActionResult> VerificaStatus([FromQuery] string codigoInscricao)
         {
             try

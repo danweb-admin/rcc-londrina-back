@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Service.Services;
 using RccManager.Service.Hubs;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -140,6 +141,13 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "RccManager.API v1"));
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "qrcodes")),
+    RequestPath = "/qrcodes"
+});
 
 app.UseRouting();
 

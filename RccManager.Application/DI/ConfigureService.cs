@@ -29,6 +29,7 @@ namespace RccManager.Application.DI
             services.AddScoped<IPagSeguroService, PagSeguroService>();
             services.AddScoped<IUsuarioCheckinService, UsuarioCheckinService>();
             services.AddScoped<ITransferenciaServoService, TransferenciaServoService>();
+            services.AddScoped<IEventoUsuariosService, EventoUsuariosService>();
 
             services.AddScoped<AppDbContext>();
             services.AddSingleton<RabbitMQConnection>();

@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Entities;
@@ -32,6 +34,10 @@ namespace RccManager.Service.Services
             http.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
 
+            string cpfSomenteNumeros = inscricao.Cpf
+                .Replace(".", "")
+                .Replace("-", "");
+
             var body = new
             {
                 reference_id = inscricao.CodigoInscricao,
@@ -54,6 +60,7 @@ namespace RccManager.Service.Services
                 items = new[]
                     {
                         new {
+                            reference_id = evento.Slug,
                             name = evento.Nome,
                             quantity = 1,
                             unit_amount = (int)(inscricao.ValorInscricao * 100) // em centavos
@@ -85,7 +92,19 @@ namespace RccManager.Service.Services
 
             var result = await response.Content.ReadFromJsonAsync<PagSeguroResponse>();
 
-           
+            var payLink = result.Qr_Codes?.FirstOrDefault()?.Links?.FirstOrDefault(l => l.Rel == "QRCODE.BASE64")?.Href;
+
+            var content = new StringContent("{}", Encoding.UTF8, "application/json");
+
+            var payResponse = await http.GetAsync(payLink);
+
+            var payResult = await payResponse.Content.ReadAsStringAsync();
+
+            if (!payResponse.IsSuccessStatusCode)
+                Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
+
+            result.QrCodeBase64 = payResult;
+
             return result;
         }
 
@@ -100,20 +119,9 @@ namespace RccManager.Service.Services
             http.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
 
-            // Normalizando CPF
             string cpfSomenteNumeros = inscricao.Cpf
                 .Replace(".", "")
                 .Replace("-", "");
-
-            // Normalizando telefone
-            string telefoneSomenteNumeros = inscricao.Telefone
-                .Replace("(", "")
-                .Replace(")", "")
-                .Replace("-", "")
-                .Replace(" ", "");
-
-            string ddd = telefoneSomenteNumeros.Substring(0, 2);
-            string numeroTelefone = telefoneSomenteNumeros.Substring(2);
 
             var body = new
             {
@@ -123,26 +131,17 @@ namespace RccManager.Service.Services
                 {
                     name = inscricao.Nome,
                     email = inscricao.Email,
-                    tax_id = cpfSomenteNumeros,
-                    phones = new[]
-                        {
-                        new {
-                            country = "55",
-                            area = ddd,
-                            number = numeroTelefone,
-                            type = "MOBILE"
-                        }
-                    }
+                    tax_id = cpfSomenteNumeros
                 },
 
                 items = new[]
-                    {
-                        new {
-                            reference_id = "inscricao-" + inscricao.CodigoInscricao,
-                            name = evento.Nome,
-                            quantity = 1,
-                            unit_amount = (int)(inscricao.ValorInscricao * 100)
-                        }
+                {
+                    new {
+                        reference_id = evento.Slug,
+                        name = evento.Nome,
+                        quantity = 1,
+                        unit_amount = (int)(inscricao.ValorInscricao * 100)
+                    }
                 },
 
                 notification_urls = new[]
@@ -150,54 +149,43 @@ namespace RccManager.Service.Services
                     "https://backend.rcc-londrina.online/api/webhook"
                 },
 
-                charges = new[]
-                    {
-                        new {
-                            reference_id = "cobranca-" + inscricao.CodigoInscricao,
-                            description = $"Pagamento inscrição {evento.Nome}",
-                            amount = new {
-                                value = (int)(inscricao.ValorInscricao * 100),
-                                currency = "BRL"
-                            },
-                            payment_method = new {
-                                type = "CREDIT_CARD",
-                                //installments = inscricao.QuantidadeParcelas == 0 ? 1 : inscricao.QuantidadeParcelas,
-                                capture = true,
-                                //card = new {
-                                //    number = inscricao.NumeroCartao,
-                                //    exp_month = inscricao.Validade.Substring(0, 2),
-                                //    exp_year = "20" + inscricao.Validade.Substring(2),
-                                //    security_code = inscricao.Cvv,
-                                //    store = false
-                                //},
-                                holder = new {
-                                    name = inscricao.Nome,
-                                    tax_id = cpfSomenteNumeros
-                                }
-                            }
+                payment_methods = new[]
+                {
+                    new {
+                        type = "CREDIT_CARD"
                     }
-                }
+                },
+                payment_methods_configs = new[]
+                {
+                    new
+                    {
+                        type = "CREDIT_CARD",
+                        config_options = new[]
+                        {
+                            new
+                            {
+                                option = "INSTALLMENTS_LIMIT",
+                                value = $"{evento.QtdParcelas}"
+                            }
+                        }
+                    }
+                },
             };
 
-            Console.WriteLine("request: " + body.ToString());
-
-
-            var response = await http.PostAsJsonAsync($"{url}/orders", body);
+            var response = await http.PostAsJsonAsync($"{url}/checkouts", body);
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
-                var error = await response.Content.ReadFromJsonAsync<PagSeguroErrorResponse>();
-                throw new WebException("Houve um problema para efetuar a transação, verifique os dados do cartão.");
+                var erro = await response.Content.ReadAsStringAsync();
+                throw new Exception(erro);
             }
-
-            Console.WriteLine("response: " + await response.Content.ReadAsStringAsync());
 
             var result = await response.Content.ReadFromJsonAsync<PagSeguroResponse>();
 
-            return result!;
+            return result;
         }
 
+        
     }
 }
 

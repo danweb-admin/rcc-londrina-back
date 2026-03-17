@@ -28,6 +28,7 @@ public class AppDbContext : DbContext
     public DbSet<TransferenciaServo> TransferenciaServos { get; set; }
     public DbSet<EventoCampos> EventoCampos { get; set; }
     public DbSet<InscricaoCampoValores> InscricaoCampoValores { get; set; }
+    public DbSet<EventoUsuarios> EventoUsuarios { get; set; }
 
 
     public DbSet<User> Users { get; set; }
@@ -66,6 +67,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new UsuariosCheckinMap());
         modelBuilder.ApplyConfiguration(new TransferenciaServoMap());
         modelBuilder.ApplyConfiguration(new EventoCamposMap());
+        modelBuilder.ApplyConfiguration(new EventoUsuariosMap());
 
 
     }

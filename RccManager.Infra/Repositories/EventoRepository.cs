@@ -28,9 +28,13 @@ namespace RccManager.Infra.Repositories
              
         }
 
-        public async Task<IEnumerable<Evento>> GetAll()
+        public async Task<IEnumerable<Evento>> GetAll(Guid userId)
         {
-            return await dbSet
+            var user = await context.Users.FirstOrDefaultAsync(x => x.Id ==  userId);
+
+            if (user.Role == "admin")
+            {
+                return await dbSet
                 .Include(x => x.Local)
                 .Include(x => x.Sobre)
                 .Include(x => x.InformacoesAdicionais)
@@ -40,6 +44,21 @@ namespace RccManager.Infra.Repositories
                 .Include(x => x.Participacoes)
                 .OrderBy(x => x.Nome)
                 .ToListAsync();
+            }
+
+
+            return await dbSet
+                .Include(x => x.Local)
+                .Include(x => x.Sobre)
+                .Include(x => x.InformacoesAdicionais)
+                .Include(x => x.LotesInscricoes)
+                .Include(x => x.Programacao)
+                .Include(x => x.Participacoes)
+                .Include(x => x.Participacoes)
+                .OrderBy(x => x.Nome)
+                .Where(x => x.EventoUsuarios.Any(eu => eu.UserId == userId && eu.Active))
+                .ToListAsync();
+            
         }
 
         public async Task<Evento> GetById(Guid id)

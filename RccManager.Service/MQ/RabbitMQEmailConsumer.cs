@@ -8,6 +8,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Responses;
+using RccManager.Service.Helper;
 
 namespace RccManager.Service.MQ
 {
@@ -157,6 +158,10 @@ namespace RccManager.Service.MQ
 
                 var valorTexto = inscricao.Status == "isento" ? "Isento" : $"R$ {inscricao.ValorInscricao:F2}".Replace(".", ",");
 
+                Utils.GerarQrCodePNG(inscricao.CodigoInscricao);
+
+                var urlQrCode = $"https://backend.rcc-londrina.online/qrcodes/{inscricao.CodigoInscricao}.png";
+
                 string html = await File.ReadAllTextAsync(templatePath);
 
                 html = html
@@ -171,7 +176,9 @@ namespace RccManager.Service.MQ
                     .Replace("{{LOCAL_EVENTO}}", inscricao.Local)
                     .Replace("{{ORGANIZADOR}}", inscricao.OrganizadorNome)
                     .Replace("{{LOGO_URL}}", logoUrl)
-                    .Replace("{{NOME_ORGANIZACAO}}", nomeOrganizacao);
+                    .Replace("{{NOME_ORGANIZACAO}}", nomeOrganizacao)
+                    .Replace("{{QRCODE_URL}}", urlQrCode);;
+                    
 
                 using var smtp = new SmtpClient(smtpServer, int.Parse(porta))
                 {

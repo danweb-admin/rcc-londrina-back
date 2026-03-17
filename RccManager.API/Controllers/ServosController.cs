@@ -109,6 +109,13 @@ namespace RccManager.API.Controllers
                 return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
             }
         }
+
+        [HttpPost("descriptografar")]
+        public async Task<IActionResult> Descriptografar()
+        {
+            await _servoService.DescriptografarServos();
+            return Ok("Servos atualizados com sucesso");
+        }
     }
 }
 

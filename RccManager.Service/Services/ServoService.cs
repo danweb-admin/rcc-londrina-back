@@ -21,12 +21,15 @@ namespace RccManager.Service.Services
 	{
         private readonly IMapper _mapper;
         private readonly IServoRepository _repository;
+        private readonly IServoTempRepository _repositoryTemp;
 
 
-        public ServoService(IMapper mapper, IServoRepository repository)
+
+        public ServoService(IMapper mapper, IServoRepository repository, IServoTempRepository repositoryTemp)
         {
             _mapper = mapper;
             _repository = repository;
+            _repositoryTemp = repositoryTemp;
         }
 
         public async Task<HttpResponse> Create(ServoDto servo)
@@ -50,6 +53,30 @@ namespace RccManager.Service.Services
                 return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
 
             return new HttpResponse { Message = "Servo(a) criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+        }
+
+        public async  Task DescriptografarServos()
+        {
+           
+            var servos = await _repositoryTemp.GetAll();
+
+            foreach (var servo in servos)
+            {
+                try
+                {
+                    servo.NamePlain = Utils.Decrypt(servo.Name);
+                    servo.CpfPlain = Utils.Decrypt(servo.Cpf).Replace(".","").Replace("-","");
+                    servo.EmailPlain = Utils.Decrypt(servo.Email);
+                    servo.CellphonePlain = Utils.Decrypt(servo.CellPhone);
+
+                    await _repositoryTemp.Update(servo);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+ 
         }
 
         public async Task<IEnumerable<ServoDtoResult>> GetAll(Guid grupoOracaoId)

@@ -10,7 +10,7 @@ namespace RccManager.Domain.Interfaces.Repositories
         Task<IEnumerable<Evento>> GetAll(string status);
         Task<IEnumerable<Evento>> GetAllHome();
         Task<IEnumerable<Evento>> GetEventsByEmail(string email);
-        Task<IEnumerable<Evento>> GetAll();
+        Task<IEnumerable<Evento>> GetAll(Guid userId);
         Task<Evento> GetById(Guid id);
         Task<string> GetSlug(Guid id);
         Task<Evento> GetSlug(string slug);
