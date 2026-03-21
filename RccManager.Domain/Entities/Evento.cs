@@ -7,6 +7,8 @@ namespace RccManager.Domain.Entities
         public string Nome { get; set; }
         public string Slug { get; set; }
         public string BannerImagem { get; set; }
+        public string CapaImagem { get; set; }
+
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
         public string OrganizadorNome { get; set; }
@@ -21,6 +23,8 @@ namespace RccManager.Domain.Entities
         public bool HabilitarCartao { get; set; }
         public bool HabilitarDinheiro { get; set; }
         public int QtdParcelas { get; set; }
+        public int LimiteParticipantes { get; set; }
+        public decimal TaxaServico { get; set; }
 
         public virtual Local Local { get; set; }
         public virtual Sobre Sobre { get; set; }

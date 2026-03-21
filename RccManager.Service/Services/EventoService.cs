@@ -25,13 +25,14 @@ namespace RccManager.Domain.Services
         private readonly IEventoUsuariosRepository _eventoUsuariosRepository;
         private readonly IPagSeguroService _pagSeguroService;
         private readonly IPagamentoAsaasService _pagamentoAsaasService;
+        private readonly IServoRepository _servoRepository;
         private readonly EmailQueueProducer _producer;
         private readonly IHubContext<CheckinHub> _hub;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub, IEventoUsuariosRepository eventoUsuariosRepository, IEmailService emailService)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub, IEventoUsuariosRepository eventoUsuariosRepository, IEmailService emailService, IServoRepository servoRepository)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
@@ -44,6 +45,7 @@ namespace RccManager.Domain.Services
             _hub = hub;
             _eventoUsuariosRepository = eventoUsuariosRepository;
             _emailService = emailService;
+            _servoRepository = servoRepository;
         }
 
         public async Task<HttpResponse> Create(EventoDto dto, Guid userId)
@@ -140,6 +142,40 @@ namespace RccManager.Domain.Services
             return _mapper.Map<IEnumerable<EventoDtoResult>>(await _eventoRepository.GetEventsByEmail(email));
         }
 
+        public async Task<InscricaoDto> VerificarCPF(string cpf, Guid eventoId)
+        {
+            cpf = cpf.Replace(".","").Replace("-","");
+
+            var verificaCPF = await _inscricaoRepository.CheckByCpf(eventoId,cpf);
+
+            if (verificaCPF != null)
+                return _mapper.Map<InscricaoDto>(verificaCPF);
+
+            var servo = await _servoRepository.GetServoByCPF(cpf);
+
+            if (servo != null)
+            {
+                var inscricao = new Inscricao
+                {
+                    Active = true,
+                    Cpf = servo.CpfPlain,
+                    Nome = servo.NamePlain,
+                    DecanatoId = servo.GrupoOracao.ParoquiaCapela.DecanatoId,
+                    GrupoOracaoId = servo.GrupoOracaoId,
+                    ServoId = servo.Id,
+                    Email = servo.EmailPlain,
+                    Telefone = servo.CellphonePlain,
+                    EventoId = eventoId
+
+                };
+
+                return _mapper.Map<InscricaoDto>(inscricao);
+            }
+            
+
+            throw new WebException("Servo não encontrado");
+        }
+
         public async Task<InscricaoDto> Inscricao(InscricaoDto inscricao)
         {
 
@@ -149,10 +185,10 @@ namespace RccManager.Domain.Services
             if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
                 throw new WebException("CPF já está cadastrado no Evento!");
 
-            //if (verificaCPF != null && verificaCPF.Status == "pendente")
-            //{
-            //    return _mapper.Map<InscricaoDto>(verificaCPF);
-            //}
+            if (verificaCPF != null && verificaCPF.Status == "pendente")
+            {
+                return _mapper.Map<InscricaoDto>(verificaCPF);
+            }
 
 
             if (inscricao.Status == null)
@@ -295,6 +331,7 @@ namespace RccManager.Domain.Services
             //_mapper.Map(dto, evento);
 
             evento.BannerImagem = dto.BannerImagem;
+            evento.CapaImagem = dto.CapaImagem;
             evento.Nome = dto.Nome;
             evento.Slug = dto.Slug;
             evento.DataInicio = dto.DataInicio;
@@ -476,7 +513,11 @@ namespace RccManager.Domain.Services
                 inscricao.Status = "pagamento_confirmado";
                 inscricao.DataPagamento = charge.Paid_At ?? DateTime.Now;
 
+                CalculaValorLiquidoPagSeguro(ref inscricao);
+
             }
+
+
 
             await _inscricaoRepository.Update(inscricao);
 
@@ -485,6 +526,38 @@ namespace RccManager.Domain.Services
             await _producer.PublishEmail(inscricaoMQ);
 
             return ValidationResult.Success;
+        }
+
+        private void CalculaValorLiquidoPagSeguro(ref Inscricao inscricao)
+        {
+            var taxaServico = Environment.GetEnvironmentVariable("TaxaServico");
+            var taxaPix = Environment.GetEnvironmentVariable("TaxaPix");
+
+            decimal taxaServico_ = 0;
+            decimal taxaPix_ = 0;
+
+
+            if (inscricao.TipoPagamento == "pix")
+            {
+                 
+                decimal.TryParse(taxaServico,out taxaServico_);
+                decimal.TryParse(taxaPix,out taxaPix_);
+
+                decimal valor = inscricao.ValorInscricao;
+                decimal percentual = taxaPix_ / 100m;
+
+                decimal resultado = valor * (1 - percentual);
+
+                resultado = Math.Round(resultado, 2);
+
+                var valorFinanceira = inscricao.ValorInscricao - resultado;
+
+                inscricao.TaxaServico = taxaServico_;
+                inscricao.DataLiberacao = inscricao.DataPagamento = DateTime.Now;
+                inscricao.DataPagamento = DateTime.Now;
+                inscricao.TaxaFinanceira = valorFinanceira;
+                inscricao.ValorLiquido = inscricao.ValorInscricao - inscricao.TaxaServico - inscricao.TaxaFinanceira;
+            }
         }
 
         // ==========================================================
@@ -676,6 +749,7 @@ namespace RccManager.Domain.Services
                 .Replace("á", "a")
                 .Replace("é", "e");
         }
+
         
     }
 }

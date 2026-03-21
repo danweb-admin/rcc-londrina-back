@@ -78,6 +78,16 @@ namespace RccManager.Infra.Mappings
             builder.Property(e => e.QtdParcelas)
                 .HasColumnType("int");
 
+            builder.Property(e => e.LimiteParticipantes)
+                .HasColumnType("int")
+                .HasDefaultValue(0);
+
+            builder.Property(x => x.TaxaServico)
+                .HasColumnType("decimal(10,2)")
+                .HasDefaultValue(0);
+
+
+
             // 🔹 Relacionamentos 1:1
             
 

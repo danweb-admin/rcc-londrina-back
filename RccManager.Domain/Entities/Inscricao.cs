@@ -29,6 +29,8 @@ namespace RccManager.Domain.Entities
         public string NumeroFatura { get; set; }
         public decimal ValorLiquido { get; set; }
         public decimal TaxaServico { get; set; }
+        public decimal TaxaFinanceira { get; set; }
+        public DateTime? DataLiberacao { get; set; }
         public virtual Evento Evento { get; set; }
     }
 }

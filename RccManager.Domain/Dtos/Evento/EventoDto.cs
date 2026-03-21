@@ -9,6 +9,8 @@ namespace RccManager.Domain.Dtos.Evento
         public string Nome { get; set; }
         public string Slug { get; set; }
         public string BannerImagem { get; set; }
+        public string CapaImagem { get; set; }
+
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
         public string OrganizadorNome { get; set; }
@@ -22,6 +24,8 @@ namespace RccManager.Domain.Dtos.Evento
         public bool HabilitarCartao { get; set; }
         public bool HabilitarDinheiro { get; set; }
         public int QtdParcelas { get; set; }
+        public int LimiteParticipantes { get; set; }
+        public decimal TaxaServico { get; set; }
 
         // 🔗 Relações
         public LocalDto Local { get; set; }
@@ -146,6 +150,8 @@ namespace RccManager.Domain.Dtos.Evento
         public decimal NumeroFatura { get; set; }
         public decimal ValorLiquido { get; set; }
         public decimal TaxaServico { get; set; }
+        public decimal TaxaFinanceira { get; set; }
+        public DateTime? DataLiberacao { get; set; }
         public List<InscricaoCampoValoresDto> CamposDinamicos { get; set; }
 
         public InscricaoDto()

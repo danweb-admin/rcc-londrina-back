@@ -75,6 +75,28 @@ namespace RccManager.API.Controllers
             return Ok(evento);
         }
 
+        [HttpGet("verificar-cpf")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerificarCPF(string cpf, Guid eventoId)
+        {
+            try
+            {
+                var evento = await _eventoService.VerificarCPF(cpf,eventoId);
+
+                return Ok(evento);
+            }
+            catch (WebException ex)
+            {
+               return NotFound("Servo não encontrado.");
+
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500);
+            }
+            
+        }
+
         [HttpGet("{id}")]
         [AllowAnonymous]
 

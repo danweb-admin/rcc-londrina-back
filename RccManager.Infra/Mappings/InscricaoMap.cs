@@ -86,6 +86,13 @@ namespace RccManager.Infra.Mappings
 
             builder.Property(l => l.DataCheckIn)
                 .HasColumnType("datetime");
+
+            builder.Property(l => l.DataLiberacao)
+                .HasColumnType("datetime");
+
+             builder.Property(x => x.TaxaFinanceira)
+                .HasColumnType("decimal(10,2)")
+                .HasDefaultValue(0);
         }
     }
 }

@@ -7,6 +7,8 @@ namespace RccManager.Domain.Dtos.Evento
         public string Nome { get; set; }
         public string Slug { get; set; }
         public string BannerImagem { get; set; }
+        public string CapaImagem { get; set; }
+
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
         public string OrganizadorNome { get; set; }
