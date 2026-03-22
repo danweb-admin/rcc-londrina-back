@@ -51,7 +51,15 @@ namespace RccManager.Domain.Services
 
         public async Task<HttpResponse> Create(EventoDto dto, Guid userId)
         {
+            if (!dto.TaxaServico.HasValue)
+                dto.TaxaServico = 0;
+
+            if (!dto.LimiteParticipantes.HasValue)
+                dto.LimiteParticipantes = 0;
+
             var evento = _mapper.Map<Evento>(dto);
+
+
 
             // Garantir mapeamento correto das filhas
             
@@ -76,20 +84,29 @@ namespace RccManager.Domain.Services
             if (dto.Inscricoes?.Any() == true)
                 evento.Inscricoes = dto.Inscricoes.Select(i => _mapper.Map<Inscricao>(i)).ToList();
 
-            var result = await _eventoRepository.Insert(evento);
-
-            if (result == null)
-                return new HttpResponse { Message = "Houve um problema para adicionar o evento", StatusCode = (int)HttpStatusCode.BadRequest };
-
-            var eventoUsuario = new EventoUsuarios
+            try
             {
-                Active = true,
-                CreatedAt = DateTime.Now,
-                EventoId = result.Id,
-                UserId = userId
-            };
+                var result = await _eventoRepository.Insert(evento);
 
-            var result1 = await _eventoUsuariosRepository.Insert(eventoUsuario);
+                if (result == null)
+                    return new HttpResponse { Message = "Houve um problema para adicionar o evento", StatusCode = (int)HttpStatusCode.BadRequest };
+
+                var eventoUsuario = new EventoUsuarios
+                {
+                    Active = true,
+                    CreatedAt = DateTime.Now,
+                    EventoId = result.Id,
+                    UserId = userId
+                };
+                var result1 = await _eventoUsuariosRepository.Insert(eventoUsuario);
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
+
+            
 
             return new HttpResponse { Message = "Evento adicionado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
 
@@ -348,7 +365,8 @@ namespace RccManager.Domain.Services
             evento.HabilitarDinheiro = dto.HabilitarDinheiro;
             evento.HabilitarCartao = dto.HabilitarCartao;
             evento.QtdParcelas = dto.QtdParcelas;
-            evento.LimiteParticipantes = dto.LimiteParticipantes;
+            evento.LimiteParticipantes = dto.LimiteParticipantes.Value;
+            evento.TaxaServico = dto.TaxaServico.Value;
 
 
             // =============== ENTIDADES 1:1 =================

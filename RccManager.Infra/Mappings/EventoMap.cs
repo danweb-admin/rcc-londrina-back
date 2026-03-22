@@ -79,12 +79,10 @@ namespace RccManager.Infra.Mappings
                 .HasColumnType("int");
 
             builder.Property(e => e.LimiteParticipantes)
-                .HasColumnType("int")
-                .HasDefaultValue(0);
+                .HasColumnType("int");
 
             builder.Property(x => x.TaxaServico)
-                .HasColumnType("decimal(10,2)")
-                .HasDefaultValue(0);
+                .HasColumnType("decimal(10,2)");
 
 
 
