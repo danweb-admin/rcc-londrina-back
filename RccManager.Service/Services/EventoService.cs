@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -347,8 +348,7 @@ namespace RccManager.Domain.Services
             evento.HabilitarDinheiro = dto.HabilitarDinheiro;
             evento.HabilitarCartao = dto.HabilitarCartao;
             evento.QtdParcelas = dto.QtdParcelas;
-
-            
+            evento.LimiteParticipantes = dto.LimiteParticipantes;
 
 
             // =============== ENTIDADES 1:1 =================
@@ -356,14 +356,12 @@ namespace RccManager.Domain.Services
             AtualizarOuCriarFilha(dto.Sobre, evento.Sobre, v => evento.Sobre = v);
             AtualizarOuCriarFilha(dto.InformacoesAdicionais, evento.InformacoesAdicionais, v => evento.InformacoesAdicionais = v);
 
-
             // =============== ENTIDADES 1:N (MERGE) =================
             MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.EventoCampos, evento.EventoCampos, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-
 
             var result = await _eventoRepository.Update(evento);
 
@@ -501,8 +499,8 @@ namespace RccManager.Domain.Services
                     return new ValidationResult("❌ Erro no processamento do webhook.");
 
                 // Se já estava paga, ignore
-                if (inscricao.Status == "pagamento_confirmado")
-                    return ValidationResult.Success;
+                //if (inscricao.Status == "pagamento_confirmado")
+                //    return ValidationResult.Success;
 
                 var charge = webhookResponse.Charges.First();
 
@@ -512,12 +510,11 @@ namespace RccManager.Domain.Services
                 // Atualizar status para pago
                 inscricao.Status = "pagamento_confirmado";
                 inscricao.DataPagamento = charge.Paid_At ?? DateTime.Now;
+                inscricao.NSU = charge.Payment_Response.Reference;
 
-                CalculaValorLiquidoPagSeguro(ref inscricao);
+                CalculaValorLiquidoPagSeguro(ref inscricao, charge);
 
             }
-
-
 
             await _inscricaoRepository.Update(inscricao);
 
@@ -528,36 +525,50 @@ namespace RccManager.Domain.Services
             return ValidationResult.Success;
         }
 
-        private void CalculaValorLiquidoPagSeguro(ref Inscricao inscricao)
+        private void CalculaValorLiquidoPagSeguro(ref Inscricao inscricao, ChargeWebhook charge)
         {
-            var taxaServico = Environment.GetEnvironmentVariable("TaxaServico");
-            var taxaPix = Environment.GetEnvironmentVariable("TaxaPix");
+            decimal.TryParse(Environment.GetEnvironmentVariable("TaxaServico"), out decimal taxaServico);
 
-            decimal taxaServico_ = 0;
-            decimal taxaPix_ = 0;
+            decimal percentual = ObterPercentualTaxa(inscricao, charge);
 
+            decimal valor = inscricao.ValorInscricao;
+
+            decimal valorComTaxa = Math.Round(valor * (1 - percentual), 2);
+
+            decimal taxaFinanceira = valor - valorComTaxa;
+
+            inscricao.TaxaServico = taxaServico;
 
             if (inscricao.TipoPagamento == "pix")
+                inscricao.DataLiberacao = DateTime.Now;
+            else
+                inscricao.DataLiberacao = DateTime.UtcNow.AddDays(14);
+            inscricao.DataPagamento = DateTime.Now;
+            inscricao.TaxaFinanceira = taxaFinanceira;
+            inscricao.ValorLiquido = valor - taxaServico - taxaFinanceira;
+        }
+
+        private decimal ObterPercentualTaxa(Inscricao inscricao, ChargeWebhook charge)
+        {
+            if (inscricao.TipoPagamento == "pix")
             {
-                 
-                decimal.TryParse(taxaServico,out taxaServico_);
-                decimal.TryParse(taxaPix,out taxaPix_);
-
-                decimal valor = inscricao.ValorInscricao;
-                decimal percentual = taxaPix_ / 100m;
-
-                decimal resultado = valor * (1 - percentual);
-
-                resultado = Math.Round(resultado, 2);
-
-                var valorFinanceira = inscricao.ValorInscricao - resultado;
-
-                inscricao.TaxaServico = taxaServico_;
-                inscricao.DataLiberacao = inscricao.DataPagamento = DateTime.Now;
-                inscricao.DataPagamento = DateTime.Now;
-                inscricao.TaxaFinanceira = valorFinanceira;
-                inscricao.ValorLiquido = inscricao.ValorInscricao - inscricao.TaxaServico - inscricao.TaxaFinanceira;
+                decimal.TryParse(Environment.GetEnvironmentVariable("TaxaPix"), out decimal taxa);
+                return taxa / 100m;
             }
+
+            if (inscricao.TipoPagamento == "cartao")
+            {
+                if (charge.Payment_Method.Installments <= 1)
+                {
+                    decimal.TryParse(Environment.GetEnvironmentVariable("TaxaCartaoAvista"), out decimal taxa);
+                    return taxa / 100m;
+                }
+
+                decimal.TryParse(Environment.GetEnvironmentVariable("TaxaCartaoParcelado"), out decimal taxaParcelado);
+                return taxaParcelado / 100m;
+            }
+
+            return 0;
         }
 
         // ==========================================================

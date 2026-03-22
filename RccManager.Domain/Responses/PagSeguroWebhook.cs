@@ -34,11 +34,23 @@ namespace RccManager.Domain.Responses
         public DateTime Created_At { get; set; }
         public DateTime? Paid_At { get; set; }
         public PaymentMethodWebhook Payment_Method { get; set; }
+        public PaymentResponseWebhook Payment_Response { get; set; }
+
     }
 
     public class PaymentMethodWebhook
     {
         public string Type { get; set; } // CREDIT_CARD, PIX, etc
+        public int Installments { get; set; }
+    }
+
+    public class PaymentResponseWebhook
+    {
+        public string Code { get; set; } 
+        public string Message { get; set; } 
+        public string Reference { get; set; } 
+
+
     }
 
 }

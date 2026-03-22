@@ -152,6 +152,7 @@ namespace RccManager.Domain.Dtos.Evento
         public decimal TaxaServico { get; set; }
         public decimal TaxaFinanceira { get; set; }
         public DateTime? DataLiberacao { get; set; }
+        public string NSU { get; set; }
         public List<InscricaoCampoValoresDto> CamposDinamicos { get; set; }
 
         public InscricaoDto()
