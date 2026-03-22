@@ -25,7 +25,7 @@ namespace RccManager.Domain.Dtos.Evento
         public bool HabilitarDinheiro { get; set; }
         public int QtdParcelas { get; set; }
         public int LimiteParticipantes { get; set; }
-        public decimal TaxaServico { get; set; }
+        public decimal? TaxaServico { get; set; }
 
         // 🔗 Relações
         public LocalDto Local { get; set; }
