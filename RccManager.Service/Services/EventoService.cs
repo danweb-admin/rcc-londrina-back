@@ -173,6 +173,8 @@ namespace RccManager.Domain.Services
 
             if (servo != null)
             {
+                var valorInscricao = await LoteInscricao(eventoId);
+
                 var inscricao = new Inscricao
                 {
                     Active = true,
@@ -183,7 +185,8 @@ namespace RccManager.Domain.Services
                     ServoId = servo.Id,
                     Email = servo.EmailPlain,
                     Telefone = servo.CellphonePlain,
-                    EventoId = eventoId
+                    EventoId = eventoId,
+                    ValorInscricao = valorInscricao
 
                 };
 

@@ -73,7 +73,7 @@ public class ServoRepository : BaseRepository<Servo>, IServoRepository
         return await dbSet
             .Include(x => x.GrupoOracao)
             .Include(x => x.GrupoOracao.ParoquiaCapela.DecanatoSetor)
-            .FirstOrDefaultAsync(x => x.Cpf.Contains(cpf) && x.Active);
+            .FirstOrDefaultAsync(x => x.CpfPlain.Contains(cpf) && x.Active);
     }
 
     public new async Task<Servo> GetById(Guid id)
