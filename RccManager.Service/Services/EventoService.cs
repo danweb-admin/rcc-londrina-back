@@ -4,6 +4,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -14,6 +15,7 @@ using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
 using RccManager.Service.Hubs;
 using RccManager.Service.MQ;
+using static QRCoder.PayloadGenerator;
 
 namespace RccManager.Domain.Services
 {
@@ -211,6 +213,12 @@ namespace RccManager.Domain.Services
                 return _mapper.Map<InscricaoDto>(verificaCPF);
             }
 
+            inscricao.Email = inscricao.Email.Trim();
+
+            if (!EmailValido(inscricao.Email))
+            {
+                throw new WebException("Email inválido");
+            }
 
             if (inscricao.Status == null)
                 inscricao.Status = "pendente";
@@ -381,7 +389,6 @@ namespace RccManager.Domain.Services
             MergeColecao(dto.Participacoes, evento.Participacoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.Programacao, evento.Programacao, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
-            MergeColecao(dto.LotesInscricoes, evento.LotesInscricoes, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
             MergeColecao(dto.EventoCampos, evento.EventoCampos, (dtoItem, entityItem) => dtoItem.Id == entityItem.Id);
 
             var result = await _eventoRepository.Update(evento);
@@ -544,6 +551,12 @@ namespace RccManager.Domain.Services
             await _producer.PublishEmail(inscricaoMQ);
 
             return ValidationResult.Success;
+        }
+
+        private bool EmailValido(string email)
+        {
+            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, pattern);
         }
 
         private void CalculaValorLiquidoPagSeguro(ref Inscricao inscricao, ChargeWebhook charge)
