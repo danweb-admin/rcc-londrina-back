@@ -552,7 +552,7 @@ namespace RccManager.Domain.Services
 
 
             var limiteParticipantesEvento = inscricao.Evento.LimiteParticipantes;
-            var participantesConfirmados = _eventoRepository.GetLimiteParticipantes(inscricao.EventoId);
+            var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(inscricao.EventoId);
 
             Console.WriteLine($"EVENTO: {inscricao.Evento.Nome}");
             Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
