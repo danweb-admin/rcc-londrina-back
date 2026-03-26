@@ -527,8 +527,8 @@ namespace RccManager.Domain.Services
                     return new ValidationResult("❌ Erro no processamento do webhook.");
 
                 // Se já estava paga, ignore
-                //if (inscricao.Status == "pagamento_confirmado")
-                //    return ValidationResult.Success;
+                if (inscricao.Status == "pagamento_confirmado")
+                    return ValidationResult.Success;
 
                 var charge = webhookResponse.Charges.First();
 
@@ -549,6 +549,15 @@ namespace RccManager.Domain.Services
             var inscricaoMQ = ConvertInscricaoMQ(inscricao);
 
             await _producer.PublishEmail(inscricaoMQ);
+
+
+            var limiteParticipantesEvento = inscricao.Evento.LimiteParticipantes;
+            var participantesConfirmados = _eventoRepository.GetLimiteParticipantes(inscricao.EventoId);
+
+            Console.WriteLine($"EVENTO: {inscricao.Evento.Nome}");
+            Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
+            Console.WriteLine($"PARTICIPANTES CONFIRMADOS: {participantesConfirmados}");
+
 
             return ValidationResult.Success;
         }
