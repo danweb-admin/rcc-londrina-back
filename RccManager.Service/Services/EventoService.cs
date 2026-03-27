@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RccManager.Domain.Dtos.Evento;
 using RccManager.Domain.Entities;
@@ -560,6 +561,26 @@ namespace RccManager.Domain.Services
 
 
             return ValidationResult.Success;
+        }
+
+        public async Task<bool> VerificaLimiteParticipante(Guid eventoId)
+        {
+            var evento = await _eventoRepository.GetById(eventoId);
+            var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(eventoId);
+
+            if (evento.LimiteParticipantes == 0 )
+                return true;
+
+            if (participantesConfirmados >= evento.LimiteParticipantes)
+            {
+                evento.Status = "Encerradas";
+                await _eventoRepository.Update(evento);
+
+                return false;
+            }
+                
+
+            return true;
         }
 
         private bool EmailValido(string email)

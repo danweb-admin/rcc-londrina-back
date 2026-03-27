@@ -12,7 +12,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/eventos")]
-    [Authorize] 
+    //[Authorize] 
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventoService;
@@ -261,6 +261,27 @@ namespace RccManager.API.Controllers
             try
             {
                 var inscricao_ = await _eventoService.IsentarInscricao(codigoInscricao);
+
+                return Ok(inscricao_);
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+
+        }
+
+        [HttpGet("verifica-limite-participantes")]
+        public async Task<IActionResult> VerificaLimiteParticipantes([FromQuery] Guid eventoId)
+        {
+            try
+            {
+                var inscricao_ = await _eventoService.VerificaLimiteParticipante(eventoId);
 
                 return Ok(inscricao_);
             }
