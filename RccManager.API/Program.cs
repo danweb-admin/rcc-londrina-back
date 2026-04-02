@@ -163,6 +163,12 @@ app.UseCors("AppCors");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Requisição: {context.Request.Method} {context.Request.Path}");
+    await next();
+});
+
 app.MapControllers();
 app.MapHub<CheckinHub>("/hub/checkin");
 
