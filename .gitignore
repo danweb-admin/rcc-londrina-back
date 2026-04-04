@@ -353,3 +353,5 @@ MigrationBackup/
 .DS_Store
 **/.DS_Store
 RccManager.Test/lcov.info
+
+RccManager.API/qrcodes

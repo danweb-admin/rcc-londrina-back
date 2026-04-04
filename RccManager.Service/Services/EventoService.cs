@@ -14,6 +14,7 @@ using RccManager.Domain.Entities;
 using RccManager.Domain.Interfaces.Repositories;
 using RccManager.Domain.Interfaces.Services;
 using RccManager.Domain.Responses;
+using RccManager.Service.Helper;
 using RccManager.Service.Hubs;
 using RccManager.Service.MQ;
 using static QRCoder.PayloadGenerator;
@@ -581,6 +582,18 @@ namespace RccManager.Domain.Services
                 
 
             return true;
+        }
+
+        public async Task GerarQrCodePNG(Guid eventoId)
+        {
+            var inscricoes = await _inscricaoRepository.GetAll(eventoId);
+
+            foreach (var inscricao in inscricoes)
+            {
+                Utils.GerarQrCodePNG(inscricao.CodigoInscricao);
+            }
+
+
         }
 
         private bool EmailValido(string email)

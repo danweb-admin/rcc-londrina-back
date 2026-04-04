@@ -20,15 +20,13 @@ namespace RccManager.Domain.Interfaces.Services
         Task<InscricaoDto> Inscricao(InscricaoDto inscricao);
         Task<InscricaoDto> VerificarCPF(string cpf, Guid eventoId);
         Task<bool> VerificaLimiteParticipante(Guid eventoId);
-
+        Task GerarQrCodePNG(Guid eventoId);
         Task<ValidationResult> ReenvioComprovante(string codigoInscricao, string email);
         Task<ValidationResult> IsentarInscricao(string codigoInscricao);
         Task<string> VerificaStatus(string codigoInscricao);
         Task<IEnumerable<InscricaoDto>> GetAllInscricoesByEvento(Guid eventoId);
         Task<HttpResponse> FazerCheckin(string codigoInscricao);
         Task<ValidationResult> EventosWebhook(string response);
-
-
     }
 }
 
