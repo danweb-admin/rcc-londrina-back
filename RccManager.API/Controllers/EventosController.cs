@@ -277,6 +277,7 @@ namespace RccManager.API.Controllers
         }
 
         [HttpGet("verifica-limite-participantes")]
+        [AllowAnonymous]
         public async Task<IActionResult> VerificaLimiteParticipantes([FromQuery] Guid eventoId)
         {
             try
