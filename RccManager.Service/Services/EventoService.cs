@@ -154,6 +154,9 @@ namespace RccManager.Domain.Services
         {
             var inscricao = await _inscricaoRepository.GetByInscricao(codigoInscricao);
 
+            if (inscricao == null)
+                return "PENDENTE";
+
             if (inscricao.Status == "pagamento_confirmado")
                 return "PAGO";
             return "PENDENTE";
@@ -455,6 +458,9 @@ namespace RccManager.Domain.Services
 
             if (inscricao == null)
                 throw new WebException("Inscrição não encontrado!");
+
+            if (inscricao.CheckIn.HasValue)
+                throw new WebException("Esse QR Code já foi utilizado!");
 
             inscricao.CheckIn = true;
             inscricao.DataCheckIn = DateTime.Now;
