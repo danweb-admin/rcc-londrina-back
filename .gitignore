@@ -355,3 +355,4 @@ MigrationBackup/
 RccManager.Test/lcov.info
 
 RccManager.API/qrcodes
+RccManager.API/Properties/launchSettings.json
