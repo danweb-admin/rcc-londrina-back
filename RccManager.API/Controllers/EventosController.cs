@@ -320,6 +320,21 @@ namespace RccManager.API.Controllers
 
         }
 
+
+        [HttpGet("exportar-inscricoes/{eventoId}")]
+        public async Task<IActionResult> Exportar(Guid eventoId)
+        {
+            var tabela = await _eventoService.ExportarInscricoes(eventoId);
+
+            var excel = _eventoService.GerarExcel(tabela);
+
+            return File(
+                excel,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"inscricoes_{eventoId}.xlsx"
+            );
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] EventoDto eventoViewModel)
         {

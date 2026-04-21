@@ -165,7 +165,9 @@ app.UseAuthorization();
 
 app.Use(async (context, next) =>
 {
-    Console.WriteLine($"Requisição: {context.Request.Method} {context.Request.Path}");
+    var brasilHora = DateTime.UtcNow.AddHours(-3);
+
+    Console.WriteLine($"[{brasilHora:yyyy-MM-dd HH:mm:ss}] Requisição: {context.Request.Method} {context.Request.Path}");
     await next();
 });
 

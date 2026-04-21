@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Drawing;
 using System.Net;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -600,6 +603,22 @@ namespace RccManager.Domain.Services
             }
 
 
+        }
+
+        public async Task<DataTable> ExportarInscricoes(Guid eventoId)
+        {
+            return await _eventoRepository.ExportarInscricoes(eventoId);
+        }
+
+        public byte[] GerarExcel(DataTable tabela)
+        {
+            using var workbook = new XLWorkbook();
+            workbook.Worksheets.Add(tabela, "Inscricoes");
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+
+            return stream.ToArray();
         }
 
         private bool EmailValido(string email)
