@@ -264,7 +264,7 @@ namespace RccManager.Service.Services
                             catch (Exception ex)
                             {
                                 Console.WriteLine($"Servo: {name}, GrupoOracao: {grupoOracao}, Decanato: {decanato}");
-                                Console.WriteLine(ex.Message);
+                                //Console.WriteLine(ex.Message);
                             }
                             
                             
