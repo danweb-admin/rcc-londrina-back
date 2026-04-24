@@ -481,6 +481,37 @@ namespace RccManager.Domain.Services
 
         }
 
+        public async Task VerificaInscricoesPendentes()
+        {
+            Console.WriteLine("******** INICIO - VerificaInscricoesPendentes() ********");
+            var dataBase = DateTime.Now.AddDays(-1);
+
+            Console.WriteLine("DataBase: " + dataBase.ToString("dd/MM/yyyy HH:mm:ss"));
+
+
+            var  pendentes = await _inscricaoRepository.GetAllPending(dataBase);
+
+            if (pendentes.Any())
+            {
+                Console.WriteLine($"******** {pendentes.Count()} INSCRICOES ENCONTRADAS ********");
+                foreach (var item in pendentes)
+                {
+                    Console.WriteLine($"Inscricao: {item.CodigoInscricao}, Nome: {item.Nome}, Email: {item.Email}, Valor: {item.ValorInscricao}");
+                }
+                
+                
+            }else
+            {
+                Console.WriteLine("******** NENHUMA INSCRICAO PENDENTE ********");
+            }
+
+
+
+            
+            Console.WriteLine("******** FIM - VerificaInscricoesPendentes() ********");
+            await Task.CompletedTask;
+        }
+
         //  WEBHOOK
         public async Task<ValidationResult> EventosWebhook(string response)
         {

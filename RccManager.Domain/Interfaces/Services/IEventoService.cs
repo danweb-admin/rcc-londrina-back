@@ -29,6 +29,7 @@ namespace RccManager.Domain.Interfaces.Services
         Task<HttpResponse> FazerCheckin(string codigoInscricao);
         Task<ValidationResult> EventosWebhook(string response);
         Task<DataTable> ExportarInscricoes(Guid eventoId);
+        Task VerificaInscricoesPendentes();
         byte[] GerarExcel(DataTable DataTable);
     }
 }
