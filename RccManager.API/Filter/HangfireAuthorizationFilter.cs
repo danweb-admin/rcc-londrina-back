@@ -15,7 +15,7 @@ namespace RccManager.API.Filter
 
             var host = httpContext.Request.Host.Host;
 
-            if (host == "localhost")
+            //if (host == "localhost")
                 return true;
 
             if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
