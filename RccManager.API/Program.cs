@@ -25,11 +25,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
 var redisPort = Environment.GetEnvironmentVariable("RedisPort");
+var apiKeyEvolutionAPI = Environment.GetEnvironmentVariable("ApiKeyEvolutionApi");
 
 builder.Services.AddStackExchangeRedisCache(o =>
 {
     o.InstanceName = "instance";
     o.Configuration = $"{redisHost}:{redisPort}";
+});
+
+builder.Services.AddHttpClient<IWhatsAppService, WhatsAppService>(client =>
+{
+    client.BaseAddress = new Uri("https://evolutionapi.kerigma-eventos.online");
+    client.DefaultRequestHeaders.Add("apikey", $"{apiKeyEvolutionAPI}");
 });
 
 builder.Services.AddControllers()
@@ -156,6 +163,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<EmailQueueProducer>();
+builder.Services.AddSingleton<WhatsAppProducer>();
+
 
 var UrlAsaas = Environment.GetEnvironmentVariable("UrlAsaas");
 var AccessToken = Environment.GetEnvironmentVariable("AccessToken");
@@ -169,6 +178,8 @@ builder.Services.AddHttpClient("asaas", (sp, client) =>
 
 // Background service
 builder.Services.AddHostedService<RabbitMQEmailConsumer>();
+builder.Services.AddHostedService<WhatsAppConsumer>();
+
 
 builder.Services.AddScoped<IAsaasClient, AsaasClient>();
 builder.Services.AddScoped<IPagamentoAsaasService, PagamentoAsaasService>();

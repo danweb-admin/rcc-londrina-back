@@ -37,10 +37,12 @@ namespace RccManager.Domain.Services
         private readonly EmailQueueProducer _producer;
         private readonly IHubContext<CheckinHub> _hub;
         private readonly IEmailService _emailService;
+        private readonly WhatsAppProducer _whatsAppProducer;
+
         private readonly IMapper _mapper;
 
 
-        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub, IEventoUsuariosRepository eventoUsuariosRepository, IEmailService emailService, IServoRepository servoRepository)
+        public EventoService(IEventoRepository eventoRepository, IInscricaoRepository inscricaoRepository, IGrupoOracaoRepository grupoOracaoRepository, IDecanatoSetorRepository decanatoRepository, IPagSeguroService pagSeguroService, EmailQueueProducer producer, IMapper mapper, IPagamentoAsaasService pagamentoAsaasService, IHubContext<CheckinHub> hub, IEventoUsuariosRepository eventoUsuariosRepository, IEmailService emailService, IServoRepository servoRepository, WhatsAppProducer whatsAppProducer)
         {
             _eventoRepository = eventoRepository;
             _inscricaoRepository = inscricaoRepository;
@@ -54,6 +56,7 @@ namespace RccManager.Domain.Services
             _eventoUsuariosRepository = eventoUsuariosRepository;
             _emailService = emailService;
             _servoRepository = servoRepository;
+            _whatsAppProducer = whatsAppProducer;
         }
 
         public async Task<HttpResponse> Create(EventoDto dto, Guid userId)
@@ -419,9 +422,11 @@ namespace RccManager.Domain.Services
 
             inscricaoMQ.Email = email;
 
-            await _emailService.EnviarEmailPagamentoConfirmado(inscricaoMQ);
+            //await _emailService.EnviarEmailPagamentoConfirmado(inscricaoMQ);
 
             await _producer.PublishEmail(inscricaoMQ);
+
+            await _whatsAppProducer.PublishWhatsAppMessage(inscricaoMQ);
 
             return ValidationResult.Success;
         }
@@ -856,7 +861,8 @@ namespace RccManager.Domain.Services
                 ValorInscricao = inscricao.ValorInscricao,
                 OrganizadorNome = inscricao.Evento.OrganizadorNome,
                 Local = formatarLocal(inscricao.Evento.Local),
-                Status = inscricao.Status
+                Status = inscricao.Status,
+                Telefone = inscricao.Telefone
             };
 
             return retorno;
