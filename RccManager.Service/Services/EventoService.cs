@@ -449,6 +449,9 @@ namespace RccManager.Domain.Services
 
             await _producer.PublishEmail(inscricaoMQ);
 
+            await _whatsAppProducer.PublishWhatsAppMessage(inscricaoMQ);
+
+
             return ValidationResult.Success;
         }
 
@@ -596,6 +599,8 @@ namespace RccManager.Domain.Services
             var inscricaoMQ = ConvertInscricaoMQ(inscricao);
 
             await _producer.PublishEmail(inscricaoMQ);
+
+            await _whatsAppProducer.PublishWhatsAppMessage(inscricaoMQ);
 
 
             var limiteParticipantesEvento = inscricao.Evento.LimiteParticipantes;
