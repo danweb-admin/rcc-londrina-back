@@ -138,9 +138,10 @@ namespace RccManager.Service.MQ
             await _channel.BasicPublishAsync(
                 exchange: "",
                 routingKey: "whatsapp_retry_queue",
+                mandatory: false,
                 basicProperties: props,
                 body: body
-            );
+            );    
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
