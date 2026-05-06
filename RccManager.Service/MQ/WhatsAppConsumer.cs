@@ -124,17 +124,18 @@ namespace RccManager.Service.MQ
             return 0;
         }
 
-        private void PublishWithRetry(byte[] body, int retry)
+        private async Task PublishWithRetry(byte[] body, int retry)
         {
-            var props = _channel.CreateBasicProperties();
-            props.Persistent = true;
-
-            props.Headers = new Dictionary<string, object>
+            var props = new BasicProperties
             {
-                { "x-retry", Encoding.UTF8.GetBytes(retry.ToString()) }
+                Persistent = true,
+                Headers = new Dictionary<string, object>
+                {
+                    { "x-retry", Encoding.UTF8.GetBytes(retry.ToString()) }
+                }
             };
-
-            _channel.BasicPublish(
+        
+            await _channel.BasicPublishAsync(
                 exchange: "",
                 routingKey: "whatsapp_retry_queue",
                 basicProperties: props,
