@@ -26,6 +26,7 @@ namespace RccManager.Domain.Dtos.Evento
         public int QtdParcelas { get; set; }
         public int? LimiteParticipantes { get; set; }
         public decimal? TaxaServico { get; set; }
+        public bool EventoGratuito { get; set; }
 
         // 🔗 Relações
         public LocalDto Local { get; set; }
@@ -134,6 +135,7 @@ namespace RccManager.Domain.Dtos.Evento
         public string GrupoOracao { get; set; }
         public string Decanato { get; set; }
         public string TipoPagamento { get; set; }
+        public string FormaSelecionada { get; set; }
         public string Status { get; set; }
         public decimal ValorInscricao { get; set; }
         public Guid EventoId { get; set; }

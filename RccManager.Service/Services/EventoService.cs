@@ -268,6 +268,36 @@ namespace RccManager.Domain.Services
 
             if (financeira == "PagSeguro")
             {
+
+                if (inscricao.TipoPagamento == "gratuito")
+                {
+                    if (inscricao.ValorInscricao > 0)
+                    {
+                        if (inscricao.FormaSelecionada == "pix")
+                        {
+                            var qrCode = await _pagSeguroService.GerarLinkPagamentoAsync(inscricao);
+
+                            if (qrCode == null)
+                                throw new WebException("Houve um problema para gerar QRCode do pagamento da inscrição!");
+
+                            inscricao_.QRCodeCopiaCola = qrCode.Qr_Codes?.FirstOrDefault()?.Text;
+                            inscricao_.LinkQrCodePNG = qrCode.Qr_Codes?.FirstOrDefault()?.Links?.FirstOrDefault(l => l.Rel == "QRCODE.PNG")?.Href;
+                            inscricao_.LinkQrCodeBase64 = qrCode.QrCodeBase64;
+                        }
+
+                        if (inscricao.FormaSelecionada == "cartao")
+                        {
+                            var cobranca = await _pagSeguroService.GerarPagamentoCartaoAsync(inscricao);
+
+                            inscricao_.LinkPgtoCartao = cobranca.Links.First(l => l.Rel == "PAY").Href;
+                        }
+                    }
+                    else
+                    {
+                        inscricao_.Status = "pagamento_confirmado";
+                    }
+                }
+
                 if (inscricao.TipoPagamento == "pix")
                 {
                     var qrCode = await _pagSeguroService.GerarLinkPagamentoAsync(inscricao);
