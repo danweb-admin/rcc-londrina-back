@@ -219,10 +219,10 @@ namespace RccManager.Domain.Services
             if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
                 throw new WebException("CPF já está cadastrado no Evento!");
 
-            if (verificaCPF != null && verificaCPF.Status == "pendente")
-            {
-                return _mapper.Map<InscricaoDto>(verificaCPF);
-            }
+            //if (verificaCPF != null && verificaCPF.Status == "pendente")
+            //{
+            //    return _mapper.Map<InscricaoDto>(verificaCPF);
+            //}
 
             inscricao.Email = inscricao.Email.Trim();
 
