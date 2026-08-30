@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RccManager.Domain.Entities;
 using RccManager.Domain.Helpers;
@@ -76,6 +77,13 @@ namespace RccManager.Infra.Repositories
                 await context.SaveChangesAsync();
 
                 return entity;
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException is SqlException sqlEx &&
+                (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+            {
+                Console.WriteLine("Registro Duplicado");
+                throw;
             }
             catch (Exception ex)
             {

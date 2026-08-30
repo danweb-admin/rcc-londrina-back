@@ -23,6 +23,8 @@ using RccManager.API.Filter;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+
 var redisHost = Environment.GetEnvironmentVariable("RedisHost");
 var redisPort = Environment.GetEnvironmentVariable("RedisPort");
 var apiKeyEvolutionAPI = Environment.GetEnvironmentVariable("ApiKeyEvolutionApi");
