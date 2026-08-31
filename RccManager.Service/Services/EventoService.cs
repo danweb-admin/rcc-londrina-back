@@ -360,6 +360,17 @@ namespace RccManager.Domain.Services
                 
             }
 
+            if (inscricao.TipoPagamento == "gratuito")
+            {
+                var inscricao = await _inscricaoRepository.GetByCodigo(result.CodigoInscricao);
+                var limiteParticipantesEvento = inscricao.Evento.LimiteParticipantes;
+                var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(inscricao.EventoId);
+
+                Console.WriteLine($"EVENTO: {inscricao.Evento.Nome}");
+                Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
+                Console.WriteLine($"PARTICIPANTES CONFIRMADOS: {participantesConfirmados}");
+            }
+
             if (result == null)
                 throw new WebException("Houve um problema para efetuar a Inscrição!");
 
