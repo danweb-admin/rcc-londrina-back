@@ -362,11 +362,11 @@ namespace RccManager.Domain.Services
 
             if (inscricao.TipoPagamento == "gratuito")
             {
-                var inscricao = await _inscricaoRepository.GetByCodigo(result.CodigoInscricao);
-                var limiteParticipantesEvento = inscricao.Evento.LimiteParticipantes;
-                var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(inscricao.EventoId);
+                var insc = await _inscricaoRepository.GetByCodigo(result.CodigoInscricao);
+                var limiteParticipantesEvento = insc.Evento.LimiteParticipantes;
+                var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(insc.EventoId);
 
-                Console.WriteLine($"EVENTO: {inscricao.Evento.Nome}");
+                Console.WriteLine($"EVENTO: {insc.Evento.Nome}");
                 Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
                 Console.WriteLine($"PARTICIPANTES CONFIRMADOS: {participantesConfirmados}");
             }
