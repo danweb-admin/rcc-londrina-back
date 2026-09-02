@@ -533,8 +533,8 @@ namespace RccManager.Domain.Services
         public async Task VerificaInscricoesPendentes()
         {
             Console.WriteLine("******** INICIO - VerificaInscricoesPendentes() ********");
-            var dataBase = DateTime.Now.AddDays(-1);
-
+            var dataBase = DateTime.Now.AddHours(-3);
+            
             Console.WriteLine("DataBase: " + dataBase.ToString("dd/MM/yyyy HH:mm:ss"));
 
 
