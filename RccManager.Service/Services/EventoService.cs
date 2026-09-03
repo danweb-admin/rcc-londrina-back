@@ -216,7 +216,7 @@ namespace RccManager.Domain.Services
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
             var financeira = Environment.GetEnvironmentVariable("Financeira");
 
-            if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
+            if (verificaCPF != null && (verificaCPF.Status == "pagamento_confirmado" || verificaCPF.Status == "isento"))
                 throw new WebException("CPF já está cadastrado no Evento!");
 
             //if (verificaCPF != null && verificaCPF.Status == "pendente")
