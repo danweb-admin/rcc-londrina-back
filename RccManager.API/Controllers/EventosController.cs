@@ -82,6 +82,8 @@ namespace RccManager.API.Controllers
         {
             try
             {
+                Console.WriteLine($"CPF: {cpf}");
+
                 var evento = await _eventoService.VerificarCPF(cpf,eventoId);
 
                 return Ok(evento);
