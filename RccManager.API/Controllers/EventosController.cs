@@ -12,7 +12,7 @@ namespace RccManager.API.Controllers
 {
     [ApiController]
     [Route("api/v1/eventos")]
-    //[Authorize]
+    [Authorize]
     public class EventosController : ControllerBase
     {
         private readonly IEventoService _eventoService;
@@ -71,6 +71,7 @@ namespace RccManager.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetSlug(string slug)
         {
+            Console.WriteLine($"EVENTO: {slug}");
             var evento = await _eventoService.GetSlug(slug);
             return Ok(evento);
         }
