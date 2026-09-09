@@ -369,6 +369,10 @@ namespace RccManager.Domain.Services
                 Console.WriteLine($"EVENTO: {insc.Evento.Nome}");
                 Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
                 Console.WriteLine($"PARTICIPANTES CONFIRMADOS: {participantesConfirmados}");
+
+                var inscricaoMQ = ConvertInscricaoMQ(insc);
+
+                await _producer.PublishEmail(inscricaoMQ);
             }
 
             if (result == null)
