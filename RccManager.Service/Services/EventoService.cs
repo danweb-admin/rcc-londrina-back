@@ -216,7 +216,7 @@ namespace RccManager.Domain.Services
             var verificaCPF = await _inscricaoRepository.CheckByCpf(inscricao.EventoId, inscricao.Cpf);
             var financeira = Environment.GetEnvironmentVariable("Financeira");
 
-            if (verificaCPF != null && verificaCPF.Status == "pagamento_confirmado")
+            if (verificaCPF != null && (verificaCPF.Status == "pagamento_confirmado" || verificaCPF.Status == "isento"))
                 throw new WebException("CPF já está cadastrado no Evento!");
 
             if (verificaCPF != null && verificaCPF.Status == "pendente")
@@ -358,6 +358,21 @@ namespace RccManager.Domain.Services
                 var camposValores = _mapper.Map<InscricaoCampoValores>(item);
                 await _inscricaoRepository.InsertCamposDinamicos(camposValores);
                 
+            }
+
+            if (inscricao.TipoPagamento == "gratuito")
+            {
+                var insc = await _inscricaoRepository.GetByCodigo(result.CodigoInscricao);
+                var limiteParticipantesEvento = insc.Evento.LimiteParticipantes;
+                var participantesConfirmados = await _eventoRepository.GetLimiteParticipantes(insc.EventoId);
+
+                Console.WriteLine($"EVENTO: {insc.Evento.Nome}");
+                Console.WriteLine($"LIMITE PARTICIPANTES: {limiteParticipantesEvento}");
+                Console.WriteLine($"PARTICIPANTES CONFIRMADOS: {participantesConfirmados}");
+
+                var inscricaoMQ = ConvertInscricaoMQ(insc);
+
+                await _producer.PublishEmail(inscricaoMQ);
             }
 
             if (result == null)
@@ -522,8 +537,8 @@ namespace RccManager.Domain.Services
         public async Task VerificaInscricoesPendentes()
         {
             Console.WriteLine("******** INICIO - VerificaInscricoesPendentes() ********");
-            var dataBase = DateTime.Now.AddDays(-1);
-
+            var dataBase = DateTime.Now.AddHours(-3);
+            
             Console.WriteLine("DataBase: " + dataBase.ToString("dd/MM/yyyy HH:mm:ss"));
 
 

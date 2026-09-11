@@ -163,7 +163,7 @@ namespace RccManager.Infra.Repositories
 
         public async Task<int> GetLimiteParticipantes(Guid eventoId)
         {
-            var list = new List<string> { "pagamento_confirmado","isento"};
+            var list = new List<string> { "pagamento_confirmado","isento","gratuito"};
 
             return await context.Inscricoes.
                 Where(x => list.Contains(x.Status) && x.EventoId == eventoId).CountAsync();
