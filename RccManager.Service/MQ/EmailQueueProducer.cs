@@ -49,7 +49,8 @@ namespace RccManager.Service.MQ
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("ERROOOOOOOOOOOOO:");
+                Console.WriteLine(ex);
             }
             
         }
