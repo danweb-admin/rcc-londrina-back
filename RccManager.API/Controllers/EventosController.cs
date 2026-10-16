@@ -301,6 +301,26 @@ namespace RccManager.API.Controllers
 
         }
 
+        [HttpGet("remover-inscricao")]
+        public async Task<IActionResult> RemoverInscricao([FromQuery] string codigoInscricao)
+        {
+            try
+            {
+                var inscricao_ = await _eventoService.RemoverInscricao(codigoInscricao);
+
+                return Ok(inscricao_);
+            }
+            catch (ValidateByNameException ex)
+            {
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+            catch (WebException ex)
+            {
+
+                return BadRequest(new Models.ValidationResult { Code = "400", Message = ex.Message, PropertyName = ex.Source });
+            }
+        }
+
         [HttpGet("gerar-qrcode-png")]
         [AllowAnonymous]
         public async Task<IActionResult> GerarQrCodePNG([FromQuery] Guid eventoId)
