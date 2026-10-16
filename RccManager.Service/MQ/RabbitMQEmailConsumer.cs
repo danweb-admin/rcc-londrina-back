@@ -6,7 +6,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RccManager.Domain.Entities;
 using RccManager.Domain.Responses;
 using RccManager.Service.Helper;
 
@@ -15,205 +14,593 @@ namespace RccManager.Service.MQ
     public class RabbitMQEmailConsumer : BackgroundService
     {
         private readonly RabbitMQConnection _rmq;
-        private IChannel _channel;
+        private IChannel? _channel;
+
+        private const string QueueName = "email_queue";
 
         public RabbitMQEmailConsumer(RabbitMQConnection rmq)
         {
             _rmq = rmq;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(
+            CancellationToken stoppingToken)
         {
-            // Retry com delay em caso de falha
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     Console.WriteLine("🔌 Tentando conectar ao RabbitMQ...");
-                    
+
                     _channel = await _rmq.CreateChannelAsync();
 
-                    Console.WriteLine("✅ Conectado ao RabbitMQ - Email com sucesso!");
+                    Console.WriteLine(
+                        "✅ Conectado ao RabbitMQ - Email com sucesso!"
+                    );
 
                     await _channel.QueueDeclareAsync(
-                        queue: "email_queue",
+                        queue: QueueName,
                         durable: true,
                         exclusive: false,
                         autoDelete: false,
                         arguments: null
                     );
 
-                    // Configurar prefetch para processar 1 mensagem por vez
-                    await _channel.BasicQosAsync(0, 1, false);
+                    // Processar apenas uma mensagem por vez
+                    await _channel.BasicQosAsync(
+                        prefetchSize: 0,
+                        prefetchCount: 1,
+                        global: false
+                    );
 
-                    var consumer = new AsyncEventingBasicConsumer(_channel);
+                    var consumer =
+                        new AsyncEventingBasicConsumer(_channel);
 
                     consumer.ReceivedAsync += async (model, ea) =>
                     {
-                        try
-                        {
-                            var body = ea.Body.ToArray();
-                            var json = Encoding.UTF8.GetString(body);
-                            var message = JsonSerializer.Deserialize<InscricaoMQResponse>(json);
-
-                            Console.WriteLine($"📩 Processando email para: {message?.Email}");
-
-                            if (message != null)
-                            {
-                                await EnviarEmailPagamentoConfirmado(message);
-                                await _channel.BasicAckAsync(ea.DeliveryTag, false);
-                                Console.WriteLine($"✅ Email enviado com sucesso para: {message.Email}");
-                            }
-                            else
-                            {
-                                Console.WriteLine("⚠️ Mensagem deserializada é nula");
-                                await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-                            }
-                        }
-                        catch (JsonException jsonEx)
-                        {
-                            Console.WriteLine($"❌ Erro ao deserializar mensagem: {jsonEx.Message}");
-                            // Rejeitar mensagem sem requeue (mensagem inválida)
-                            await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"❌ Erro ao processar mensagem: {ex.Message}");
-                            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                            // Rejeitar com requeue para tentar novamente
-                            await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
-                        }
+                        await ProcessarMensagem(ea, stoppingToken);
                     };
 
                     await _channel.BasicConsumeAsync(
-                        queue: "email_queue",
+                        queue: QueueName,
                         autoAck: false,
                         consumer: consumer
                     );
 
-                    Console.WriteLine("👂 Aguardando mensagens...");
+                    Console.WriteLine(
+                        $"👂 Aguardando mensagens na fila '{QueueName}'..."
+                    );
 
-                    // Manter o consumer ativo até o cancellation
-                    await Task.Delay(Timeout.Infinite, stoppingToken);
+                    // Mantém o consumer ativo
+                    await Task.Delay(
+                        Timeout.Infinite,
+                        stoppingToken
+                    );
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("🛑 Consumer está sendo encerrado...");
+                    Console.WriteLine(
+                        "🛑 Consumer está sendo encerrado..."
+                    );
+
                     break;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("-*-*-*- ERRO CONSUMER -*-*-*-");
-                    Console.WriteLine($"Mensagem: {ex.Message}");
-                    Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                    Console.WriteLine(
+                        "❌ ERRO NO CONSUMER RABBITMQ"
+                    );
 
-                    // Aguardar antes de tentar reconectar
+                    Console.WriteLine(ex.ToString());
+
                     if (!stoppingToken.IsCancellationRequested)
                     {
-                        Console.WriteLine("⏳ Aguardando 5 segundos antes de reconectar - Email...");
-                        await Task.Delay(5000, stoppingToken);
+                        Console.WriteLine(
+                            "⏳ Aguardando 5 segundos antes de reconectar..."
+                        );
+
+                        await Task.Delay(
+                            TimeSpan.FromSeconds(5),
+                            stoppingToken
+                        );
                     }
                 }
             }
         }
 
-        public override async Task StopAsync(CancellationToken cancellationToken)
-        {
-            Console.WriteLine("🛑 Encerrando consumer...");
-            
-            if (_channel != null)
-            {
-                await _channel.CloseAsync();
-                _channel.Dispose();
-            }
-
-            await base.StopAsync(cancellationToken);
-        }
-
-        private async Task EnviarEmailPagamentoConfirmado(InscricaoMQResponse inscricao)
+        private async Task ProcessarMensagem(
+            BasicDeliverEventArgs ea,
+            CancellationToken stoppingToken)
         {
             try
             {
-                var smtpServer = Environment.GetEnvironmentVariable("SmtpServer");
-                var porta = Environment.GetEnvironmentVariable("Port");
-                var senderEmail = Environment.GetEnvironmentVariable("SenderEmail");
-                var senderPassword = Environment.GetEnvironmentVariable("SenderPassword");
+                var body = ea.Body.ToArray();
 
-                // Validar variáveis de ambiente
-                if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(porta) ||
-                    string.IsNullOrEmpty(senderEmail) || string.IsNullOrEmpty(senderPassword))
+                var json = Encoding.UTF8.GetString(body);
+
+                if (string.IsNullOrWhiteSpace(json))
                 {
-                    throw new InvalidOperationException("Variáveis de ambiente SMTP não configuradas corretamente");
+                    Console.WriteLine(
+                        "⚠️ Mensagem RabbitMQ vazia."
+                    );
+
+                    await RejeitarMensagem(ea, false);
+
+                    return;
                 }
 
-                var nomeOrganizacao = "Renovação Carismática Católica Arquidiocese de Londrina";
-                var logoUrl = "https://res.cloudinary.com/dgcpvxvcj/image/upload/v1763292856/Fotos%20Eventos/Rcc.jpg";
+                InscricaoMQResponse? inscricao;
 
-                string templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "email-confirmacao.html");
-                
-                if (!File.Exists(templatePath))
+                try
                 {
-                    throw new FileNotFoundException($"Template não encontrado: {templatePath}");
+                    inscricao =
+                        JsonSerializer.Deserialize<InscricaoMQResponse>(
+                            json
+                        );
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine(
+                        "❌ Erro ao deserializar mensagem RabbitMQ."
+                    );
+
+                    Console.WriteLine(ex.ToString());
+
+                    // Mensagem inválida não deve voltar para a fila
+                    await RejeitarMensagem(ea, false);
+
+                    return;
                 }
 
-                var valorTexto = inscricao.Status == "isento" ? "Isento" : $"R$ {inscricao.ValorInscricao:F2}".Replace(".", ",");
-
-                Utils.GerarQrCodePNG(inscricao.CodigoInscricao);
-
-                var urlQrCode = $"https://backend.rcc-londrina.online/qrcodes/{inscricao.CodigoInscricao}.png";
-
-                string html = await File.ReadAllTextAsync(templatePath);
-
-                html = html
-                    .Replace("{{NOME}}", inscricao.Nome)
-                    .Replace("{{EMAIL}}", inscricao.Email)
-                    .Replace("{{CPF}}", inscricao.Cpf)
-                    .Replace("{{CODIGO_INSCRICAO}}", inscricao.CodigoInscricao)
-                    .Replace("{{VALOR}}", valorTexto)
-                    .Replace("{{NOME_EVENTO}}", inscricao.NomeEvento)
-                    .Replace("{{DATA_INICIAL}}", inscricao.DataInicio.ToString("dd/MM/yyyy"))
-                    .Replace("{{DATA_FINAL}}", inscricao.DataFim.ToString("dd/MM/yyyy"))
-                    .Replace("{{LOCAL_EVENTO}}", inscricao.Local)
-                    .Replace("{{ORGANIZADOR}}", inscricao.OrganizadorNome)
-                    .Replace("{{LOGO_URL}}", logoUrl)
-                    .Replace("{{NOME_ORGANIZACAO}}", nomeOrganizacao)
-                    .Replace("{{QRCODE_URL}}", urlQrCode);;
-                    
-
-                using var smtp = new SmtpClient(smtpServer, int.Parse(porta))
+                if (inscricao == null)
                 {
-                    EnableSsl = true,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(senderEmail, senderPassword),
-                    Timeout = 30000 // 30 segundos
-                };
+                    Console.WriteLine(
+                        "⚠️ Mensagem deserializada como null."
+                    );
 
-                var message = new MailMessage
+                    await RejeitarMensagem(ea, false);
+
+                    return;
+                }
+
+                Console.WriteLine(
+                    $"📩 Processando email para: {inscricao.Email}"
+                );
+
+                if (string.IsNullOrWhiteSpace(inscricao.Email))
                 {
-                    From = new MailAddress(senderEmail,"RCC Londrina - Cadastramento"),
-                    Subject = $"Pagamento confirmado! Seu ingresso está disponível - {inscricao.NomeEvento} - {inscricao.CodigoInscricao}",
-                    Body = html,
-                    IsBodyHtml = true
-                };
+                    Console.WriteLine(
+                        "⚠️ Inscrição sem email. Mensagem rejeitada."
+                    );
 
-                message.To.Add(inscricao.Email);
+                    await RejeitarMensagem(ea, false);
 
-                await smtp.SendMailAsync(message);
-                
-                Console.WriteLine($"📧 Email enviado com sucesso para {inscricao.Email}, {inscricao.Nome}");
+                    return;
+                }
+
+                await EnviarEmailPagamentoConfirmado(
+                    inscricao,
+                    stoppingToken
+                );
+
+                // Só confirma a mensagem depois que o email foi enviado
+                await _channel!.BasicAckAsync(
+                    ea.DeliveryTag,
+                    multiple: false
+                );
+
+                Console.WriteLine(
+                    $"✅ Email enviado com sucesso para: {inscricao.Email}"
+                );
             }
-            catch (SmtpException smtpEx)
+            catch (SmtpException ex)
             {
-                Console.WriteLine($"❌ Erro SMTP: {smtpEx.Message}");
-                Console.WriteLine($"Status Code: {smtpEx.StatusCode}");
-                throw; // Re-throw para que a mensagem seja reprocessada
+                Console.WriteLine(
+                    "❌ ERRO SMTP AO PROCESSAR EMAIL"
+                );
+
+                Console.WriteLine(
+                    $"Mensagem: {ex.Message}"
+                );
+
+                Console.WriteLine(
+                    $"StatusCode: {ex.StatusCode}"
+                );
+
+                Console.WriteLine(
+                    $"Exception: {ex}"
+                );
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(
+                        "❌ INNER EXCEPTION:"
+                    );
+
+                    Console.WriteLine(
+                        ex.InnerException.ToString()
+                    );
+                }
+
+                /*
+                 * IMPORTANTE:
+                 *
+                 * Não usamos requeue=true aqui.
+                 *
+                 * Caso o SMTP esteja indisponível,
+                 * a mensagem entraria em loop infinito:
+                 *
+                 * SMTP -> erro -> RabbitMQ -> SMTP -> erro...
+                 *
+                 * O ideal em produção é configurar uma
+                 * Dead Letter Queue / Retry Queue.
+                 */
+
+                await RejeitarMensagem(ea, false);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine(
+                    "🛑 Processamento cancelado."
+                );
+
+                // Se a aplicação estiver sendo encerrada,
+                // não tentamos confirmar a mensagem.
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Erro ao enviar email: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                throw; // Re-throw para que a mensagem seja reprocessada
+                Console.WriteLine(
+                    "❌ ERRO AO PROCESSAR MENSAGEM"
+                );
+
+                Console.WriteLine(
+                    ex.ToString()
+                );
+
+                /*
+                 * Mensagem com erro inesperado.
+                 * Por segurança não fazemos requeue infinito.
+                 *
+                 * Em produção o ideal é DLQ.
+                 */
+
+                await RejeitarMensagem(ea, false);
             }
+        }
+
+        private async Task EnviarEmailPagamentoConfirmado(
+            InscricaoMQResponse inscricao,
+            CancellationToken cancellationToken)
+        {
+            var smtpServer =
+                Environment.GetEnvironmentVariable("SmtpServer");
+
+            var porta =
+                Environment.GetEnvironmentVariable("Port");
+
+            var senderEmail =
+                Environment.GetEnvironmentVariable("SenderEmail");
+
+            var senderPassword =
+                Environment.GetEnvironmentVariable("SenderPassword");
+
+            ValidarConfiguracaoSmtp(
+                smtpServer,
+                porta,
+                senderEmail,
+                senderPassword
+            );
+
+            Console.WriteLine(
+                $"📤 SMTP Server: {smtpServer}"
+            );
+
+            Console.WriteLine(
+                $"📤 SMTP Port: {porta}"
+            );
+
+            Console.WriteLine(
+                $"📤 SMTP Email: {senderEmail}"
+            );
+
+            Console.WriteLine(
+                $"📤 SMTP Password configurada: " +
+                $"{!string.IsNullOrWhiteSpace(senderPassword)}"
+            );
+
+            var nomeOrganizacao =
+                "Renovação Carismática Católica Arquidiocese de Londrina";
+
+            var logoUrl =
+                "https://res.cloudinary.com/dgcpvxvcj/image/upload/v1763292856/Fotos%20Eventos/Rcc.jpg";
+
+            var templatePath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Templates",
+                "email-confirmacao.html"
+            );
+
+            Console.WriteLine(
+                $"📄 Template: {templatePath}"
+            );
+
+            if (!File.Exists(templatePath))
+            {
+                throw new FileNotFoundException(
+                    $"Template não encontrado: {templatePath}"
+                );
+            }
+
+            var valorTexto =
+                inscricao.Status == "isento"
+                    ? "Isento"
+                    : $"R$ {inscricao.ValorInscricao:F2}"
+                        .Replace(".", ",");
+
+            Utils.GerarQrCodePNG(
+                inscricao.CodigoInscricao
+            );
+
+            var urlQrCode =
+                $"https://backend.rcc-londrina.online/qrcodes/{inscricao.CodigoInscricao}.png";
+
+            var html =
+                await File.ReadAllTextAsync(
+                    templatePath,
+                    cancellationToken
+                );
+
+            html = html
+                .Replace(
+                    "{{NOME}}",
+                    inscricao.Nome ?? string.Empty
+                )
+                .Replace(
+                    "{{EMAIL}}",
+                    inscricao.Email ?? string.Empty
+                )
+                .Replace(
+                    "{{CPF}}",
+                    inscricao.Cpf ?? string.Empty
+                )
+                .Replace(
+                    "{{CODIGO_INSCRICAO}}",
+                    inscricao.CodigoInscricao ?? string.Empty
+                )
+                .Replace(
+                    "{{VALOR}}",
+                    valorTexto
+                )
+                .Replace(
+                    "{{NOME_EVENTO}}",
+                    inscricao.NomeEvento ?? string.Empty
+                )
+                .Replace(
+                    "{{DATA_INICIAL}}",
+                    inscricao.DataInicio.ToString("dd/MM/yyyy")
+                )
+                .Replace(
+                    "{{DATA_FINAL}}",
+                    inscricao.DataFim.ToString("dd/MM/yyyy")
+                )
+                .Replace(
+                    "{{LOCAL_EVENTO}}",
+                    inscricao.Local ?? string.Empty
+                )
+                .Replace(
+                    "{{ORGANIZADOR}}",
+                    inscricao.OrganizadorNome ?? string.Empty
+                )
+                .Replace(
+                    "{{LOGO_URL}}",
+                    logoUrl
+                )
+                .Replace(
+                    "{{NOME_ORGANIZACAO}}",
+                    nomeOrganizacao
+                )
+                .Replace(
+                    "{{QRCODE_URL}}",
+                    urlQrCode
+                );
+
+            if (!int.TryParse(porta, out var smtpPort))
+            {
+                throw new InvalidOperationException(
+                    $"Porta SMTP inválida: {porta}"
+                );
+            }
+
+            using var smtp = new SmtpClient(
+                smtpServer!,
+                smtpPort
+            )
+            {
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials =
+                    new NetworkCredential(
+                        senderEmail!,
+                        senderPassword!
+                    ),
+                Timeout = 30000
+            };
+
+            using var message = new MailMessage
+            {
+                From = new MailAddress(
+                    senderEmail!,
+                    "RCC Londrina - Cadastramento"
+                ),
+
+                Subject =
+                    $"Pagamento confirmado! " +
+                    $"Seu ingresso está disponível - " +
+                    $"{inscricao.NomeEvento} - " +
+                    $"{inscricao.CodigoInscricao}",
+
+                Body = html,
+
+                IsBodyHtml = true
+            };
+
+            message.To.Add(
+                new MailAddress(inscricao.Email!)
+            );
+
+            Console.WriteLine(
+                $"📤 Enviando email para {inscricao.Email}..."
+            );
+
+            try
+            {
+                await smtp.SendMailAsync(message);
+
+                Console.WriteLine(
+                    $"📧 Email enviado com sucesso para " +
+                    $"{inscricao.Email}, {inscricao.Nome}"
+                );
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine(
+                    "❌ ERRO SMTP"
+                );
+
+                Console.WriteLine(
+                    $"Message: {ex.Message}"
+                );
+
+                Console.WriteLine(
+                    $"StatusCode: {ex.StatusCode}"
+                );
+
+                Console.WriteLine(
+                    $"Type: {ex.GetType().FullName}"
+                );
+
+                Console.WriteLine(
+                    $"Exception completa:"
+                );
+
+                Console.WriteLine(
+                    ex.ToString()
+                );
+
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine(
+                        "❌ INNER EXCEPTION:"
+                    );
+
+                    Console.WriteLine(
+                        ex.InnerException.ToString()
+                    );
+                }
+
+                throw;
+            }
+        }
+
+        private static void ValidarConfiguracaoSmtp(
+            string? smtpServer,
+            string? porta,
+            string? senderEmail,
+            string? senderPassword)
+        {
+            if (string.IsNullOrWhiteSpace(smtpServer))
+            {
+                throw new InvalidOperationException(
+                    "Variável SmtpServer não configurada."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(porta))
+            {
+                throw new InvalidOperationException(
+                    "Variável Port não configurada."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(senderEmail))
+            {
+                throw new InvalidOperationException(
+                    "Variável SenderEmail não configurada."
+                );
+            }
+
+            if (string.IsNullOrWhiteSpace(senderPassword))
+            {
+                throw new InvalidOperationException(
+                    "Variável SenderPassword não configurada."
+                );
+            }
+
+            if (!int.TryParse(porta, out _))
+            {
+                throw new InvalidOperationException(
+                    $"Porta SMTP inválida: {porta}"
+                );
+            }
+        }
+
+        private async Task RejeitarMensagem(
+            BasicDeliverEventArgs ea,
+            bool requeue)
+        {
+            try
+            {
+                if (_channel == null)
+                    return;
+
+                await _channel.BasicNackAsync(
+                    ea.DeliveryTag,
+                    multiple: false,
+                    requeue: requeue
+                );
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "❌ Erro ao executar BasicNack:"
+                );
+
+                Console.WriteLine(
+                    ex.ToString()
+                );
+            }
+        }
+
+        public override async Task StopAsync(
+            CancellationToken cancellationToken)
+        {
+            Console.WriteLine(
+                "🛑 Encerrando consumer de email..."
+            );
+
+            try
+            {
+                if (_channel != null)
+                {
+                    await _channel.CloseAsync();
+                    _channel.Dispose();
+                    _channel = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "⚠️ Erro ao fechar canal RabbitMQ:"
+                );
+
+                Console.WriteLine(
+                    ex.ToString()
+                );
+            }
+
+            await base.StopAsync(
+                cancellationToken
+            );
         }
     }
 }
