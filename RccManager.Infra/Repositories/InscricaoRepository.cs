@@ -73,6 +73,14 @@ namespace RccManager.Infra.Repositories
                 throw;
             }
         }
+
+        public Task<Inscricao> ConsultaInscricao(Guid eventoId, string cpf)
+        {
+            var list = new List<string> { "pagamento_confirmado","isento","gratuito"};
+
+            return context.Inscricoes.FirstOrDefaultAsync(x => x.EventoId == eventoId
+                && x.Cpf.Replace(".","").Replace("-","") == cpf && list.Contains(x.Status));
+        }
     }
 }
 

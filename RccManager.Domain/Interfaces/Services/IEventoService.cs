@@ -32,6 +32,8 @@ namespace RccManager.Domain.Interfaces.Services
         Task<DataTable> ExportarInscricoes(Guid eventoId);
         Task VerificaInscricoesPendentes();
         byte[] GerarExcel(DataTable DataTable);
+        Task<InscricaoDto> ConsultaInscricao(Guid eventoId, string cpf);
+
     }
 }
 

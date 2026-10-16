@@ -515,6 +515,13 @@ namespace RccManager.Domain.Services
             return ValidationResult.Success;
         }
 
+        public async Task<InscricaoDto> ConsultaInscricao(Guid eventoId, string cpf)
+        {
+            var inscricao = await _inscricaoRepository.ConsultaInscricao(eventoId,cpf);
+
+            return _mapper.Map<InscricaoDto>(inscricao);
+        }
+
         public async Task<IEnumerable<InscricaoDto>> GetAllInscricoesByEvento(Guid eventoId)
         {
             var lista = await _eventoRepository.GetAllInscricoesByEvento(eventoId);
