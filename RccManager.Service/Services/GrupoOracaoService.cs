@@ -25,35 +25,75 @@ namespace RccManager.Service.Services
         private readonly IGrupoOracaoRepository repository;
         private readonly IServoTempRepository servoTempRepository;
         private readonly IUserRepository userRepository;
+        private readonly IFormularioCadastroServoRepository formularioCadastroServoRepository;
+
 
         private readonly IHistoryRepository history;
 
-        public GrupoOracaoService(IMapper _mapper, IGrupoOracaoRepository _repository, IHistoryRepository _history, IServoTempRepository _servoTempRepository, IUserRepository _userRepository)
+        public GrupoOracaoService(IMapper _mapper, IGrupoOracaoRepository _repository, IHistoryRepository _history, IServoTempRepository _servoTempRepository, IUserRepository _userRepository, IFormularioCadastroServoRepository _formularioCadastroServoRepository)
         {
             mapper = _mapper;
             repository = _repository;
             servoTempRepository = _servoTempRepository;
             history = _history;
             userRepository = _userRepository;
+            formularioCadastroServoRepository = _formularioCadastroServoRepository;
         }
 
+        
         public async Task<HttpResponse> Create(GrupoOracaoDto grupoOracao)
         {
+            grupoOracao.FoundationDate =
+                Utils.formatDate(grupoOracao.FoundationDate1);
 
-            grupoOracao.FoundationDate = Utils.formatDate(grupoOracao.FoundationDate1);
-            grupoOracao.Time = Utils.formaTime(grupoOracao.Time1);
+            grupoOracao.Time =
+                Utils.formaTime(grupoOracao.Time1);
 
             var grupoOracao_ = mapper.Map<GrupoOracao>(grupoOracao);
+
             var result = await repository.Insert(grupoOracao_);
 
             if (result == null)
-                return new HttpResponse { Message = "Houve um problema para criar Grupo de Oração", StatusCode = (int)HttpStatusCode.BadRequest };
+            {
+                return new HttpResponse
+                {
+                    Message = "Houve um problema para criar Grupo de Oração",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
 
-            // adiciona a tabela de histórico de alteracao
-            await history.Add(TableEnum.GrupoOracao.ToString(), result.Id, OperationEnum.Criacao.ToString());
+            var formulario = new FormularioCadastroServo
+            {
+                Id = Guid.NewGuid(),
+                GrupoOracaoId = result.Id,
+                Token = Convert.ToHexString(
+                    System.Security.Cryptography.RandomNumberGenerator
+                        .GetBytes(32)),
+                Active = true,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            return new HttpResponse { Message = "Grupo de Oração criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+            await formularioCadastroServoRepository.Insert(formulario);
+
+            await history.Add(
+                TableEnum.GrupoOracao.ToString(),
+                result.Id,
+                OperationEnum.Criacao.ToString());
+
+            var link = $"https://www.kerigma-eventos.online/cadastro-servo/{formulario.Token}";
+
+            return new HttpResponse
+            {
+                Message = "Grupo de Oração criado com sucesso.",
+                StatusCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    grupoOracaoId = result.Id,
+                    linkFormulario = link
+                }
+            };
         }
+
 
         public async Task<IEnumerable<GrupoOracaoDtoResult>> GetAll(string search, UserDtoResult user)
         {
@@ -64,18 +104,18 @@ namespace RccManager.Service.Services
 
             if (user.Name != "administrador")
             {
-            foreach (var item in result)
-                item.CsvUrl = string.Empty;
-            }
+                foreach (var item in result)
+                    item.CsvUrl = string.Empty;
+             }
 
             foreach (var grupo in result)
             {
-            if (grupo.ServosTemp != null)
-            {
-                grupo.ServosTemp = grupo.ServosTemp
-                    .Where(s => s.Active == true)
-                    .ToList();
-            }
+                if (grupo.ServosTemp != null)
+                {
+                    grupo.ServosTemp = grupo.ServosTemp
+                        .Where(s => s.Active == true)
+                        .ToList();
+                }
             }
 
             return result;

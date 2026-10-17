@@ -84,35 +84,97 @@ namespace RccManager.Service.Services
 
         }
 
-        public HttpResponse Create(ServoTempDto servo)
+        
+        public async Task<HttpResponse> Create(ServoTempDto servo)
         {
+            if (servo == null)
+            {
+                return new HttpResponse
+                {
+                    Message = "Dados do servo não informados.",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
 
+            if (servo.GrupoOracaoId == Guid.Empty)
+            {
+                return new HttpResponse
+                {
+                    Message = "Grupo de oração não informado.",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
 
-            var exists = _repository.ValidateServoTemp(Utils.Encrypt(servo.Name), servo.Birthday, Utils.Encrypt(servo.Cpf), Utils.Encrypt(servo.Email), Utils.Encrypt(servo.CellPhone));
+            var nome = servo.Name?.Trim().ToUpperInvariant();
+            var cpf = servo.Cpf?.Replace(".", "").Replace("-", "").Trim();
+
+            if (string.IsNullOrWhiteSpace(nome) ||
+                string.IsNullOrWhiteSpace(cpf))
+            {
+                return new HttpResponse
+                {
+                    Message = "Nome e CPF são obrigatórios.",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
+
+            var exists = await _repository.ValidateServoTemp(
+                Utils.Encrypt(nome),
+                servo.Birthday,
+                Utils.Encrypt(cpf),
+                Utils.Encrypt(servo.Email ?? ""),
+                Utils.Encrypt(servo.CellPhone ?? "")
+            );
 
             if (exists)
-                return new HttpResponse { Message = "Servo(a) temporário já existe", StatusCode = (int)HttpStatusCode.BadRequest };
+            {
+                return new HttpResponse
+                {
+                    Message = "Servo(a) temporário já existe.",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
 
-            servo.Name = servo.Name.ToUpper();
-            servo.MainMinistry = Ministerios.returnMinistryValue(servo.MainMinistry);
-            if (!string.IsNullOrEmpty(servo.SecondaryMinistry))
-                servo.SecondaryMinistry = Ministerios.returnMinistryValue(servo.SecondaryMinistry);
+            servo.Name = nome;
+            servo.Cpf = cpf;
+            servo.MainMinistry =
+                Ministerios.returnMinistryValue(servo.MainMinistry);
+
+            if (!string.IsNullOrWhiteSpace(servo.SecondaryMinistry))
+            {
+                servo.SecondaryMinistry =
+                    Ministerios.returnMinistryValue(servo.SecondaryMinistry);
+            }
 
             var servo_ = _mapper.Map<ServoTemp>(servo);
 
-            var grupoOracao = _repositoryGO.GetByName(servo.GrupoOracaoName, servo.ParoquiaCapelaName);
-            servo_.GrupoOracaoId = grupoOracao.Id;
+            // Preserva o grupo informado pelo backend.
+            servo_.GrupoOracaoId = servo.GrupoOracaoId;
 
-            var result =  _repository.Insert(servo_).GetAwaiter().GetResult();
+            // Cadastro público sempre inicia pendente.
+            servo_.Active = true;
+            servo_.Checked = false;
+
+            var result = _repository.Insert(servo_)
+                .GetAwaiter()
+                .GetResult();
 
             if (result == null)
-                return new HttpResponse { Message = "Houve um problema para criar Servo(a)", StatusCode = (int)HttpStatusCode.BadRequest };
+            {
+                return new HttpResponse
+                {
+                    Message = "Houve um problema para criar o servo.",
+                    StatusCode = (int)HttpStatusCode.BadRequest
+                };
+            }
 
-            // adiciona a tabela de histórico de alteracao
-            //_history.Add(TableEnum.ServoTemp.ToString(), result.Id, OperationEnum.Criacao.ToString());
-
-            return new HttpResponse { Message = "Servo(a) criado com sucesso.", StatusCode = (int)HttpStatusCode.OK };
+            return new HttpResponse
+            {
+                Message = "Servo(a) criado com sucesso.",
+                StatusCode = (int)HttpStatusCode.OK
+            };
         }
+
 
         public async Task<HttpResponse> Delete(Guid id)
         {
@@ -163,6 +225,10 @@ namespace RccManager.Service.Services
                 MainMinistry = Ministerios.returnMinistryValue(servoTemp.MainMinistry),
                 SecondaryMinistry = Ministerios.returnMinistryValue(servoTemp.SecondaryMinistry),
                 Name = servo_.Name,
+                NamePlain = Utils.Decrypt(servo_.Name),
+                CellphonePlain = Utils.Decrypt(servo_.CellPhone),
+                EmailPlain = Utils.Decrypt(servo_.Email),
+                CpfPlain = Utils.Decrypt(servo_.Cpf)
 
             };
 

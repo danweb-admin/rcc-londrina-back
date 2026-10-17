@@ -10,7 +10,7 @@ public interface IServoTempService
 {
     Task<IEnumerable<ServoTempDtoResult>> GetAll(Guid grupoOracaoId);
     Task<IEnumerable<ServoTempDtoResult>> LoadServos();
-    HttpResponse Create(ServoTempDto servo);
+    Task<HttpResponse> Create(ServoTempDto servo);
     Task<HttpResponse> Update(ServoTempDto servo, Guid id);
     Task<HttpResponse> Checked(Guid id);
     Task<HttpResponse> Delete(Guid id);

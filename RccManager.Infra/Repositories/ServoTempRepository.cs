@@ -66,9 +66,9 @@ namespace RccManager.Infra.Repositories
                                                   x.Email == email).ToListAsync();
         }
 
-        public bool ValidateServoTemp(string name, string birthday, string cpf, string email, string cellPhone)
+        public async Task<bool> ValidateServoTemp(string name, string birthday, string cpf, string email, string cellPhone)
         {
-            return dbSet.Any(x => x.Name == name &&
+            return await dbSet.AnyAsync(x => x.Name == name &&
                                              x.CellPhone == cellPhone &&
                                              x.Email == email &&
                                              x.Cpf == cpf);
