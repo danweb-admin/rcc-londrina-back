@@ -572,7 +572,8 @@ namespace RccManager.Domain.Services
                 foreach (var item in pendentes)
                 {
                     Console.WriteLine($"Inscricao: {item.CodigoInscricao}, Nome: {item.Nome}, Email: {item.Email}, Valor: {item.ValorInscricao}");
-                    await _inscricaoRepository.Delete(item.Id);                }
+                    item.Status = "pagamento_expirado";
+                    await _inscricaoRepository.Update(item);                }
                 
                 
             }else
