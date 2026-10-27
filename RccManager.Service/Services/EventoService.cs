@@ -573,7 +573,8 @@ namespace RccManager.Domain.Services
                 {
                     Console.WriteLine($"Inscricao: {item.CodigoInscricao}, Nome: {item.Nome}, Email: {item.Email}, Valor: {item.ValorInscricao}");
                     item.Status = "pagamento_expirado";
-                    await _inscricaoRepository.Update(item);                }
+                    await _inscricaoRepository.Update(item);
+                }
                 
                 
             }else

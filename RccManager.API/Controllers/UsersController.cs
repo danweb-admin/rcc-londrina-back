@@ -71,7 +71,6 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("user")]
-    [AllowAnonymous]
     [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResult))]
     public async Task<IActionResult> PostAsync([FromBody] UserDtoAdd model)
     {
